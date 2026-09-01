@@ -4,957 +4,1083 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="House Premiere League (HPL) Cricket Tournament — Live match center, scores, fixtures, standings, and player profiles.">
+    <title>House Premiere League — Modern Cricket Platform</title>
 
-    <title>House Premiere League</title>
-
-    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-
-    <link rel="stylesheet" href="css/blueTheme.css"/> 
-    <link rel="stylesheet" href="css/cricket-scorecard.css"/> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-      /* Gallery Section Styling */
-      .hpl-gallery-container {
-        background: #fff;
-        border-radius: 4px;
-        overflow: hidden;
-        margin-top: 15px;
-        margin-bottom: 20px;
-        border-top: 3px solid #1a73e8;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      :root {
+        --bg-page: #f8fafc;
+        --surface: #ffffff;
+        --surface-subtle: #f0f9ff;
+        --border: #e2e8f0;
+        --border-subtle: #f1f5f9;
+        
+        --text-main: #0f172a;
+        --text-muted: #475569;
+        --text-dim: #94a3b8;
+        
+        /* Light Blue Primary Palette */
+        --cricket-blue: #0284c7;
+        --cricket-blue-dark: #0369a1;
+        --cricket-blue-light: #e0f2fe;
+        --cricket-blue-border: #bae6fd;
+        
+        /* Light Red / Rose Secondary Palette */
+        --cricket-red: #e11d48;
+        --cricket-red-dark: #be123c;
+        --cricket-red-light: #ffe4e6;
+        --cricket-red-border: #fecdd3;
+        
+        --cricket-green: #059669;
+        --cricket-green-light: #ecfdf5;
+
+        --radius: 12px;
+        --radius-sm: 8px;
+        --radius-full: 9999px;
+        
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+        --shadow-md: 0 4px 12px rgba(2,132,199,0.08);
       }
-      .hpl-gallery-header {
-        padding: 14px 20px;
-        border-bottom: 1px solid #f0f0f0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-      .hpl-gallery-title {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 700;
-        color: #2c3e50;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .hpl-gallery-title i {
-        color: #1a73e8;
-      }
-      .hpl-gallery-filters {
-        display: flex;
-        gap: 8px;
-        list-style: none;
+
+      *, *::before, *::after {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
       }
-      .hpl-filter-btn {
-        padding: 5px 14px;
+
+      body {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background: var(--bg-page);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ── HEADER NAVIGATION (White with Light Blue & Light Red theme) ── */
+      .hpl-nav {
+        background: #ffffff;
+        border-bottom: 2px solid var(--cricket-blue);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+      .hpl-nav-inner {
+        max-width: 1160px;
+        margin: 0 auto;
+        padding: 0 20px;
+        height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .hpl-nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+      }
+      .hpl-nav-logo {
+        width: 34px;
+        height: 34px;
+        object-fit: contain;
+      }
+      .hpl-nav-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 17px;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: 0.3px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .hpl-nav-tag {
+        font-size: 10.5px;
+        font-weight: 800;
+        background: var(--cricket-blue-light);
+        color: var(--cricket-blue);
+        border: 1px solid var(--cricket-blue-border);
+        padding: 2px 8px;
+        border-radius: var(--radius-sm);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+      .hpl-nav-links {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        list-style: none;
+      }
+      .hpl-nav-link {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #475569;
+        text-decoration: none;
+        padding: 8px 14px;
+        border-radius: var(--radius-sm);
+        transition: all 0.15s ease;
+      }
+      .hpl-nav-link:hover, .hpl-nav-link.active {
+        color: var(--cricket-blue);
+        background: var(--cricket-blue-light);
+      }
+      .hpl-nav-admin-btn {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--cricket-red);
+        background: var(--cricket-red-light);
+        border: 1px solid var(--cricket-red-border);
+        padding: 6px 14px;
+        border-radius: var(--radius-sm);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.15s ease;
+      }
+      .hpl-nav-admin-btn:hover {
+        background: var(--cricket-red);
+        color: #ffffff;
+      }
+      .hpl-nav-toggle {
+        display: none;
+        background: transparent;
+        border: none;
+        color: #0f172a;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 6px;
+      }
+
+      /* Mobile Drawer */
+      @media (max-width: 820px) {
+        .hpl-nav-links { display: none; }
+        .hpl-nav-toggle { display: block; }
+        .hpl-nav-links.mobile-open {
+          display: flex;
+          flex-direction: column;
+          position: absolute;
+          top: 58px;
+          left: 0;
+          right: 0;
+          background: #ffffff;
+          border-bottom: 2px solid var(--cricket-blue);
+          box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+          padding: 16px 20px;
+          gap: 8px;
+        }
+      }
+
+      /* ── PAGE LAYOUT ── */
+      .hpl-main {
+        max-width: 1160px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 24px 16px 64px;
+        flex: 1;
+      }
+
+      /* ── LEAGUE FILTER BAR (Segmented Control) ── */
+      .hpl-filter-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .hpl-segmented-control {
+        display: inline-flex;
+        background: #ffffff;
+        border: 1px solid var(--border);
+        padding: 4px;
+        border-radius: var(--radius-sm);
+        box-shadow: var(--shadow-sm);
+        gap: 4px;
+      }
+      .hpl-segmented-btn {
+        border: none;
+        background: transparent;
+        padding: 8px 16px;
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--text-muted);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .hpl-segmented-btn:hover {
+        color: var(--cricket-blue);
+        background: var(--surface-subtle);
+      }
+      .hpl-segmented-btn.active {
+        color: var(--cricket-blue);
+        background: var(--cricket-blue-light);
+        border: 1px solid var(--cricket-blue-border);
+        font-weight: 800;
+      }
+
+      /* ── SECTION CARDS ── */
+      .hpl-section {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 24px;
+        overflow: hidden;
+      }
+      .hpl-section-header {
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #ffffff;
+      }
+      .hpl-section-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 13.5px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .hpl-live-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--cricket-red);
+        border-radius: 50%;
+        animation: hplPulse 1.2s ease-in-out infinite;
+      }
+      @keyframes hplPulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.4; transform: scale(0.8); }
+      }
+      @keyframes hplPulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.4; transform: scale(0.8); }
+      }
+
+      /* ── MATCH CARDS GRID / LIST ── */
+      .hpl-cards-list {
+        display: flex;
+        flex-direction: column;
+      }
+      .hpl-match-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border-subtle);
+        gap: 16px;
+        transition: background 0.15s ease;
+        text-decoration: none;
+        color: inherit;
+      }
+      .hpl-match-card:last-child {
+        border-bottom: none;
+      }
+      .hpl-match-card:hover {
+        background: #f8fbff;
+      }
+      .hpl-match-card-left {
+        flex: 1;
+        min-width: 0;
+      }
+      .hpl-badge-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+      }
+      .hpl-league-badge {
+        font-family: 'Outfit', sans-serif;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: var(--cricket-blue);
+        background: var(--cricket-blue-light);
+        padding: 3px 8px;
+        border-radius: var(--radius-sm);
+      }
+      .hpl-format-badge {
+        font-size: 10px;
+        font-weight: 800;
+        color: #475569;
+        background: #f1f5f9;
+        padding: 3px 8px;
+        border-radius: var(--radius-sm);
+        text-transform: uppercase;
+      }
+      .hpl-status-pill {
+        font-size: 10.5px;
+        font-weight: 800;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: var(--radius-sm);
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .hpl-status-pill.live {
+        background: var(--cricket-red-light);
+        color: var(--cricket-red);
+        border: 1px solid var(--cricket-red-border);
+      }
+      .hpl-status-pill.upcoming {
+        background: var(--cricket-blue-light);
+        color: var(--cricket-blue);
+        border: 1px solid var(--cricket-blue-border);
+      }
+      .hpl-status-pill.completed {
+        background: #f1f5f9;
+        color: #64748b;
+      }
+
+      .hpl-match-card-teams {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .hpl-team-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .hpl-team-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-main);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .hpl-team-title.batting {
+        color: #0f172a;
+      }
+      .hpl-score-val {
+        font-family: 'Outfit', sans-serif;
+        font-size: 17px;
+        font-weight: 800;
+        color: #0f172a;
+        white-space: nowrap;
+      }
+      .hpl-score-val.dim {
+        color: var(--text-dim);
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .hpl-match-summary-line {
         font-size: 12px;
         font-weight: 600;
-        border-radius: 20px;
+        color: var(--cricket-red);
+        margin-top: 6px;
+      }
+      .hpl-match-summary-line.upcoming {
+        color: var(--cricket-blue);
+      }
+      .hpl-card-action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border-radius: var(--radius-sm);
+        font-size: 12px;
+        font-weight: 700;
         cursor: pointer;
-        background: #f4f6f8;
-        color: #5f6368;
-        transition: all 0.2s ease;
-        border: 1px solid transparent;
-        outline: none;
+        text-decoration: none;
+        white-space: nowrap;
+        border: none;
+        transition: all 0.15s ease;
       }
-      .hpl-filter-btn:hover, .hpl-filter-btn.active {
-        background: #1a73e8;
-        color: #fff;
+      .hpl-card-action-btn.live {
+        background: var(--cricket-red);
+        color: #ffffff;
       }
+      .hpl-card-action-btn.live:hover {
+        background: var(--cricket-red-dark);
+      }
+      .hpl-card-action-btn.view {
+        background: var(--cricket-blue-light);
+        color: var(--cricket-blue);
+        border: 1px solid var(--cricket-blue-border);
+      }
+      .hpl-card-action-btn.view:hover {
+        background: #bae6fd;
+      }
+      .hpl-cards-empty {
+        padding: 32px 20px;
+        text-align: center;
+        color: var(--text-dim);
+        font-size: 13.5px;
+      }
+
+      @media (max-width: 640px) {
+        .hpl-match-card {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .hpl-match-card-right {
+          align-self: flex-end;
+          width: 100%;
+        }
+        .hpl-card-action-btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      /* ── POINTS TABLE ── */
+      .hpl-table-wrap {
+        overflow-x: auto;
+      }
+      .hpl-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        text-align: center;
+      }
+      .hpl-table th {
+        background: #f8fafc;
+        color: var(--text-muted);
+        padding: 12px 14px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+      }
+      .hpl-table th:nth-child(2) {
+        text-align: left;
+      }
+      .hpl-table td {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border-subtle);
+        vertical-align: middle;
+      }
+      .hpl-table td:nth-child(2) {
+        text-align: left;
+      }
+      .hpl-table tr:hover {
+        background: #f0f9ff;
+      }
+      .hpl-pos-pill {
+        display: inline-flex;
+        width: 22px;
+        height: 22px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 11px;
+        font-weight: 800;
+        background: #f1f5f9;
+        color: var(--text-muted);
+      }
+      .hpl-table tr.qualifier .hpl-pos-pill {
+        background: var(--cricket-blue);
+        color: #ffffff;
+      }
+      .hpl-table tr.qualifier td:first-child {
+        border-left: 4px solid var(--cricket-blue);
+      }
+      .hpl-team-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+      .hpl-team-color-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .hpl-pts-bold {
+        font-family: 'Outfit', sans-serif;
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--cricket-blue);
+      }
+      .hpl-form-pills {
+        display: inline-flex;
+        gap: 4px;
+      }
+      .hpl-form-pill {
+        width: 18px;
+        height: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 9.5px;
+        font-weight: 800;
+        color: #ffffff;
+      }
+      .hpl-form-pill.w { background: var(--cricket-blue); }
+      .hpl-form-pill.l { background: var(--cricket-red); }
+
+      /* ── GALLERY ── */
       .hpl-gallery-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 15px;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
         padding: 20px;
       }
-      @media (max-width: 991px) {
-        .hpl-gallery-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-      @media (max-width: 575px) {
-        .hpl-gallery-grid {
-          grid-template-columns: 1fr;
-        }
-      }
       .hpl-gallery-card {
-        position: relative;
-        border-radius: 6px;
+        border-radius: var(--radius-sm);
         overflow: hidden;
+        position: relative;
+        height: 180px;
         cursor: pointer;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        background: #111;
-        height: 200px;
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        background: #0f172a;
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
       .hpl-gallery-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
       }
       .hpl-gallery-card img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        display: block;
-        transition: transform 0.4s ease, opacity 0.3s ease;
+        transition: transform 0.3s ease;
       }
       .hpl-gallery-card:hover img {
-        transform: scale(1.08);
-        opacity: 0.88;
+        transform: scale(1.05);
       }
       .hpl-gallery-overlay {
         position: absolute;
         bottom: 0;
         left: 0;
         right: 0;
-        padding: 20px 12px 10px;
-        background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 70%, transparent 100%);
-        color: #fff;
-        transition: all 0.3s ease;
+        padding: 16px 12px 10px;
+        background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+        color: #ffffff;
       }
-      .hpl-gallery-badge {
-        display: inline-block;
-        font-size: 10px;
-        font-weight: 700;
-        padding: 2px 8px;
-        border-radius: 10px;
-        text-transform: uppercase;
-        margin-bottom: 5px;
-        background: #1a73e8;
-        color: #fff;
-      }
-      .hpl-badge-agni { background: #e67e22; }
-      .hpl-badge-vayu { background: #2980b9; }
-      .hpl-badge-jala { background: #16a085; }
-      .hpl-badge-prithvi { background: #27ae60; }
-      .hpl-gallery-card-title {
-        font-size: 13px;
+      .hpl-gallery-caption {
+        font-size: 12.5px;
         font-weight: 600;
-        margin: 0;
-        color: #fff;
-        line-height: 1.3;
+        color: #ffffff;
       }
-      /* Lightbox Modal */
+
+      /* ── LIGHTBOX ── */
       .hpl-lightbox {
         display: none;
         position: fixed;
+        inset: 0;
         z-index: 9999;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.88);
+        background: rgba(15, 23, 42, 0.92);
         align-items: center;
         justify-content: center;
         padding: 20px;
-        box-sizing: border-box;
       }
-      .hpl-lightbox.active {
-        display: flex;
-      }
+      .hpl-lightbox.active { display: flex; }
       .hpl-lightbox-content {
         position: relative;
-        max-width: 900px;
-        max-height: 90vh;
+        max-width: 800px;
+        width: 100%;
         text-align: center;
       }
       .hpl-lightbox-img {
         max-width: 100%;
         max-height: 75vh;
-        border-radius: 6px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        border-radius: var(--radius-sm);
       }
-      .hpl-lightbox-caption {
-        color: #fff;
-        margin-top: 12px;
-        font-size: 16px;
+      .hpl-lightbox-title {
+        color: #ffffff;
+        font-size: 15px;
         font-weight: 600;
+        margin-top: 12px;
       }
       .hpl-lightbox-close {
         position: absolute;
-        top: -35px;
+        top: -36px;
         right: 0;
-        color: #fff;
-        font-size: 28px;
-        cursor: pointer;
-        background: none;
+        color: #ffffff;
+        font-size: 26px;
+        background: transparent;
         border: none;
-        padding: 0 10px;
-        outline: none;
+        cursor: pointer;
       }
 
-      /* Points Table Styling */
-      .hpl-table-container {
-        background: #fff;
-        border-radius: 4px;
-        overflow: hidden;
-        margin-top: 15px;
-        margin-bottom: 20px;
-        border-top: 3px solid #1a73e8;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      /* ── FOOTER ── */
+      .hpl-footer {
+        background: #0f172a;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        padding: 24px 20px;
+        color: #94a3b8;
+        font-size: 13px;
+        margin-top: auto;
       }
-      .hpl-table-header {
-        padding: 14px 20px;
-        border-bottom: 1px solid #f0f0f0;
+      .hpl-footer-inner {
+        max-width: 1160px;
+        margin: 0 auto;
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
         flex-wrap: wrap;
         gap: 12px;
       }
-      .hpl-table-title {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 700;
-        color: #2c3e50;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
+      .hpl-footer-links {
         display: flex;
-        align-items: center;
-        gap: 8px;
+        gap: 16px;
+        list-style: none;
       }
-      .hpl-table-title i {
-        color: #f39c12;
+      .hpl-footer-links a {
+        color: #94a3b8;
+        text-decoration: none;
+        transition: color 0.15s ease;
       }
-      .hpl-table-subtitle {
-        font-size: 12px;
-        font-weight: 600;
-        color: #27ae60;
-        background: #eafaf1;
-        padding: 4px 12px;
-        border-radius: 12px;
-      }
-      .hpl-table-responsive {
-        overflow-x: auto;
-      }
-      .hpl-standings-table {
-        width: 100%;
-        border-collapse: collapse;
-        text-align: center;
-        font-size: 13px;
-      }
-      .hpl-standings-table th {
-        background: #f8f9fa;
-        color: #5f6368;
-        padding: 12px 14px;
-        font-weight: 700;
-        font-size: 12px;
-        text-transform: uppercase;
-        border-bottom: 2px solid #e9ecef;
-        letter-spacing: 0.5px;
-      }
-      .hpl-standings-table td {
-        padding: 12px 14px;
-        border-bottom: 1px solid #f1f3f4;
-        color: #333;
-        vertical-align: middle;
-      }
-      .hpl-standings-table tr:hover {
-        background-color: #f8fbff;
-      }
-      .hpl-standings-table tr.qualifier {
-        background-color: #fcfffd;
-      }
-      .hpl-standings-table tr.qualifier td:first-child {
-        border-left: 4px solid #27ae60;
-      }
-      .hpl-pos-badge {
-        display: inline-block;
-        width: 22px;
-        height: 22px;
-        line-height: 22px;
-        border-radius: 50%;
-        font-weight: 700;
-        font-size: 12px;
-        background: #eee;
-        color: #555;
-      }
-      .qualifier .hpl-pos-badge {
-        background: #27ae60;
-        color: #fff;
-      }
-      .hpl-team-cell {
-        text-align: left;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 600;
-      }
-      .hpl-team-color {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        display: inline-block;
-        flex-shrink: 0;
-      }
-      .hpl-color-vayu { background: #2980b9; }
-      .hpl-color-agni { background: #e67e22; }
-      .hpl-color-akasha { background: #8e44ad; }
-      .hpl-color-jala { background: #16a085; }
-      .hpl-color-prithvi { background: #27ae60; }
-      .hpl-pts-col {
-        font-weight: 700;
-        color: #1a73e8;
-        font-size: 15px;
-      }
-      .hpl-form-guide {
-        display: inline-flex;
-        gap: 4px;
-      }
-      .hpl-form-badge {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        line-height: 20px;
-        border-radius: 50%;
-        font-size: 10px;
-        font-weight: 700;
-        color: #fff;
-        text-align: center;
-      }
-      .hpl-form-w { background: #27ae60; }
-      .hpl-form-l { background: #e74c3c; }
-      .hpl-table-footer {
-        padding: 10px 20px;
-        font-size: 12px;
-        color: #7f8c8d;
-        background: #fafbfc;
-        border-top: 1px solid #f1f3f4;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      .hpl-table-footer .legend-qualifier {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .hpl-table-footer .legend-qualifier span {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        background: #27ae60;
-        border-radius: 2px;
+      .hpl-footer-links a:hover {
+        color: #ffffff;
       }
     </style>
   </head>
   <body>
-    <!--Whole Container -->
-    <div class="rca-container">
-
-      <!--Logo Holder-->
-      <div class="rca-row">
-        <div class="rca-column-12">
-          <div class="rca-logo">
-            <h2>
-              <span><img src="images/hpl-logo.png" style="width: 60px; vertical-align: middle;"></span><span>House Premiere League</span>
-            </h2>
-          </div>
-        </div>
+    <!-- GLOBAL NAVIGATION -->
+    <nav class="hpl-nav">
+      <div class="hpl-nav-inner">
+        <a href="/" class="hpl-nav-brand">
+          <img src="/images/hpl-logo.png" class="hpl-nav-logo" alt="CSD & CSIT Logo" onerror="this.style.display='none'">
+          <span class="hpl-nav-title">CSD & CSIT</span>
+        </a>
+        <ul class="hpl-nav-links" id="navLinks">
+          <li><a href="/" class="hpl-nav-link active"><i class="fa fa-house"></i> Home</a></li>
+          <li><a href="#matches" class="hpl-nav-link"><i class="fa fa-cricket-bat-ball"></i> Matches</a></li>
+          <li><a href="#standings" class="hpl-nav-link"><i class="fa fa-trophy"></i> Points Table</a></li>
+          <li><a href="#gallery" class="hpl-nav-link"><i class="fa fa-images"></i> Gallery</a></li>
+        </ul>
+        <button class="hpl-nav-toggle" onclick="toggleMobileNav()" aria-label="Toggle Navigation">
+          <i class="fa fa-bars"></i>
+        </button>
       </div>
+    </nav>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <main class="hpl-main">
       
-
-
-      <!--Widget Outer-->
-      <div class="rca-row">
-        <div class="rca-column-12">
-          <!--Widget Inner -->
-          <div class="rca-menu-scroll rca-left-border">
-            <ul class="rca-season-list">
-              <li>
-                <a href="#">
-                  VAYU vs AGNI
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  JALA vs PRITHVI
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  AKASHA vs VAYU
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  AGNI vs JALA
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  PRITHVI vs AKASHA
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  VAYU vs JALA
-                </a>
-              </li>
-            </ul>
-          </div>
+      <!-- LEAGUE FILTER CONTROLS -->
+      <div class="hpl-filter-container">
+        <div class="hpl-segmented-control" id="matchLeagueBar">
+          <button class="hpl-segmented-btn active" id="mlpAll" onclick="filterMatchLeague(null, this)"><i class="fa fa-globe"></i> All Leagues</button>
         </div>
-      </div>
-      <!--Widget Outer-->
-      <div class="rca-row">
-        <!--Widget Inner -->
-        <div class="rca-column-4">
-          <!--Live Season-->
-          <div class="rca-menu-widget rca-live-season rca-left-border">
-            <a href="#" class="rca-padding">
-              <span class="rca-match-title rca-live-text">VAYU vs AGNI : </span><span class="rca-match-score">Vayu 173/2 - 18.5(0)</span>
-              <span class="rca-live-label rca-right">Live</span>
-            </a>
-          </div>
-        </div>
-        
-        <!--Widget Inner -->
-        <div class="rca-column-4">
-          <!--Upcoming Match-->
-          <div class="rca-menu-widget rca-left-border">
-            <a href="#" class="rca-padding">
-              <span class="rca-match-title">JALA vs PRITHVI : </span><span class="rca-match-score">Today, 4:00 pm IST</span>
-            </a>
-          </div>
-        </div>
-
-        <!--Widget Inner -->
-        <div class="rca-column-4">
-          <!--Completed Match-->
-          <div class="rca-menu-widget rca-left-border">
-            <a href="#" class="rca-padding">
-              <span class="rca-match-title">AKASHA vs VAYU : </span><span class="rca-match-score">Akasha won by 24 runs.</span>
-            </a>
-          </div>
+        <div style="font-size:12px; font-weight:700; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+          <span class="hpl-live-dot"></span> Real-Time Live Sync Active
         </div>
       </div>
 
-      <div class="rca-row">
-        <!-- Left: Dynamic Live Match Hero & Recent Overs -->
-        <div class="rca-column-6">
-          <!-- Dynamic Hero Live Score Card -->
-          <div id="liveScoreHeader"></div>
+      <!-- 1. LIVE MATCHES SECTION -->
+      <section class="hpl-section" id="matches">
+        <div class="hpl-section-header">
+          <h2 class="hpl-section-title">
+            <span class="hpl-live-dot"></span> Live Matches
+          </h2>
+        </div>
+        <div class="hpl-cards-list" id="liveMatchCards">
+          <div class="hpl-cards-empty"><i class="fa fa-spinner fa-spin"></i> Checking live match feeds…</div>
+        </div>
+      </section>
 
-          <!-- Dynamic Recent Overs Track -->
-          <div id="liveRecentOvers"></div>
+      <!-- 2. UPCOMING FIXTURES -->
+      <section class="hpl-section">
+        <div class="hpl-section-header">
+          <h2 class="hpl-section-title">
+            <i class="fa fa-calendar" style="color:var(--cricket-blue);"></i> Upcoming Fixtures
+          </h2>
+        </div>
+        <div class="hpl-cards-list" id="upcomingMatchCards">
+          <div class="hpl-cards-empty"><i class="fa fa-spinner fa-spin"></i> Loading upcoming fixtures…</div>
+        </div>
+      </section>
 
-          <!-- Tournament Results & Fixtures Tabs -->
-          <div class="rca-mini-widget rca-top-border rca-tab-simple" style="margin-top: 20px;">
-            <ul class="rca-tab-list">
-              <li class="rca-tab-link active" data-tab="ltab-results" onclick="showTab(this);">Results</li>
-              <li class="rca-tab-link" data-tab="ltab-fixtures" onclick="showTab(this);">Fixtures</li>
-            </ul>
-            <div id="ltab-results" class="rca-padding rca-tab-content active">
-              <div id="matchResultsList">
-                <div class="table-empty">Loading match results...</div>
-              </div>
-            </div>
-            <div id="ltab-fixtures" class="rca-padding rca-tab-content">
-              <div id="matchFixturesList">
-                <div class="table-empty">Loading upcoming fixtures...</div>
-              </div>
-            </div>
+      <!-- 3. RECENT RESULTS -->
+      <section class="hpl-section">
+        <div class="hpl-section-header">
+          <h2 class="hpl-section-title">
+            <i class="fa fa-circle-check" style="color:#64748b;"></i> Recent Match Results
+          </h2>
+        </div>
+        <div class="hpl-cards-list" id="resultMatchCards">
+          <div class="hpl-cards-empty"><i class="fa fa-spinner fa-spin"></i> Loading recent results…</div>
+        </div>
+      </section>
+
+      <!-- 4. STANDINGS & POINTS TABLE -->
+      <section class="hpl-section" id="standings">
+        <div class="hpl-section-header">
+          <h2 class="hpl-section-title">
+            <i class="fa fa-trophy" style="color:#f59e0b;"></i> Tournament Standings
+          </h2>
+        </div>
+        <div class="hpl-table-wrap">
+          <table class="hpl-table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">Pos</th>
+                <th>Team / House</th>
+                <th>P</th>
+                <th>W</th>
+                <th>L</th>
+                <th>T / NR</th>
+                <th>NRR</th>
+                <th>PTS</th>
+                <th>Form</th>
+              </tr>
+            </thead>
+            <tbody id="standingsBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 5. TOURNAMENT MOMENTS GALLERY -->
+      <section class="hpl-section" id="gallery">
+        <div class="hpl-section-header">
+          <h2 class="hpl-section-title">
+            <i class="fa fa-camera" style="color:var(--cricket-blue);"></i> Tournament Moments
+          </h2>
+        </div>
+        <div class="hpl-gallery-grid">
+          <div class="hpl-gallery-card" onclick="openLightbox('images/1200px-IPL_T20_Chennai_vs_Kolkata.jpg', 'Match Night Atmosphere Under Floodlights');">
+            <img src="images/1200px-IPL_T20_Chennai_vs_Kolkata.jpg" alt="Stadium" loading="lazy">
+            <div class="hpl-gallery-overlay"><div class="hpl-gallery-caption">Stadium Floodlights</div></div>
+          </div>
+          <div class="hpl-gallery-card" onclick="openLightbox('images/Mahendra_Singh_Dhoni_batting.jpg', 'Powerplay Explosive Batting');">
+            <img src="images/Mahendra_Singh_Dhoni_batting.jpg" alt="Batting Action" loading="lazy">
+            <div class="hpl-gallery-overlay"><div class="hpl-gallery-caption">Explosive Batting</div></div>
+          </div>
+          <div class="hpl-gallery-card" onclick="openLightbox('images/Sachin_at_the_other_end.jpg', 'Partnership & Running');">
+            <img src="images/Sachin_at_the_other_end.jpg" alt="Partnership" loading="lazy">
+            <div class="hpl-gallery-overlay"><div class="hpl-gallery-caption">Partnership & Running</div></div>
+          </div>
+          <div class="hpl-gallery-card" onclick="openLightbox('images/1200px-Flagcricket.jpg', 'Championship Celebration');">
+            <img src="images/1200px-Flagcricket.jpg" alt="Celebration" loading="lazy">
+            <div class="hpl-gallery-overlay"><div class="hpl-gallery-caption">Championship Celebration</div></div>
           </div>
         </div>
+      </section>
 
-        <!-- Right: Live Players on Pitch & Detailed Scorecard -->
-        <div class="rca-column-6">
-          <div class="rca-medium-widget rca-top-border">
-            <ul class="rca-tab-list">
-              <li class="rca-tab-link active" data-tab="tab-live-pitch" onclick="showTab(this);">LIVE MATCH</li>
-              <li class="rca-tab-link" data-tab="tab-sc" onclick="showTab(this);">FULL SCORECARD</li>
-              <li class="rca-tab-link" data-tab="tab-sq" onclick="showTab(this);">SQUADS</li>
-            </ul>
+    </main>
 
-            <!-- Tab: Live Pitch (Current Batsmen & Bowler) -->
-            <div id="tab-live-pitch" class="rca-tab-content rca-padding active">
-              <div style="margin-bottom: 16px;">
-                <h4 style="margin:0 0 10px; font-size:13px; font-weight:800; color:#1e293b; text-transform:uppercase; letter-spacing:0.5px;">
-                  <i class="fa fa-user" style="color:#1a73e8;"></i> Current Batsmen
-                </h4>
-                <div id="liveBattingTable"></div>
-              </div>
-
-              <div>
-                <h4 style="margin:0 0 10px; font-size:13px; font-weight:800; color:#1e293b; text-transform:uppercase; letter-spacing:0.5px;">
-                  <i class="fa fa-bullseye" style="color:#0d8a4a;"></i> Current Bowler
-                </h4>
-                <div id="liveBowlingTable"></div>
-              </div>
-            </div>
-
-            <!-- Tab: Full Scorecard -->
-            <div id="tab-sc" class="rca-tab-content rca-padding">
-              <div id="fullScorecardContent">
-                <div class="table-empty">Loading full scorecard from database...</div>
-              </div>
-            </div>
-
-            <!-- Tab: Squads -->
-            <div id="tab-sq" class="rca-tab-content rca-padding">
-              <div id="liveSquadsContent">
-                <div class="rca-batting-score">
-                  <h3>Tournament Playing Squads</h3>
-                  <p style="font-size:12.5px; color:#64748b; line-height:1.6;">
-                    Squad details are managed authoritatively by the tournament database. Check the Admin panel for line-up modifications.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Points Table Section -->
-      <div class="rca-row" id="points-table">
-        <div class="rca-column-12">
-          <div class="hpl-table-container">
-            <div class="hpl-table-header">
-              <h3 class="hpl-table-title">
-                <i class="fa fa-trophy"></i> HPL Standings &amp; Points Table
-              </h3>
-              <span class="hpl-table-subtitle">
-                <i class="fa fa-check-circle"></i> Season 2026 &bull; Top 2 Qualify for the Final
-              </span>
-            </div>
-            <div class="hpl-table-responsive">
-              <table class="hpl-standings-table">
-                <thead>
-                  <tr>
-                    <th style="width: 55px;">Pos</th>
-                    <th style="text-align: left;">House / Team</th>
-                    <th>P</th>
-                    <th>W</th>
-                    <th>L</th>
-                    <th>T / NR</th>
-                    <th>NRR</th>
-                    <th>PTS</th>
-                    <th>Recent Form</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="qualifier">
-                    <td><span class="hpl-pos-badge">1</span></td>
-                    <td>
-                      <div class="hpl-team-cell">
-                        <span class="hpl-team-color hpl-color-vayu"></span>
-                        <span>House Vayu <small style="color: #7f8c8d; font-weight: normal;">(Wind)</small></span>
-                      </div>
-                    </td>
-                    <td>4</td>
-                    <td><strong>3</strong></td>
-                    <td>1</td>
-                    <td>0</td>
-                    <td style="color: #27ae60; font-weight: 600;">+1.245</td>
-                    <td class="hpl-pts-col">6</td>
-                    <td>
-                      <div class="hpl-form-guide">
-                        <span class="hpl-form-badge hpl-form-w">W</span>
-                        <span class="hpl-form-badge hpl-form-w">W</span>
-                        <span class="hpl-form-badge hpl-form-l">L</span>
-                        <span class="hpl-form-badge hpl-form-w">W</span>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr class="qualifier">
-                    <td><span class="hpl-pos-badge">2</span></td>
-                    <td>
-                      <div class="hpl-team-cell">
-                        <span class="hpl-team-color hpl-color-agni"></span>
-                        <span>House Agni <small style="color: #7f8c8d; font-weight: normal;">(Fire)</small></span>
-                      </div>
-                    </td>
-                    <td>4</td>
-                    <td><strong>3</strong></td>
-                    <td>1</td>
-                    <td>0</td>
-                    <td style="color: #27ae60; font-weight: 600;">+0.890</td>
-                    <td class="hpl-pts-col">6</td>
-                    <td>
-                      <div class="hpl-form-guide">
-                        <span class="hpl-form-badge hpl-form-w">W</span>
-                        <span class="hpl-form-badge hpl-form-l">L</span>
-                        <span class="hpl-form-badge hpl-form-w">W</span>
-                        <span class="hpl-form-badge hpl-form-w">W</span>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td><span class="hpl-pos-badge">3</span></td>
-                    <td>
-                      <div class="hpl-team-cell">
-                        <span class="hpl-team-color hpl-color-akasha"></span>
-                        <span>House Akasha <small style="color: #7f8c8d; font-weight: normal;">(Ether)</small></span>
-                      </div>
-                    </td>
-                    <td>4</td>
-                    <td><strong>2</strong></td>
-                    <td>2</td>
-                    <td>0</td>
-                    <td style="color: #27ae60; font-weight: 600;">+0.150</td>
-                    <td class="hpl-pts-col">4</td>
-                    <td>
-                      <div class="hpl-form-guide">
-                        <span class="hpl-form-badge hpl-form-l">L</span>
-                        <span class="hpl-form-badge hpl-form-w">W</span>
-                        <span class="hpl-form-badge hpl-form-w">W</span>
-                        <span class="hpl-form-badge hpl-form-l">L</span>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td><span class="hpl-pos-badge">4</span></td>
-                    <td>
-                      <div class="hpl-team-cell">
-                        <span class="hpl-team-color hpl-color-jala"></span>
-                        <span>House Jala <small style="color: #7f8c8d; font-weight: normal;">(Water)</small></span>
-                      </div>
-                    </td>
-                    <td>3</td>
-                    <td><strong>1</strong></td>
-                    <td>2</td>
-                    <td>0</td>
-                    <td style="color: #e74c3c; font-weight: 600;">-0.420</td>
-                    <td class="hpl-pts-col">2</td>
-                    <td>
-                      <div class="hpl-form-guide">
-                        <span class="hpl-form-badge hpl-form-l">L</span>
-                        <span class="hpl-form-badge hpl-form-w">W</span>
-                        <span class="hpl-form-badge hpl-form-l">L</span>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td><span class="hpl-pos-badge">5</span></td>
-                    <td>
-                      <div class="hpl-team-cell">
-                        <span class="hpl-team-color hpl-color-prithvi"></span>
-                        <span>House Prithvi <small style="color: #7f8c8d; font-weight: normal;">(Earth)</small></span>
-                      </div>
-                    </td>
-                    <td>3</td>
-                    <td><strong>0</strong></td>
-                    <td>3</td>
-                    <td>0</td>
-                    <td style="color: #e74c3c; font-weight: 600;">-1.865</td>
-                    <td class="hpl-pts-col">0</td>
-                    <td>
-                      <div class="hpl-form-guide">
-                        <span class="hpl-form-badge hpl-form-l">L</span>
-                        <span class="hpl-form-badge hpl-form-l">L</span>
-                        <span class="hpl-form-badge hpl-form-l">L</span>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="hpl-table-footer">
-              <div class="legend-qualifier">
-                <span></span> Qualified for Final Championship
-              </div>
-              <div>
-                <strong>P:</strong> Played | <strong>W:</strong> Won | <strong>L:</strong> Lost | <strong>NRR:</strong> Net Run Rate | <strong>PTS:</strong> Points
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Gallery Section -->
-      <div class="rca-row" id="gallery">
-        <div class="rca-column-12">
-          <div class="hpl-gallery-container">
-            <div class="hpl-gallery-header">
-              <h3 class="hpl-gallery-title">
-                <i class="fa fa-camera"></i> HPL Tournament Gallery
-              </h3>
-              <div class="hpl-gallery-filters">
-                <button class="hpl-filter-btn active" onclick="filterGallery('all', this);">All Moments</button>
-                <button class="hpl-filter-btn" onclick="filterGallery('action', this);">Match Action</button>
-                <button class="hpl-filter-btn" onclick="filterGallery('stadium', this);">Stadium Views</button>
-                <button class="hpl-filter-btn" onclick="filterGallery('celebration', this);">Celebrations</button>
-              </div>
-            </div>
-            <div class="hpl-gallery-grid">
-              <!-- Photo 1: Stadium -->
-              <div class="hpl-gallery-card" data-category="stadium" onclick="openLightbox('images/1200px-IPL_T20_Chennai_vs_Kolkata.jpg', 'Match Night Atmosphere Under Floodlights');">
-                <img src="images/1200px-IPL_T20_Chennai_vs_Kolkata.jpg" alt="Stadium Atmosphere" loading="lazy">
-                <div class="hpl-gallery-overlay">
-                  <span class="hpl-gallery-badge hpl-badge-vayu">Stadium</span>
-                  <p class="hpl-gallery-card-title">Match Night Atmosphere Under Floodlights</p>
-                </div>
-              </div>
-
-              <!-- Photo 2: Action -->
-              <div class="hpl-gallery-card" data-category="action" onclick="openLightbox('images/Mahendra_Singh_Dhoni_batting.jpg', 'VAYU vs AGNI - Powerplay Explosive Batting');">
-                <img src="images/Mahendra_Singh_Dhoni_batting.jpg" alt="Match Action" loading="lazy">
-                <div class="hpl-gallery-overlay">
-                  <span class="hpl-gallery-badge hpl-badge-agni">Action</span>
-                  <p class="hpl-gallery-card-title">VAYU vs AGNI - Powerplay Explosive Batting</p>
-                </div>
-              </div>
-
-              <!-- Photo 3: Action -->
-              <div class="hpl-gallery-card" data-category="action" onclick="openLightbox('images/Sachin_at_the_other_end.jpg', 'Middle Overs Partnership & Fast Running');">
-                <img src="images/Sachin_at_the_other_end.jpg" alt="Partnership" loading="lazy">
-                <div class="hpl-gallery-overlay">
-                  <span class="hpl-gallery-badge hpl-badge-jala">Partnership</span>
-                  <p class="hpl-gallery-card-title">Middle Overs Partnership & Fast Running</p>
-                </div>
-              </div>
-
-              <!-- Photo 4: Celebration -->
-              <div class="hpl-gallery-card" data-category="celebration" onclick="openLightbox('images/1200px-Flagcricket.jpg', 'Post-Match Triumph & Trophy Celebration');">
-                <img src="images/1200px-Flagcricket.jpg" alt="Trophy Celebration" loading="lazy">
-                <div class="hpl-gallery-overlay">
-                  <span class="hpl-gallery-badge hpl-badge-prithvi">Celebration</span>
-                  <p class="hpl-gallery-card-title">Post-Match Triumph & Trophy Celebration</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Lightbox Modal -->
-      <div id="hplLightbox" class="hpl-lightbox" onclick="closeLightbox();">
-        <div class="hpl-lightbox-content" onclick="event.stopPropagation();">
-          <button class="hpl-lightbox-close" onclick="closeLightbox();">&times;</button>
-          <img id="hplLightboxImg" class="hpl-lightbox-img" src="" alt="Enlarged gallery photo">
-          <div id="hplLightboxCaption" class="hpl-lightbox-caption"></div>
-        </div>
-      </div>
-
-      <div class="rca-row">
-        <div class="rca-column-8">
-          <ul class="rca-footer">
-            <li><a href="#">About HPL</a></li>
-            <li><a href="#points-table">Points Table</a></li>
-            <li><a href="#gallery">Gallery</a></li>
-            <li><a href="#">Schedule</a></li>
-            <li><a href="#">Teams</a></li>
-          </ul>
-        </div>
-        <div class="rca-column-4">
-          <ul class="rca-footer rca-right">
-            <li>&copy; 2026 <a href="#">House Premiere League</a>, All rights reserved </li>
-          </ul>
-        </div>
+    <!-- LIGHTBOX MODAL -->
+    <div id="hplLightbox" class="hpl-lightbox" onclick="closeLightbox();">
+      <div class="hpl-lightbox-content" onclick="event.stopPropagation();">
+        <button class="hpl-lightbox-close" onclick="closeLightbox();">&times;</button>
+        <img id="hplLightboxImg" class="hpl-lightbox-img" src="" alt="Photo preview">
+        <div id="hplLightboxTitle" class="hpl-lightbox-title"></div>
       </div>
     </div>
 
-   <script>
-      function showTab(event) {
-        var sourceParent = event.parentElement.parentElement;
-        var sourceChilds = sourceParent.getElementsByClassName("rca-tab-content");
-        var sourceLinkParent = sourceParent.getElementsByClassName("rca-tab-link");
-        for (var i=0; i < sourceChilds.length; i++) {
-          sourceChilds.item(i).classList.remove("active");
-        }
-        for (var i=0; i < sourceLinkParent.length; i++) {
-          sourceLinkParent.item(i).classList.remove("active");
-        }
-        var dataTab = event.getAttribute("data-tab");
+    <!-- FOOTER -->
+    <footer class="hpl-footer">
+      <div class="hpl-footer-inner">
+        <div>&copy; 2026 <strong>House Premiere League</strong>. All rights reserved.</div>
+        <ul class="hpl-footer-links">
+          <li><a href="#">Tournament Rules</a></li>
+          <li><a href="#matches">Matches</a></li>
+          <li><a href="#standings">Points Table</a></li>
+        </ul>
+      </div>
+    </footer>
 
-        event.classList.add("active");
-        var el = document.getElementById(dataTab);
-        if (el) {
-          el.classList.add("active");
-        }
+    <!-- CLIENT LOGIC -->
+    <script>
+      let selectedMatchLeagueId = null;
+      let allLeagues = [];
+      let allMatchesCache = [];
+      let leagueMapCache = {};
+      let matchCardSSE = null;
+      let matchCardPollTimer = null;
+
+      function escH(s) {
+        return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
       }
 
-      function filterGallery(category, btn) {
-        var buttons = document.querySelectorAll('.hpl-filter-btn');
-        for (var i = 0; i < buttons.length; i++) {
-          buttons[i].classList.remove('active');
-        }
-        btn.classList.add('active');
-
-        var cards = document.querySelectorAll('.hpl-gallery-card');
-        for (var j = 0; j < cards.length; j++) {
-          var cardCategory = cards[j].getAttribute('data-category');
-          if (category === 'all' || cardCategory === category) {
-            cards[j].style.display = 'block';
-          } else {
-            cards[j].style.display = 'none';
-          }
-        }
+      function toggleMobileNav() {
+        const links = document.getElementById('navLinks');
+        if (links) links.classList.toggle('mobile-open');
       }
 
-      function openLightbox(imgSrc, title) {
-        var lightbox = document.getElementById('hplLightbox');
-        var img = document.getElementById('hplLightboxImg');
-        var caption = document.getElementById('hplLightboxCaption');
-        if (lightbox && img && caption) {
-          img.src = imgSrc;
-          caption.innerText = title;
-          lightbox.classList.add('active');
+      function openLightbox(src, title) {
+        const lb = document.getElementById('hplLightbox');
+        const img = document.getElementById('hplLightboxImg');
+        const cap = document.getElementById('hplLightboxTitle');
+        if (lb && img) {
+          img.src = src;
+          if (cap) cap.innerText = title;
+          lb.classList.add('active');
         }
       }
 
       function closeLightbox() {
-        var lightbox = document.getElementById('hplLightbox');
-        if (lightbox) {
-          lightbox.classList.remove('active');
-        }
+        const lb = document.getElementById('hplLightbox');
+        if (lb) lb.classList.remove('active');
       }
-    </script>
 
-    <!-- HPL Frontend Data Layer & Reactive Components -->
-    <script src="js/api/matches.js"></script>
-    <script src="js/hooks/useLiveMatch.js"></script>
-    <script src="js/components/ScoreHeader.js"></script>
-    <script src="js/components/BattingTable.js"></script>
-    <script src="js/components/BowlingTable.js"></script>
-    <script src="js/components/OverHistory.js"></script>
-    <script src="js/components/LiveScore.js"></script>
-
-    <script>
       document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-          closeLightbox();
-        }
+        if (e.key === 'Escape') closeLightbox();
       });
 
-      // Fetch live tournament data & initialize live scorecard
-      function loadDbData() {
-        // 1. Initialize Authoritative Live Scoring component (SSE stream + auto-updating tables)
-        if (window.LiveScore) {
-          window.LiveScore.init({
-            headerSelector: '#liveScoreHeader',
-            battingSelector: '#liveBattingTable',
-            bowlingSelector: '#liveBowlingTable',
-            oversSelector: '#liveRecentOvers',
-            scorecardSelector: '#fullScorecardContent'
-          });
-        }
+      function buildMatchCard(m, leagueName) {
+        const status = m.status || 'UPCOMING';
+        const inns = m.innings || [];
+        const inn1 = inns[0] || null;
+        const inn2 = inns[1] || null;
 
-        // 2. Load dynamic Tournament Results & Fixtures
-        renderTournamentMatches();
-
-        // 3. Load Standings
-        fetch('/api/standings')
-          .then(function(res) { return res.json(); })
-          .then(function(data) {
-            if (data.success && data.standings && data.standings.length > 0) {
-              renderLiveStandings(data.standings);
-            }
-          })
-          .catch(function(err) {
-            console.log('Using static standings', err);
-          });
-      }
-
-      function renderTournamentMatches() {
-        if (!window.MatchesAPI) return;
-        window.MatchesAPI.getAll().then(function(res) {
-          if (!res.success || !res.matches) return;
-          var matches = res.matches;
-          var completed = matches.filter(function(m) { return m.status === 'COMPLETED'; });
-          var upcoming = matches.filter(function(m) { return m.status === 'UPCOMING'; });
-
-          var resContainer = document.getElementById('matchResultsList');
-          if (resContainer) {
-            if (completed.length === 0) {
-              resContainer.innerHTML = '<div class="table-empty">No completed matches yet.</div>';
-            } else {
-              resContainer.innerHTML = completed.map(function(m) {
-                var inn1 = m.innings && m.innings[0];
-                var inn2 = m.innings && m.innings[1];
-                var s1 = inn1 ? inn1.batting_team + ' ' + inn1.runs + '/' + inn1.wickets : '';
-                var s2 = inn2 ? inn2.batting_team + ' ' + inn2.runs + '/' + inn2.wickets : '';
-                return '<div class="rca-match-detail rca-padding" style="border-bottom:1px solid #f1f5f9; padding:12px 16px;">' +
-                  '<h3 class="rca-match-title">' +
-                    '<a href="javascript:void(0)" onclick="selectScorecard(' + m.id + ')">' + m.team_a + ' vs ' + m.team_b + '</a>' +
-                    '<span class="rca-match-info rca-right" style="font-size:11.5px; color:#1a73e8; font-weight:700;">Scorecard &raquo;</span>' +
-                  '</h3>' +
-                  '<p class="rca-duration" style="font-weight:700; color:#0d8a4a; margin:4px 0;">' + (m.winner ? m.winner + ' won ' + (m.result_margin || '') : 'Match completed') + '</p>' +
-                  '<p class="rca-match-schedule" style="font-size:11.5px; color:#64748b;">' + (s1 ? s1 + (s2 ? ' | ' + s2 : '') : m.venue) + '</p>' +
-                '</div>';
-              }).join('');
-            }
-          }
-
-          var fixContainer = document.getElementById('matchFixturesList');
-          if (fixContainer) {
-            if (upcoming.length === 0) {
-              fixContainer.innerHTML = '<div class="table-empty">No upcoming fixtures scheduled.</div>';
-            } else {
-              fixContainer.innerHTML = upcoming.map(function(m) {
-                return '<div class="rca-match-detail rca-padding" style="border-bottom:1px solid #f1f5f9; padding:12px 16px;">' +
-                  '<h3 class="rca-match-title">' + m.team_a + ' vs ' + m.team_b + '</h3>' +
-                  '<p class="rca-duration" style="color:#1a73e8; font-weight:600; margin:4px 0;">' + m.total_overs + ' Overs Match</p>' +
-                  '<p class="rca-match-schedule" style="font-size:11.5px; color:#64748b;">' + m.match_date + ' · ' + m.venue + '</p>' +
-                '</div>';
-              }).join('');
-            }
-          }
-        }).catch(function(e) { console.warn('Could not load matches', e); });
-      }
-
-      function selectScorecard(matchId) {
-        if (window.LiveScore) {
-          window.LiveScore.loadFullScorecard(matchId);
-          var tabSc = document.querySelector('[data-tab="tab-sc"]');
-          if (tabSc) tabSc.click();
-        }
-      }
-
-      function renderLiveStandings(standings) {
-        var tbody = document.querySelector('.hpl-standings-table tbody');
-        if (!tbody) return;
+        const leagueTag = `<span class="hpl-league-badge"><i class="fa fa-trophy"></i> ${escH(leagueName || 'HPL')}</span>`;
+        const formatTag = `<span class="hpl-format-badge">${escH(m.format_name || 'T10')} • ${m.players_per_team || 11} PLAYERS</span>`;
         
-        var html = '';
-        standings.forEach(function(team) {
-          var qualifierClass = team.qualified || (team.pos <= 2) ? 'qualifier' : '';
-          var nrrVal = team.nrr || '0.00';
-          var nrrColor = (nrrVal && String(nrrVal).startsWith('-')) ? '#e74c3c' : '#27ae60';
-          var pVal = team.played !== undefined ? team.played : (team.p !== undefined ? team.p : 0);
-          var wVal = team.won !== undefined ? team.won : (team.w !== undefined ? team.w : 0);
-          var lVal = team.lost !== undefined ? team.lost : (team.l !== undefined ? team.l : 0);
-          var nrVal = team.tied !== undefined ? team.tied : (team.nr !== undefined ? team.nr : 0);
-          var ptsVal = team.pts !== undefined ? team.pts : 0;
-          var teamColor = team.color || '#1a73e8';
-          
-          var formHtml = '';
-          if (team.form && Array.isArray(team.form)) {
-            team.form.forEach(function(f) {
-              var badgeClass = f === 'W' ? 'hpl-form-w' : 'hpl-form-l';
-              formHtml += '<span class="hpl-form-badge ' + badgeClass + '">' + f + '</span> ';
-            });
-          }
+        let statusTag = '';
+        let teamsHtml = '';
+        let summaryHtml = '';
+        let btn = '';
 
-          html += '<tr class="' + qualifierClass + '">' +
-            '<td><span class="hpl-pos-badge">' + team.pos + '</span></td>' +
-            '<td><div class="hpl-team-cell">' +
-              '<span class="hpl-team-color" style="background:' + teamColor + '"></span>' +
-              '<span>' + team.team + (team.element ? ' <small style="color: #7f8c8d; font-weight: normal;">(' + team.element + ')</small>' : '') + '</span>' +
-            '</div></td>' +
-            '<td>' + pVal + '</td>' +
-            '<td><strong>' + wVal + '</strong></td>' +
-            '<td>' + lVal + '</td>' +
-            '<td>' + nrVal + '</td>' +
-            '<td style="color:' + nrrColor + '; font-weight: 600;">' + nrrVal + '</td>' +
-            '<td class="hpl-pts-col">' + ptsVal + '</td>' +
-            '<td><div class="hpl-form-guide">' + formHtml + '</div></td>' +
-          '</tr>';
-        });
-        tbody.innerHTML = html;
+        if (status === 'LIVE' || status === 'PAUSED') {
+          statusTag = `<span class="hpl-status-pill live"><span class="hpl-live-dot"></span> ${m.status}</span>`;
+          const sc = m.liveScorecard || {};
+          const batTeam = (inn1 && inn1.batting_team) ? inn1.batting_team : m.team_a;
+          const otherTeam = (batTeam === m.team_a) ? m.team_b : m.team_a;
+          const score = sc.runs !== undefined 
+            ? `${sc.runs}/${sc.wickets} (${sc.oversCompleted}.${sc.ballsInOver} ov)`
+            : (inn1 ? `${inn1.runs}/${inn1.wickets}` : '0/0 (0.0 ov)');
+
+          teamsHtml = `
+            <div class="hpl-team-row">
+              <span class="hpl-team-title batting">${escH(batTeam)}</span>
+              <span class="hpl-score-val">${escH(score)}</span>
+            </div>
+            <div class="hpl-team-row">
+              <span class="hpl-team-title" style="color:var(--text-muted);">${escH(otherTeam)}</span>
+              <span class="hpl-score-val dim">${inn2 ? (inn2.runs + '/' + inn2.wickets) : 'Yet to bat'}</span>
+            </div>
+          `;
+          summaryHtml = `<div class="hpl-match-summary-line"><i class="fa fa-circle" style="font-size:7px; margin-right:4px;"></i> Live in progress · ${escH(m.venue || 'Main Stadium')}</div>`;
+          btn = `<a href="/match/${m.id}" class="hpl-card-action-btn live"><i class="fa fa-circle-play"></i> LIVE CENTER</a>`;
+
+        } else if (status === 'COMPLETED') {
+          statusTag = `<span class="hpl-status-pill completed">COMPLETED</span>`;
+          const s1 = inn1 ? `${inn1.runs}/${inn1.wickets} (${inn1.overs}.${inn1.balls} ov)` : (m.scoreA || '—');
+          const s2 = inn2 ? `${inn2.runs}/${inn2.wickets} (${inn2.overs}.${inn2.balls} ov)` : (m.scoreB || 'Did not bat');
+
+          teamsHtml = `
+            <div class="hpl-team-row">
+              <span class="hpl-team-title">${escH(inn1 ? inn1.batting_team : m.team_a)}</span>
+              <span class="hpl-score-val">${escH(s1)}</span>
+            </div>
+            <div class="hpl-team-row">
+              <span class="hpl-team-title">${escH(inn2 ? inn2.batting_team : m.team_b)}</span>
+              <span class="hpl-score-val ${!inn2 ? 'dim' : ''}">${escH(s2)}</span>
+            </div>
+          `;
+          const winText = m.winner ? `${m.winner} won ${m.result_margin || ''}`.trim() : 'Match completed';
+          summaryHtml = `<div class="hpl-match-summary-line" style="color:var(--cricket-green);"><i class="fa fa-trophy" style="margin-right:4px;"></i> ${escH(winText)}</div>`;
+          btn = `<a href="/match/${m.id}" class="hpl-card-action-btn view"><i class="fa fa-table-list"></i> Scorecard</a>`;
+
+        } else { // UPCOMING
+          statusTag = `<span class="hpl-status-pill upcoming">UPCOMING</span>`;
+          teamsHtml = `
+            <div class="hpl-team-row"><span class="hpl-team-title">${escH(m.team_a)}</span></div>
+            <div class="hpl-team-row"><span class="hpl-team-title">${escH(m.team_b)}</span></div>
+          `;
+          const details = [m.match_date || 'Today', m.venue || 'College Ground', `${m.total_overs || 10} Overs`].filter(Boolean);
+          summaryHtml = `<div class="hpl-match-summary-line upcoming">${escH(details.join(' · '))}</div>`;
+          btn = `<a href="/match/${m.id}" class="hpl-card-action-btn view"><i class="fa fa-circle-info"></i> Match Info</a>`;
+        }
+
+        return `
+          <div class="hpl-match-card">
+            <div class="hpl-match-card-left">
+              <div class="hpl-badge-row">
+                ${leagueTag}
+                ${formatTag}
+                ${statusTag}
+              </div>
+              <div class="hpl-match-card-teams">
+                ${teamsHtml}
+              </div>
+              ${summaryHtml}
+            </div>
+            <div class="hpl-match-card-right">
+              ${btn}
+            </div>
+          </div>
+        `;
       }
 
-      document.addEventListener('DOMContentLoaded', loadDbData);
+      function renderMatchCards(matches, leagueMap) {
+        const lid = selectedMatchLeagueId;
+        const filtered = lid ? matches.filter(m => m.league_id === lid) : matches;
+
+        const live = filtered.filter(m => m.status === 'LIVE' || m.status === 'PAUSED');
+        const upcoming = filtered.filter(m => m.status === 'UPCOMING');
+        const completed = filtered.filter(m => m.status === 'COMPLETED').reverse();
+
+        function getLeagueName(m) {
+          if (leagueMap && m.league_id && leagueMap[m.league_id]) return leagueMap[m.league_id];
+          return m.league_name || '';
+        }
+
+        const liveEl = document.getElementById('liveMatchCards');
+        if (liveEl) {
+          liveEl.innerHTML = live.length === 0 
+            ? '<div class="hpl-cards-empty"><i class="fa fa-circle-o" style="margin-right:6px;"></i>No match is currently live.</div>'
+            : live.map(m => buildMatchCard(m, getLeagueName(m))).join('');
+        }
+
+        const upEl = document.getElementById('upcomingMatchCards');
+        if (upEl) {
+          upEl.innerHTML = upcoming.length === 0
+            ? '<div class="hpl-cards-empty">No upcoming fixtures scheduled.</div>'
+            : upcoming.map(m => buildMatchCard(m, getLeagueName(m))).join('');
+        }
+
+        const resEl = document.getElementById('resultMatchCards');
+        if (resEl) {
+          resEl.innerHTML = completed.length === 0
+            ? '<div class="hpl-cards-empty">No completed match results yet.</div>'
+            : completed.map(m => buildMatchCard(m, getLeagueName(m))).join('');
+        }
+      }
+
+      async function loadMatchCards() {
+        try {
+          const res = await fetch('/api/matches');
+          const data = await res.json();
+          if (!data.success || !data.matches) return;
+          allMatchesCache = data.matches;
+          renderMatchCards(allMatchesCache, leagueMapCache);
+        } catch(e) {
+          console.warn('Match load error', e);
+        }
+      }
+
+      async function loadMatchLeagueBar() {
+        try {
+          const res = await fetch('/api/leagues');
+          const data = await res.json();
+          if (!data.success || !data.leagues) return;
+          allLeagues = data.leagues;
+          leagueMapCache = {};
+          allLeagues.forEach(l => { leagueMapCache[l.id] = l.name; });
+
+          const bar = document.getElementById('matchLeagueBar');
+          if (!bar) return;
+
+          let pills = `<button class="hpl-segmented-btn active" id="mlpAll" onclick="filterMatchLeague(null, this)"><i class="fa fa-globe"></i> All Leagues</button>`;
+          allLeagues.forEach(l => {
+            pills += `<button class="hpl-segmented-btn" id="mlp${l.id}" onclick="filterMatchLeague(${l.id}, this)"><i class="fa fa-trophy"></i> ${escH(l.name)}</button>`;
+          });
+          bar.innerHTML = pills;
+        } catch(e) {
+          console.warn('League bar error', e);
+        }
+      }
+
+      function filterMatchLeague(leagueId, btn) {
+        selectedMatchLeagueId = leagueId;
+        document.querySelectorAll('.hpl-segmented-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        renderMatchCards(allMatchesCache, leagueMapCache);
+        loadStandings(leagueId || 1);
+      }
+
+      function connectMatchCardSSE() {
+        try {
+          matchCardSSE = new EventSource('/api/matches/live/stream');
+          matchCardSSE.onmessage = function(e) {
+            const payload = JSON.parse(e.data);
+            if (payload && (payload.live || payload.match)) {
+              const liveMatch = payload.live || payload.match;
+              if (liveMatch && liveMatch.id) {
+                const idx = allMatchesCache.findIndex(m => m.id === liveMatch.id);
+                if (idx >= 0) allMatchesCache[idx] = Object.assign({}, allMatchesCache[idx], liveMatch);
+                else allMatchesCache.push(liveMatch);
+                renderMatchCards(allMatchesCache, leagueMapCache);
+              }
+            }
+          };
+          matchCardSSE.onerror = function() {
+            matchCardSSE.close();
+            if (!matchCardPollTimer) matchCardPollTimer = setInterval(loadMatchCards, 10000);
+          };
+        } catch(e) {
+          if (!matchCardPollTimer) matchCardPollTimer = setInterval(loadMatchCards, 10000);
+        }
+      }
+
+      async function loadStandings(leagueId = 1) {
+        try {
+          const res = await fetch(`/api/leagues/${leagueId}/points-table`);
+          const data = await res.json();
+          const tbody = document.getElementById('standingsBody');
+          if (!tbody) return;
+
+          if (!data.success || !data.standings || data.standings.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" style="padding:24px; color:var(--text-dim);">No standings recorded yet.</td></tr>`;
+            return;
+          }
+
+          tbody.innerHTML = data.standings.map(t => {
+            const isQual = t.qualified || (t.pos <= 2);
+            const nrrVal = t.nrr || '0.00';
+            const nrrColor = String(nrrVal).startsWith('-') ? 'var(--cricket-red)' : 'var(--cricket-green)';
+            const formPills = (t.form && Array.isArray(t.form)) 
+              ? t.form.map(f => `<span class="hpl-form-pill ${f.toLowerCase()}">${f}</span>`).join('')
+              : '—';
+
+            return `
+              <tr class="${isQual ? 'qualifier' : ''}">
+                <td><span class="hpl-pos-pill">${t.pos}</span></td>
+                <td>
+                  <div class="hpl-team-cell">
+                    <span class="hpl-team-color-dot" style="background:${t.color || '#1a73e8'};"></span>
+                    <span>${escH(t.team)} ${t.element ? `<small style="color:var(--text-dim);">(${escH(t.element)})</small>` : ''}</span>
+                  </div>
+                </td>
+                <td>${t.played !== undefined ? t.played : t.p}</td>
+                <td><strong>${t.won !== undefined ? t.won : t.w}</strong></td>
+                <td>${t.lost !== undefined ? t.lost : t.l}</td>
+                <td>${t.tied !== undefined ? t.tied : (t.nr || 0)}</td>
+                <td style="color:${nrrColor}; font-weight:700;">${nrrVal}</td>
+                <td class="hpl-pts-bold">${t.pts}</td>
+                <td><div class="hpl-form-pills">${formPills}</div></td>
+              </tr>
+            `;
+          }).join('');
+        } catch(e) {
+          console.warn('Standings load error', e);
+        }
+      }
+
+      async function initHomePage() {
+        await Promise.all([loadMatchLeagueBar(), loadMatchCards()]);
+        connectMatchCardSSE();
+        loadStandings(1);
+      }
+
+      document.addEventListener('DOMContentLoaded', initHomePage);
     </script>
   </body>
 </html>

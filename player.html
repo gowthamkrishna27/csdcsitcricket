@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="House Premiere League (HPL) Player Profile — Career batting and bowling statistics, tournament figures, strike rates, and performances.">
+  <meta property="og:title" content="Player Profile — House Premiere League">
+  <meta property="og:description" content="Career batting and bowling figures for tournament players.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="/images/hpl-logo.png">
+  <title>Player Profile — House Premiere League</title>
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --card-subtle: #f0f9ff;
+      --border: #e2e8f0;
+      --border-subtle: #f1f5f9;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+      
+      --blue: #0284c7;
+      --blue-dark: #0369a1;
+      --blue-light: #e0f2fe;
+      --blue-border: #bae6fd;
+      
+      --red: #e11d48;
+      --red-dark: #be123c;
+      --red-light: #ffe4e6;
+      --red-border: #fecdd3;
+      
+      --green: #059669;
+      --green-light: #ecfdf5;
+
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
+    .pp-navbar {
+      background: #ffffff;
+      border-bottom: 2px solid var(--blue);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      padding: 0 20px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .pp-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #0f172a;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+    }
+    .pp-nav-tag {
+      font-size: 10px;
+      font-weight: 800;
+      background: var(--blue-light);
+      color: var(--blue);
+      border: 1px solid var(--blue-border);
+      padding: 2px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .pp-back-btn {
+      color: var(--blue);
+      text-decoration: none;
+      font-size: 12.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--blue-light);
+      border: 1px solid var(--blue-border);
+      transition: all 0.15s ease;
+    }
+    .pp-back-btn:hover { background: #bae6fd; color: #0369a1; }
+
+    .pp-container {
+      max-width: 1000px;
+      width: 100%;
+      margin: 28px auto;
+      padding: 0 16px;
+      flex: 1;
+    }
+    .pp-hero {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow);
+    }
+    .pp-avatar {
+      width: 68px; height: 68px;
+      border-radius: 50%;
+      background: var(--blue-light);
+      border: 2px solid var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      color: var(--blue);
+    }
+    .pp-player-name { font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 800; color: var(--text); }
+    .pp-player-meta { display: flex; align-items: center; gap: 10px; margin-top: 4px; font-size: 13.5px; color: var(--text-muted); flex-wrap: wrap; }
+    .pp-role-badge {
+      background: var(--blue-light);
+      color: var(--blue);
+      padding: 3px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 11.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .pp-team-link {
+      color: var(--text-main);
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .pp-team-link:hover { color: var(--blue); }
+
+    .pp-section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 15.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin: 24px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+    }
+    .pp-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .pp-stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 12px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      transition: all 0.15s ease;
+    }
+    .pp-stat-card:hover {
+      border-color: var(--blue);
+      transform: translateY(-2px);
+    }
+    .pp-stat-label { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .pp-stat-num { font-size: 20px; font-weight: 800; font-family: 'Outfit', sans-serif; color: var(--text); }
+    .pp-empty { text-align: center; padding: 36px; color: var(--text-dim); font-size: 14px; }
+  </style>
+</head>
+<body>
+  <nav class="pp-navbar">
+    <a href="/" class="pp-brand">
+      <img src="/images/hpl-logo.png" style="width:30px;height:30px;object-fit:contain;" alt="CSD & CSIT Logo" onerror="this.style.display='none'">
+      <span>CSD & CSIT</span>
+    </a>
+    <a href="/" class="pp-back-btn"><i class="fa-solid fa-arrow-left"></i> Home</a>
+  </nav>
+
+  <div class="pp-container">
+    <div id="playerHero" class="pp-hero">
+      <div style="text-align:center;width:100%;padding:20px;color:var(--text-dim);">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:24px;margin-bottom:8px;"></i>
+        <p>Loading player career statistics...</p>
+      </div>
+    </div>
+
+    <h3 class="pp-section-title"><i class="fa-solid fa-baseball-bat-ball" style="color:var(--amber);"></i> Batting Career Statistics</h3>
+    <div id="battingGrid" class="pp-stats-grid"></div>
+
+    <h3 class="pp-section-title"><i class="fa-solid fa-bowling-ball" style="color:var(--green);"></i> Bowling Career Statistics</h3>
+    <div id="bowlingGrid" class="pp-stats-grid"></div>
+  </div>
+
+  <script>
+    const playerId = (function() {
+      const parts = window.location.pathname.split('/');
+      for (let i = 0; i < parts.length; i++) {
+        if (parts[i] === 'player' && parts[i+1]) {
+          return decodeURIComponent(parts[i+1]);
+        }
+      }
+      return null;
+    })();
+
+    async function loadPlayer() {
+      if (!playerId) return;
+      try {
+        const res = await fetch(`/api/players/${encodeURIComponent(playerId)}`);
+        const data = await res.json();
+        if (!data.success || !data.player) throw new Error('Player not found');
+
+        const p = data.player;
+        const b = p.batting || {};
+        const bw = p.bowling || {};
+        const initial = (p.name || 'P').charAt(0);
+
+        document.title = `${p.name || playerId} — Player Profile`;
+
+        document.getElementById('playerHero').innerHTML = `
+          <div class="pp-avatar">${initial}</div>
+          <div>
+            <div class="pp-player-name">${p.name || playerId}</div>
+            <div class="pp-player-meta">
+              <span class="pp-team-link"><i class="fa-solid fa-shield-halved" style="color:var(--blue);"></i> ${p.team || 'Tournament Squad'}</span>
+              <span class="pp-role-badge">${p.role || 'All-Rounder'}</span>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('battingGrid').innerHTML = `
+          <div class="pp-stat-card"><div class="pp-stat-label">Innings</div><div class="pp-stat-num">${b.innings || 0}</div></div>
+          <div class="pp-stat-card"><div class="pp-stat-label">Runs</div><div class="pp-stat-num" style="color:var(--blue);">${b.runs || 0}</div></div>
+          <div class="pp-stat-card"><div class="pp-stat-label">Balls</div><div class="pp-stat-num">${b.balls || 0}</div></div>
+          <div class="pp-stat-card"><div class="pp-stat-label">Average</div><div class="pp-stat-num">${b.average || '0.00'}</div></div>
+          <div class="pp-stat-card"><div class="pp-stat-label">Strike Rate</div><div class="pp-stat-num">${b.strike_rate || '0.00'}</div></div>
+          <div class="pp-stat-card"><div class="pp-stat-label">Highest</div><div class="pp-stat-num">${b.highest_score || 0}</div></div>
+          <div class="pp-stat-card"><div class="pp-stat-label">Fours</div><div class="pp-stat-num">${b.fours || 0}</div></div>
+          <div class="pp-stat-card"><div class="pp-stat-label">Sixes</div><div class="pp-stat-num">${b.sixes || 0}</div></div>
+          <div class="pp-stat-card"><div class="pp-stat-label">50s / 100s</div><div class="pp-stat-num">${b.fifties || 0} / ${b.hundreds || 0}</div></div>
+        `;
+
+        document.getElementById('bowlingGrid').innerHTML = `
+          <div class="pp-stat-card"><div class="pp-stat-label">Innings</div><div class="pp-stat-num">${bw.innings || 0}</div></div>
+          <div class="pp-stat-card"><div class="pp-stat-label">Overs</div><div class="pp-stat-num">${bw.overs || '0.0'}</div></div>
+          <div class="pp-stat-card"><div class="pp-stat-label">Maidens</div><div class="pp-stat-num">${bw.maidens || 0}</div></div>
+          <div class="pp-stat-card"><div class="pp-stat-label">Runs</div><div class="pp-stat-num">${bw.runs || 0}</div></div>
+          <div class="pp-stat-card"><div class="pp-stat-label">Wickets</div><div class="pp-stat-num" style="color:var(--green);">${bw.wickets || 0}</div></div>
+          <div class="pp-stat-card"><div class="pp-stat-label">Economy</div><div class="pp-stat-num">${bw.economy || '0.00'}</div></div>
+          <div class="pp-stat-card"><div class="pp-stat-label">Average</div><div class="pp-stat-num">${bw.average || '0.00'}</div></div>
+          <div class="pp-stat-card"><div class="pp-stat-label">Best</div><div class="pp-stat-num">${bw.best_bowling || '—'}</div></div>
+        `;
+      } catch (err) {
+        document.getElementById('playerHero').innerHTML = `<div class="pp-empty"><i class="fa-solid fa-triangle-exclamation"></i> Player profile not found.</div>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadPlayer);
+  </script>
+</body>
+</html>

@@ -160,16 +160,33 @@ def admin_html_redirect():
         return redirect("/admin/login")
     return send_from_directory(PROJECT_ROOT, "admin.html")
 
-@app.route("/<path:filename>")
-def static_files(filename):
-    # Strictly block unauthenticated access to admin page or login source
-    if filename in ("admin", "admin.html"):
-        if not is_authenticated():
-            return redirect("/admin/login")
-        return send_from_directory(PROJECT_ROOT, "admin.html")
-    if filename == "login.html":
-        return redirect("/admin/login")
-    return send_from_directory(PROJECT_ROOT, filename)
+@app.route("/match/<int:match_id>")
+@app.route("/match/<int:match_id>/scorecard")
+@app.route("/match/<int:match_id>/commentary")
+@app.route("/match/<int:match_id>/overs")
+@app.route("/match/<int:match_id>/info")
+def match_center_page(match_id):
+    """Serves the Match Center SPA for any match sub-route."""
+    return send_from_directory(PROJECT_ROOT, "match.html")
+
+@app.route("/team/<path:team_id>")
+def team_page(team_id):
+    """Serves the dedicated Team profile page."""
+    return send_from_directory(PROJECT_ROOT, "team.html")
+
+@app.route("/player/<path:player_id>")
+def player_page(player_id):
+    """Serves the dedicated Player profile page."""
+    return send_from_directory(PROJECT_ROOT, "player.html")
+
+@app.route("/api/health", methods=["GET"])
+def api_health():
+    """Production health check endpoint."""
+    return jsonify({
+        "success": True,
+        "status": "healthy",
+        "service": "hpl-cricket-platform"
+    }), 200
 
 # --------------------------------------------------------------------------
 # AUTHENTICATION API ENDPOINTS
@@ -473,9 +490,13 @@ def api_delete_player(player_id):
 
 @app.route("/api/matches", methods=["GET"])
 def api_get_matches():
-    """Public read-only: Lists all matches from the authoritative database."""
+    """Public read-only: Lists all matches, optionally filtered by league_id, status, date, team."""
     try:
-        matches = cricket_db.get_all_matches()
+        league_id = request.args.get("league_id")
+        status = request.args.get("status")
+        date = request.args.get("date")
+        team = request.args.get("team")
+        matches = cricket_db.get_all_matches(league_id=league_id, status=status, date=date, team=team)
         return jsonify({"success": True, "matches": matches}), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
@@ -484,10 +505,31 @@ def api_get_matches():
 def api_live_match():
     """Public read-only: Returns the authoritative current live match details."""
     try:
-        live = cricket_db.get_live_match_details()
+        league_id = request.args.get("league_id")
+        live = cricket_db.get_live_match_details(league_id=league_id)
         if live:
             return jsonify({"success": True, "live": True, "match": live}), 200
         return jsonify({"success": True, "live": False, "match": None}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/matches/upcoming", methods=["GET"])
+def api_upcoming_matches():
+    """Public read-only: Returns all UPCOMING matches."""
+    try:
+        league_id = request.args.get("league_id")
+        matches = cricket_db.get_all_matches(league_id=league_id, status="UPCOMING")
+        return jsonify({"success": True, "matches": matches}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/matches/completed", methods=["GET"])
+def api_completed_matches():
+    """Public read-only: Returns all COMPLETED matches."""
+    try:
+        league_id = request.args.get("league_id")
+        matches = cricket_db.get_all_matches(league_id=league_id, status="COMPLETED")
+        return jsonify({"success": True, "matches": matches}), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
@@ -514,6 +556,71 @@ def api_get_match_scorecard(match_id):
         return jsonify({"success": True, "scorecard": sc}), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/matches/<match_id>/commentary", methods=["GET"])
+def api_get_match_commentary(match_id):
+    """Public: Returns ball-by-ball commentary for a match."""
+    try:
+        mid = parse_match_id(match_id)
+        data = cricket_db.get_match_commentary(mid)
+        if data is None:
+            return jsonify({"success": False, "error": f"Match {match_id} not found"}), 404
+        return jsonify({"success": True, "commentary": data}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/matches/<match_id>/overs", methods=["GET"])
+def api_get_match_overs(match_id):
+    """Public: Returns over-by-over breakdown for a match."""
+    try:
+        mid = parse_match_id(match_id)
+        data = cricket_db.get_match_overs(mid)
+        if data is None:
+            return jsonify({"success": False, "error": f"Match {match_id} not found"}), 404
+        return jsonify({"success": True, "overs": data}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/matches/<match_id>/info", methods=["GET"])
+def api_get_match_info(match_id):
+    """Public: Returns match metadata for the Info tab."""
+    try:
+        mid = parse_match_id(match_id)
+        data = cricket_db.get_match_info(mid)
+        if data is None:
+            return jsonify({"success": False, "error": f"Match {match_id} not found"}), 404
+        return jsonify({"success": True, "info": data}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/matches/<match_id>/stream", methods=["GET"])
+def api_match_stream(match_id):
+    """Per-match SSE stream — pushes live updates whenever this specific match changes."""
+    mid = parse_match_id(match_id)
+    def event_stream():
+        client_queue = queue.Queue()
+        _sse_subscribers.append(client_queue)
+        # Immediately push current match state
+        initial = cricket_db.get_match_full_scorecard(mid)
+        live = cricket_db.get_live_match_details(mid)
+        payload = {"type": "init", "scorecard": initial, "live": live}
+        yield f"data: {json.dumps(payload)}\n\n"
+        try:
+            while True:
+                try:
+                    msg = client_queue.get(timeout=15)
+                    yield msg
+                except queue.Empty:
+                    yield ": keepalive\n\n"
+        except GeneratorExit:
+            if client_queue in _sse_subscribers:
+                _sse_subscribers.remove(client_queue)
+
+    return Response(event_stream(), mimetype="text/event-stream", headers={
+        "Cache-Control": "no-cache",
+        "X-Accel-Buffering": "no",
+        "Connection": "keep-alive"
+    })
 
 @app.route("/api/matches/live/stream", methods=["GET"])
 def api_live_stream():
@@ -548,7 +655,11 @@ def api_live_stream():
 @require_auth
 def api_admin_get_matches():
     try:
-        matches = cricket_db.get_all_matches()
+        league_id = request.args.get("league_id")
+        status = request.args.get("status")
+        date = request.args.get("date")
+        team = request.args.get("team")
+        matches = cricket_db.get_all_matches(league_id=league_id, status=status, date=date, team=team)
         return jsonify({"success": True, "matches": matches}), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
@@ -563,10 +674,22 @@ def api_admin_create_match():
         team_b = req.get("team_b") or req.get("teamB")
         venue = req.get("venue") or "College Ground"
         match_date = req.get("match_date") or req.get("date") or "Today"
-        total_overs = req.get("total_overs") or req.get("overs") or 10
-        match_name = req.get("match_name") or f"{team_a} vs {team_b}"
+        
+        raw_overs = req.get("total_overs") if "total_overs" in req else req.get("overs")
+        total_overs = 10 if raw_overs is None else raw_overs
+        
+        format_name = req.get("format_name") or req.get("format") or ("T6" if total_overs == 6 else ("T10" if total_overs == 10 else f"T{total_overs}"))
+        players_per_team = req.get("players_per_team") or (8 if (total_overs == 6 or str(format_name).upper() == "T6") else 11)
+        balls_per_over = req.get("balls_per_over") or 6
 
-        ok, res = cricket_db.create_match(team_a, team_b, venue, match_date, total_overs, match_name)
+        match_name = req.get("match_name") or f"{team_a} vs {team_b}"
+        league_id = req.get("league_id") or req.get("league") or 1
+
+        ok, res = cricket_db.create_match(
+            team_a, team_b, venue, match_date, total_overs, match_name, 
+            league_id=league_id, format_name=format_name, 
+            players_per_team=players_per_team, balls_per_over=balls_per_over
+        )
         if not ok:
             return jsonify({"success": False, "error": res}), 400
         
@@ -598,14 +721,133 @@ def api_admin_update_match(match_id):
         venue = req.get("venue")
         match_date = req.get("match_date") or req.get("date")
         total_overs = req.get("total_overs") or req.get("overs")
+        format_name = req.get("format_name") or req.get("format")
+        players_per_team = req.get("players_per_team")
+        balls_per_over = req.get("balls_per_over")
         status = req.get("status")
+        league_id = req.get("league_id")
 
-        ok, res = cricket_db.update_match(mid, team_a, team_b, venue, match_date, total_overs, status)
+        ok, res = cricket_db.update_match(
+            mid, team_a, team_b, venue, match_date, total_overs, status, 
+            league_id=league_id, format_name=format_name, 
+            players_per_team=players_per_team, balls_per_over=balls_per_over
+        )
         if not ok:
             return jsonify({"success": False, "error": res}), 400
         
         broadcast_live_update()
         return jsonify({"success": True, "match": res}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/matches/<match_id>/setup", methods=["GET"])
+@app.route("/api/admin/matches/<match_id>/setup", methods=["GET"])
+def api_get_match_setup(match_id):
+    try:
+        mid = parse_match_id(match_id)
+        m = cricket_db.get_match_by_id(mid)
+        if not m:
+            return jsonify({"success": False, "error": f"Match {match_id} not found"}), 404
+
+        squad_a = cricket_db.get_players_by_team(m["team_a"])
+        squad_b = cricket_db.get_players_by_team(m["team_b"])
+
+        return jsonify({
+            "success": True,
+            "match_id": mid,
+            "match_name": m["match_name"],
+            "team_a": m["team_a"],
+            "team_b": m["team_b"],
+            "format_name": m["format_name"],
+            "total_overs": m["total_overs"],
+            "players_per_team": m["players_per_team"],
+            "balls_per_over": m["balls_per_over"],
+            "squad_a": squad_a,
+            "squad_b": squad_b,
+            "playing_xi_a": m["playing_xi_a"],
+            "playing_xi_b": m["playing_xi_b"],
+            "captain_a": m["captain_a"],
+            "captain_b": m["captain_b"],
+            "wicketkeeper_a": m["wicketkeeper_a"],
+            "wicketkeeper_b": m["wicketkeeper_b"],
+            "toss_winner": m["toss_winner"],
+            "toss_decision": m["toss_decision"]
+        }), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/admin/matches/<match_id>/setup", methods=["POST"])
+@require_auth
+def api_admin_save_match_setup(match_id):
+    try:
+        mid = parse_match_id(match_id)
+        req = request.get_json(force=True, silent=True) or {}
+        
+        playing_xi_a = req.get("playing_xi_a") or req.get("playing_xi_A") or []
+        playing_xi_b = req.get("playing_xi_b") or req.get("playing_xi_B") or []
+        captain_a = req.get("captain_a") or req.get("captain_A")
+        captain_b = req.get("captain_b") or req.get("captain_B")
+        wicketkeeper_a = req.get("wicketkeeper_a") or req.get("wicketkeeper_A")
+        wicketkeeper_b = req.get("wicketkeeper_b") or req.get("wicketkeeper_B")
+        toss_winner = req.get("toss_winner")
+        toss_decision = req.get("toss_decision")
+
+        ok, res = cricket_db.save_match_setup(
+            mid, playing_xi_a, playing_xi_b, captain_a, captain_b,
+            wicketkeeper_a=wicketkeeper_a, wicketkeeper_b=wicketkeeper_b,
+            toss_winner=toss_winner, toss_decision=toss_decision
+        )
+        if not ok:
+            return jsonify({"success": False, "error": res}), 400
+
+        broadcast_live_update()
+        return jsonify({"success": True, "match": res}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/matches/<match_id>/playing-xi", methods=["GET"])
+def api_get_match_playing_xi(match_id):
+    try:
+        mid = parse_match_id(match_id)
+        m = cricket_db.get_match_by_id(mid)
+        if not m:
+            return jsonify({"success": False, "error": f"Match {match_id} not found"}), 404
+
+        return jsonify({
+            "success": True,
+            "match_id": mid,
+            "format_name": m["format_name"],
+            "total_overs": m["total_overs"],
+            "required_players": m["players_per_team"],
+            "team_a": {
+                "name": m["team_a"],
+                "playing_xi": m["playing_xi_a"],
+                "captain": m["captain_a"],
+                "wicketkeeper": m["wicketkeeper_a"]
+            },
+            "team_b": {
+                "name": m["team_b"],
+                "playing_xi": m["playing_xi_b"],
+                "captain": m["captain_b"],
+                "wicketkeeper": m["wicketkeeper_b"]
+            },
+            "toss": {
+                "winner": m["toss_winner"],
+                "decision": m["toss_decision"],
+                "text": f"{m['toss_winner']} won the toss and elected to {m['toss_decision'].lower()}." if m["toss_winner"] and m["toss_decision"] else "Toss yet to take place"
+            }
+        }), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/matches/<match_id>/players-for-scoring", methods=["GET"])
+@require_auth
+def api_get_players_for_scoring(match_id):
+    try:
+        mid = parse_match_id(match_id)
+        innings_id = request.args.get("innings_id", type=int)
+        data = cricket_db.get_match_players_for_scoring(mid, innings_id=innings_id)
+        return jsonify({"success": True, **data}), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
@@ -704,8 +946,12 @@ def api_admin_record_wicket(match_id):
         wicket_type = req.get("wicket_type") or req.get("type") or "BOWLED"
         out_batter = req.get("out_batter")
         bowler_name = req.get("bowler_name")
+        fielder_name = req.get("fielder_name") or req.get("fielder")
 
-        ok, res = cricket_db.record_wicket(mid, new_batter_name=new_batter, wicket_type=wicket_type, out_batter_name=out_batter, bowler_name=bowler_name)
+        ok, res = cricket_db.record_wicket(
+            mid, new_batter_name=new_batter, wicket_type=wicket_type,
+            out_batter_name=out_batter, bowler_name=bowler_name, fielder_name=fielder_name
+        )
         if not ok:
             return jsonify({"success": False, "error": res}), 400
         
@@ -715,6 +961,7 @@ def api_admin_record_wicket(match_id):
         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route("/api/admin/matches/<match_id>/undo", methods=["POST"])
+@app.route("/api/matches/<match_id>/undo", methods=["POST"])
 @require_auth
 def api_admin_undo_ball(match_id):
     try:
@@ -729,6 +976,7 @@ def api_admin_undo_ball(match_id):
         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route("/api/admin/matches/<match_id>/score", methods=["POST", "PUT"])
+@app.route("/api/matches/<match_id>/score", methods=["POST", "PUT"])
 @require_auth
 def api_admin_set_score(match_id):
     try:
@@ -748,6 +996,7 @@ def api_admin_set_score(match_id):
         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route("/api/admin/matches/<match_id>/innings/switch", methods=["POST"])
+@app.route("/api/matches/<match_id>/innings/switch", methods=["POST"])
 @require_auth
 def api_admin_switch_innings(match_id):
     try:
@@ -761,6 +1010,197 @@ def api_admin_switch_innings(match_id):
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
+@app.route("/api/admin/matches/<match_id>/resume", methods=["POST"])
+@require_auth
+def api_admin_resume_match(match_id):
+    try:
+        mid = parse_match_id(match_id)
+        ok, res = cricket_db.resume_match(mid)
+        if not ok:
+            return jsonify({"success": False, "error": res}), 400
+        
+        broadcast_live_update(res)
+        return jsonify({"success": True, "match": res}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/admin/matches/<match_id>/edit-last-ball", methods=["POST"])
+@require_auth
+def api_admin_edit_last_ball(match_id):
+    try:
+        mid = parse_match_id(match_id)
+        req = request.get_json(force=True, silent=True) or {}
+        runs = req.get("runs", 0)
+        extra_type = req.get("extra_type") or req.get("extra")
+        wicket = req.get("wicket", 0)
+        wicket_type = req.get("wicket_type")
+        batsman_name = req.get("batsman_name")
+        bowler_name = req.get("bowler_name")
+        commentary = req.get("commentary")
+
+        ok, res = cricket_db.edit_last_ball(
+            mid, runs=runs, extra_type=extra_type, wicket=wicket,
+            wicket_type=wicket_type, batsman_name=batsman_name,
+            bowler_name=bowler_name, commentary=commentary
+        )
+        if not ok:
+            return jsonify({"success": False, "error": res}), 400
+        
+        broadcast_live_update(res)
+        return jsonify({"success": True, "match": res}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/admin/matches/<match_id>/swap-strike", methods=["POST"])
+@require_auth
+def api_admin_swap_strike(match_id):
+    try:
+        mid = parse_match_id(match_id)
+        ok, res = cricket_db.swap_strike(mid)
+        if not ok:
+            return jsonify({"success": False, "error": res}), 400
+        
+        broadcast_live_update(res)
+        return jsonify({"success": True, "match": res}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/admin/matches/<match_id>/set-striker", methods=["POST"])
+@require_auth
+def api_admin_set_striker(match_id):
+    try:
+        mid = parse_match_id(match_id)
+        req = request.get_json(force=True, silent=True) or {}
+        player_name = req.get("player_name") or req.get("name")
+        if not player_name:
+            return jsonify({"success": False, "error": "player_name is required"}), 400
+        ok, res = cricket_db.set_current_striker(mid, player_name)
+        if not ok:
+            return jsonify({"success": False, "error": res}), 400
+        
+        broadcast_live_update(res)
+        return jsonify({"success": True, "match": res}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/admin/matches/<match_id>/set-bowler", methods=["POST"])
+@require_auth
+def api_admin_set_bowler(match_id):
+    try:
+        mid = parse_match_id(match_id)
+        req = request.get_json(force=True, silent=True) or {}
+        player_name = req.get("player_name") or req.get("name")
+        if not player_name:
+            return jsonify({"success": False, "error": "player_name is required"}), 400
+        ok, res = cricket_db.set_current_bowler(mid, player_name)
+        if not ok:
+            return jsonify({"success": False, "error": res}), 400
+        
+        broadcast_live_update(res)
+        return jsonify({"success": True, "match": res}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+# --------------------------------------------------------------------------
+# LEAGUES API ENDPOINTS (ISOLATED TOURNAMENT DIVISIONS)
+# --------------------------------------------------------------------------
+@app.route("/api/leagues", methods=["GET"])
+def api_get_leagues():
+    try:
+        leagues = cricket_db.get_all_leagues()
+        return jsonify({"success": True, "leagues": leagues}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/leagues/<int:league_id>", methods=["GET"])
+def api_get_league(league_id):
+    try:
+        league = cricket_db.get_league_by_id(league_id)
+        if not league:
+            return jsonify({"success": False, "error": f"League {league_id} not found"}), 404
+        return jsonify({"success": True, "league": league}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/leagues", methods=["POST"])
+@require_auth
+def api_create_league():
+    try:
+        req = request.get_json(force=True, silent=True) or {}
+        name = req.get("name")
+        short_name = req.get("short_name")
+        description = req.get("description", "")
+        status = req.get("status", "active")
+        ok, res = cricket_db.create_league(name, short_name, description, status)
+        if not ok:
+            return jsonify({"success": False, "error": res}), 400
+        return jsonify({"success": True, "league": res}), 201
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/leagues/<int:league_id>", methods=["PUT"])
+@require_auth
+def api_update_league(league_id):
+    try:
+        req = request.get_json(force=True, silent=True) or {}
+        name = req.get("name")
+        short_name = req.get("short_name")
+        description = req.get("description")
+        status = req.get("status")
+        ok, res = cricket_db.update_league(league_id, name=name, short_name=short_name, description=description, status=status)
+        if not ok:
+            return jsonify({"success": False, "error": res}), 400
+        return jsonify({"success": True, "league": res}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/leagues/<int:league_id>", methods=["DELETE"])
+@require_auth
+def api_delete_league(league_id):
+    try:
+        ok, res = cricket_db.delete_league(league_id)
+        if not ok:
+            return jsonify({"success": False, "error": res}), 400
+        return jsonify({"success": True, "message": res}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/leagues/<int:league_id>/matches", methods=["GET"])
+def api_get_league_matches(league_id):
+    try:
+        status = request.args.get("status")
+        matches = cricket_db.get_league_matches(league_id, status=status)
+        return jsonify({"success": True, "league_id": league_id, "matches": matches}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/leagues/<int:league_id>/points-table", methods=["GET"])
+def api_get_league_points_table(league_id):
+    try:
+        standings = cricket_db.recalculate_standings(league_id)
+        return jsonify({"success": True, "league_id": league_id, "standings": standings}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/leagues/<int:league_id>/overview", methods=["GET"])
+def api_get_league_overview(league_id):
+    try:
+        overview = cricket_db.get_league_overview(league_id)
+        if not overview:
+            return jsonify({"success": False, "error": f"League {league_id} not found"}), 404
+        return jsonify({"success": True, "overview": overview}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/leagues/<int:league_id>/teams/<path:team_name>", methods=["GET"])
+def api_get_league_team(league_id, team_name):
+    try:
+        details = cricket_db.get_league_team_details(league_id, team_name)
+        return jsonify({"success": True, "team_details": details}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
 
 # --------------------------------------------------------------------------
 # STANDINGS (PUBLIC READ, PROTECTED RECALC)
@@ -768,9 +1208,13 @@ def api_admin_switch_innings(match_id):
 @app.route("/api/standings", methods=["GET"])
 def api_get_standings():
     try:
+        league_id = request.args.get("league_id")
+        if league_id is not None:
+            standings = cricket_db.recalculate_standings(int(league_id))
+            return jsonify({"success": True, "league_id": int(league_id), "standings": standings}), 200
         standings, is_atlas = get_collection("standings")
         if not standings:
-            standings = cricket_db.recalculate_standings()
+            standings = cricket_db.recalculate_standings(1)
         return jsonify({"success": True, "standings": standings, "atlas_synced": is_atlas}), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
@@ -779,8 +1223,37 @@ def api_get_standings():
 @require_auth
 def api_recalc_standings():
     try:
-        standings = recalculate_standings_internal()
+        req = request.get_json(force=True, silent=True) or {}
+        league_id = req.get("league_id")
+        standings = recalculate_standings_internal(league_id)
         return jsonify({"success": True, "standings": standings}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/teams/<path:team_name_or_id>", methods=["GET"])
+def api_get_team_profile(team_name_or_id):
+    try:
+        league_id = request.args.get("league_id", 1)
+        details = cricket_db.get_league_team_details(int(league_id), team_name_or_id)
+        return jsonify({"success": True, "team_details": details}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/players/<path:player_name_or_id>", methods=["GET"])
+def api_get_player_profile(player_name_or_id):
+    try:
+        profile = cricket_db.get_player_profile(player_name_or_id)
+        return jsonify({"success": True, "player": profile}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/leaderboards", methods=["GET"])
+def api_leaderboards():
+    try:
+        league_id = request.args.get("league_id")
+        lid = int(league_id) if league_id and str(league_id).isdigit() else None
+        data = cricket_db.get_tournament_leaderboards(lid)
+        return jsonify({"success": True, "leaderboards": data}), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
@@ -802,6 +1275,47 @@ def api_stats():
         }), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+# --------------------------------------------------------------------------
+# STATIC ASSETS SERVING
+# --------------------------------------------------------------------------
+@app.route("/css/<path:filename>")
+def serve_css(filename):
+    return send_from_directory(os.path.join(PROJECT_ROOT, "css"), filename)
+
+@app.route("/js/<path:filename>")
+def serve_js(filename):
+    return send_from_directory(os.path.join(PROJECT_ROOT, "js"), filename)
+
+@app.route("/images/<path:filename>")
+def serve_images(filename):
+    return send_from_directory(os.path.join(PROJECT_ROOT, "images"), filename)
+
+@app.route("/font/<path:filename>")
+def serve_fonts(filename):
+    return send_from_directory(os.path.join(PROJECT_ROOT, "font"), filename)
+
+@app.route("/favicon.ico")
+@app.route("/favicon.png")
+def serve_favicon():
+    fav_path = os.path.join(PROJECT_ROOT, "images", "favicon.png")
+    if os.path.exists(fav_path):
+        return send_from_directory(os.path.join(PROJECT_ROOT, "images"), "favicon.png")
+    return send_from_directory(PROJECT_ROOT, "favicon.png")
+
+# --------------------------------------------------------------------------
+# PRODUCTION ERROR HANDLERS
+# --------------------------------------------------------------------------
+@app.errorhandler(404)
+def handle_404(e):
+    if request.path.startswith("/api/"):
+        return jsonify({"success": False, "error": "Endpoint not found"}), 404
+    return send_from_directory(PROJECT_ROOT, "index.html"), 404
+
+@app.errorhandler(500)
+def handle_500(e):
+    if request.path.startswith("/api/"):
+        return jsonify({"success": False, "error": "Internal server error"}), 500
+    return jsonify({"success": False, "error": "An unexpected error occurred"}), 500
 
 # --------------------------------------------------------------------------
 # SERVER INITIALIZATION
@@ -813,6 +1327,7 @@ if __name__ == "__main__":
         print(f"[AUTH] Initial administrator ready: {bootstrapped['email']}")
 
     ok, msg = test_connection()
+    port = int(os.getenv("PORT", 8080))
     print(f"MongoDB Atlas connection: {'SUCCESS' if ok else 'OFFLINE'} - {msg}")
-    print("Starting HPL Production Server on http://localhost:8080 ...")
-    app.run(host="0.0.0.0", port=8080, debug=False)
+    print(f"Starting HPL Production Server on port {port} ...")
+    app.run(host="0.0.0.0", port=port, debug=False, threaded=True)

@@ -6,14 +6,14 @@
   "admins": [
     {
       "id": "A001",
-      "name": "Tournament Admin",
-      "email": "admin@hpl.cricket",
-      "password_hash": "scrypt:32768:8:1$KUvoRI3NGROxFCYQ$937bf814248b3f87e2aa2aef4a60a4d1118ed235189984ace29ec3ca6f2d4b7d9be57de37878e169681cd3cad3f4bd5a823cc96a449d73fb356877700a0a7540",
+      "name": "Gowtham Krishna",
+      "email": "gowthamkrishna18v@gmail.com",
+      "password_hash": "scrypt:32768:8:1$FRWHsVniVIdGTHMr$3fb23fa23c5f70e9653244e3c36e8efe4afacfada7e4311d1f2dd3931499811e9eea11673fd8191ad3bc28efa09d82fdc472d900823e463e1f84a1f81ef0fa86",
       "role": "admin",
       "status": "active",
-      "created_at": "2026-08-31 23:49:01",
-      "updated_at": "2026-08-31 23:49:01",
-      "last_login": "2026-09-01 23:16:10"
+      "created_at": "2026-09-02 00:00:00",
+      "updated_at": "2026-09-02 00:00:00",
+      "last_login": "2026-09-02 02:01:52"
     }
   ],
   "settings": {

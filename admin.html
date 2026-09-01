@@ -24,35 +24,35 @@
        IPL-style sports branding + Apple-level minimalism
        ========================================================================== */
     :root {
-      --bg-body: #f4f8fb;
+      --bg-body: #f8fafc;
       --bg-white: #ffffff;
-      --bg-subtle: #f8fafc;
-      --bg-blue-tint: #f0f6ff;
+      --bg-subtle: #f0f9ff;
+      --bg-blue-tint: #e0f2fe;
 
       --navy-950: #060e1a;
       --navy-900: #0a1728;
-      --navy-800: #10233b;
-      --navy-700: #193150;
+      --navy-800: #0f172a;
+      --navy-700: #1e293b;
       --text-muted: #5e7796;
       --text-subtle: #8a9cb0;
 
-      --hpl-blue: #1a73e8;
-      --hpl-blue-hover: #1557b0;
-      --hpl-blue-light: #e8f2fe;
-      --hpl-green: #0d8a4a;
-      --hpl-green-light: #e6f7ef;
-      --hpl-red: #d93025;
-      --hpl-red-light: #fce8e6;
+      --hpl-blue: #0284c7;
+      --hpl-blue-hover: #0369a1;
+      --hpl-blue-light: #e0f2fe;
+      --hpl-green: #059669;
+      --hpl-green-light: #ecfdf5;
+      --hpl-red: #e11d48;
+      --hpl-red-light: #ffe4e6;
 
-      --border-light: #e2ecf5;
-      --border-focus: #1a73e8;
+      --border-light: #e2e8f0;
+      --border-focus: #0284c7;
 
       --radius-sm: 4px;
       --radius-md: 8px;
       --radius-lg: 12px;
 
       --shadow-subtle: 0 1px 3px rgba(10, 23, 40, 0.04);
-      --shadow-card: 0 2px 6px rgba(10, 23, 40, 0.05);
+      --shadow-card: 0 2px 6px rgba(2, 132, 199, 0.05);
       --shadow-float: 0 12px 30px rgba(10, 23, 40, 0.10);
 
       --sidebar-w: 220px;
@@ -681,8 +681,22 @@
        11. CRICKET SCORING CONSOLE (CLEAN & TOUCH FRIENDLY)
        -------------------------------------------------------------------------- */
     .console-shell {
-      max-width: 600px;
+      max-width: 680px;
       margin: 0 auto;
+    }
+    .offline-alert-banner {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      animation: pulseLive 2s infinite;
     }
     .scoreboard-box {
       background: var(--bg-white);
@@ -694,12 +708,17 @@
       box-shadow: var(--shadow-subtle);
     }
     .console-header-match {
-      font-size: 10.5px;
+      font-size: 11px;
       font-weight: 800;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.8px;
       margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
     }
     .console-batting-name {
       font-size: 16px;
@@ -719,6 +738,19 @@
       font-weight: 800;
       color: var(--navy-700);
     }
+    .console-target-strip {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 10px;
+      padding: 6px 12px;
+      background: #f8fafc;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--navy-800);
+      flex-wrap: wrap;
+    }
 
     .over-balls-track {
       display: flex;
@@ -726,10 +758,11 @@
       justify-content: center;
       gap: 6px;
       margin: 14px 0 10px 0;
+      flex-wrap: wrap;
     }
     .over-ball-item {
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       background: var(--bg-subtle);
       border: 1px solid var(--border-light);
@@ -740,9 +773,12 @@
       font-weight: 800;
       color: var(--navy-800);
     }
-    .over-ball-item.four { background: #e8f0fe; color: var(--hpl-blue); border-color: var(--hpl-blue); }
-    .over-ball-item.six { background: #fef08a; color: #854d0e; border-color: #eab308; }
-    .over-ball-item.wkt { background: var(--hpl-red-light); color: var(--hpl-red); border-color: var(--hpl-red); }
+    .over-ball-item.dot { background: #f1f5f9; color: #94a3b8; border-color: #cbd5e1; }
+    .over-ball-item.runs { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+    .over-ball-item.four { background: #d1fae5; color: #065f46; border-color: #6ee7b7; font-weight: 900; }
+    .over-ball-item.six { background: #fef3c7; color: #92400e; border-color: #fcd34d; font-weight: 900; }
+    .over-ball-item.wkt { background: var(--hpl-red-light); color: var(--hpl-red); border-color: #fca5a5; font-weight: 900; }
+    .over-ball-item.extra { background: #f8fafc; color: #64748b; border-color: #cbd5e1; }
 
     .pitch-strip {
       display: grid;
@@ -756,7 +792,12 @@
     .pitch-stat-cell {
       background: var(--bg-subtle);
       border-radius: var(--radius-sm);
-      padding: 9px 12px;
+      padding: 10px 12px;
+      position: relative;
+    }
+    .pitch-stat-cell.striker-cell {
+      border: 1.5px solid #bfdbfe;
+      background: #f0f7ff;
     }
     .pitch-stat-lbl {
       font-size: 9.5px;
@@ -764,17 +805,21 @@
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .pitch-stat-name {
-      font-size: 12.5px;
-      font-weight: 700;
+      font-size: 13.5px;
+      font-weight: 800;
       color: var(--navy-900);
-      margin-top: 1px;
+      margin-top: 2px;
     }
     .pitch-stat-val {
-      font-size: 11.5px;
-      font-weight: 800;
+      font-size: 12px;
+      font-weight: 700;
       color: var(--hpl-blue);
+      margin-top: 2px;
     }
 
     /* Keypad */
@@ -792,25 +837,34 @@
       margin-bottom: 10px;
     }
     .keypad-btn-run {
-      height: 48px;
+      height: 52px;
       background: var(--bg-white);
-      border: 1px solid var(--border-light);
+      border: 1.5px solid #cbd5e1;
       border-radius: var(--radius-sm);
-      font-size: 19px;
+      font-size: 20px;
       font-weight: 900;
       color: var(--navy-900);
       cursor: pointer;
       transition: all 0.1s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
-    .keypad-btn-run:hover {
+    .keypad-btn-run:hover:not(:disabled) {
       background: var(--bg-blue-tint);
       border-color: var(--hpl-blue);
       color: var(--hpl-blue);
+      transform: translateY(-1px);
     }
     .keypad-btn-run.active {
       background: var(--hpl-blue);
       color: #fff;
       border-color: var(--hpl-blue);
+    }
+    .keypad-btn-run:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
     .keypad-extras-row {
@@ -820,44 +874,50 @@
       margin-bottom: 12px;
     }
     .btn-opt-extra {
-      height: 34px;
+      height: 36px;
       background: var(--bg-white);
-      border: 1px solid var(--border-light);
+      border: 1px solid #cbd5e1;
       border-radius: var(--radius-sm);
       font-size: 10.5px;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--navy-700);
       cursor: pointer;
       text-transform: uppercase;
       letter-spacing: 0.3px;
+      transition: all 0.12s ease;
     }
-    .btn-opt-extra:hover { background: var(--bg-subtle); }
-    .btn-opt-extra.active { background: var(--navy-800); color: #fff; border-color: var(--navy-800); }
+    .btn-opt-extra:hover:not(:disabled) { background: var(--bg-subtle); border-color: var(--navy-800); }
+    .btn-opt-extra.active { background: var(--navy-900); color: #fff; border-color: var(--navy-900); }
+    .btn-opt-extra:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .btn-wicket-action {
       width: 100%;
-      height: 38px;
-      background: var(--bg-white);
-      color: var(--hpl-red);
-      border: 1px solid var(--hpl-red-light);
+      height: 44px;
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1.5px solid #f87171;
       border-radius: var(--radius-sm);
-      font-size: 12px;
-      font-weight: 800;
+      font-size: 13px;
+      font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.8px;
       cursor: pointer;
-      margin-bottom: 12px;
-      transition: background 0.15s ease;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
-    .btn-wicket-action:hover {
-      background: var(--hpl-red-light);
+    .btn-wicket-action:hover:not(:disabled) {
+      background: #fca5a5;
+      color: #7f1d1d;
     }
 
     .btn-undo-action {
-      height: 38px;
+      height: 44px;
       background: var(--bg-white);
       color: #475569;
-      border: 1px solid #cbd5e1;
+      border: 1.5px solid #cbd5e1;
       border-radius: var(--radius-sm);
       font-size: 12px;
       font-weight: 800;
@@ -870,14 +930,81 @@
       justify-content: center;
       gap: 6px;
     }
-    .btn-undo-action:hover {
+    .btn-undo-action:hover:not(:disabled) {
       background: #f1f5f9;
       color: #0f172a;
       border-color: #94a3b8;
     }
 
+    .btn-edit-ball-action {
+      height: 44px;
+      background: var(--bg-white);
+      color: var(--hpl-blue);
+      border: 1.5px solid #bfdbfe;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-edit-ball-action:hover:not(:disabled) {
+      background: #eff6ff;
+      border-color: var(--hpl-blue);
+    }
+
+    /* Match selector cards */
+    .match-selector-section {
+      background: #fff;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-light);
+      margin-bottom: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow-subtle);
+    }
+    .match-selector-header {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+    }
+    .match-selector-title {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--navy-900);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .match-selector-list { display: flex; flex-direction: column; }
+    .match-selector-card {
+      padding: 16px 20px;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      transition: background 0.1s;
+    }
+    .match-selector-card:last-child { border-bottom: none; }
+    .match-selector-card:hover { background: #f8fbff; }
+    .match-selector-empty {
+      padding: 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
     .btn-confirm-ball {
-      width: 100%;
       height: 48px;
       background: var(--hpl-blue);
       color: #fff;
@@ -1154,13 +1281,16 @@
        ======================================================================== -->
   <aside class="sidebar" id="appSidebar">
     <div class="brand-box">
-      <img src="images/hpl-logo.png" alt="HPL" class="brand-logo-img">
-      <span class="brand-title">HPL</span>
+      <img src="images/hpl-logo.png" alt="CSD & CSIT" class="brand-logo-img">
+      <span class="brand-title">CSD & CSIT</span>
     </div>
 
     <div class="nav-menu">
       <button class="nav-btn active" onclick="showView('dashboard')">
         <i class="fa fa-th-large"></i> Dashboard
+      </button>
+      <button class="nav-btn" onclick="showView('leagues')">
+        <i class="fa fa-trophy"></i> Leagues
       </button>
       <button class="nav-btn" onclick="showView('teams')">
         <i class="fa fa-shield"></i> Teams
@@ -1218,7 +1348,7 @@
           <div class="admin-dropdown-menu" id="adminDropdownMenu">
             <div class="admin-dropdown-header">
               <div class="dropdown-name" id="dropAdminName">Admin</div>
-              <div class="dropdown-email" id="dropAdminEmail">admin@hpl.cricket</div>
+              <div class="dropdown-email" id="dropAdminEmail">gowthamkrishna18v@gmail.com</div>
             </div>
             <button class="dropdown-item" onclick="openChangePasswordModal()"><i class="fa fa-key"></i> Change Password</button>
             <div class="dropdown-divider"></div>
@@ -1270,6 +1400,39 @@
         <div class="panel-title" style="margin-bottom: 8px;">NEXT MATCH</div>
         <div class="dash-next-panel" id="dashNextPanel">
           <div class="empty-state-desc" style="margin: 0; text-align: left;">No upcoming matches scheduled.</div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           LEAGUES MANAGEMENT VIEW
+           ==================================================================== -->
+      <div class="page-view" id="page-leagues">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Leagues</h1>
+            <p class="page-subtitle">Configure independent tournament divisions and points tables.</p>
+          </div>
+          <div>
+            <button class="btn-primary" onclick="openCreateLeague()">+ Create League</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <table class="clean-table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">ID</th>
+                <th>LEAGUE NAME</th>
+                <th>SHORT NAME</th>
+                <th>DESCRIPTION</th>
+                <th>STATUS</th>
+                <th style="text-align:right;">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody id="leaguesBody">
+              <!-- Rendered via DB -->
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -1386,18 +1549,41 @@
       <div class="page-view" id="page-matches">
         <div class="page-head">
           <div>
-            <h1 class="page-title">Matches</h1>
-            <p class="page-subtitle">Tournament schedule and fixtures.</p>
+            <h1 class="page-title">Fixtures & Matches</h1>
+            <p class="page-subtitle">Tournament schedule, calendar view, and fixture management.</p>
           </div>
-          <div>
-            <button class="btn-primary" onclick="openModal('modalSchedule')">+ Schedule Match</button>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <div class="tab-strip" style="margin-bottom:0;">
+              <button class="tab-btn active" id="viewModeList" onclick="setFixtureViewMode('list')"><i class="fa fa-list"></i> List View</button>
+              <button class="tab-btn" id="viewModeCalendar" onclick="setFixtureViewMode('calendar')"><i class="fa fa-calendar-days"></i> Calendar</button>
+            </div>
+            <button class="btn-primary" onclick="openCreateFixtureModal()">+ Create Fixture</button>
           </div>
         </div>
 
-        <div class="tab-strip">
-          <button class="tab-btn active" id="tabUp" onclick="setMatchFilter('UPCOMING')">Upcoming</button>
+        <div class="tab-strip" style="margin-bottom:12px;">
+          <button class="tab-btn active" id="tabFixAll" onclick="setMatchFilter('ALL')">All Fixtures</button>
+          <button class="tab-btn" id="tabUp" onclick="setMatchFilter('UPCOMING')">Upcoming</button>
           <button class="tab-btn" id="tabLiv" onclick="setMatchFilter('LIVE')">Live</button>
           <button class="tab-btn" id="tabComp" onclick="setMatchFilter('COMPLETED')">Completed</button>
+        </div>
+
+        <div class="filter-bar" style="margin-bottom:16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">League:</span>
+            <select class="form-input" id="matchLeagueFilter" style="width:160px;" onchange="renderMatches()">
+              <option value="ALL">All Leagues</option>
+            </select>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Team:</span>
+            <input type="text" class="form-input" id="matchTeamSearch" placeholder="Search team..." style="width:150px;" oninput="renderMatches()">
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Date:</span>
+            <input type="text" class="form-input" id="matchDateFilter" placeholder="e.g. Today or 01 Sep" style="width:140px;" oninput="renderMatches()">
+          </div>
+          <button class="btn-secondary btn-sm" onclick="resetFixtureFilters()"><i class="fa fa-rotate-left"></i> Reset</button>
         </div>
 
         <div id="matchesContainer">
@@ -1433,6 +1619,14 @@
             <h1 class="page-title">Points Table</h1>
             <p class="page-subtitle">Automatically calculated from match outcomes.</p>
           </div>
+        </div>
+
+        <div class="filter-bar" style="margin-bottom:14px; display:flex; align-items:center; gap:10px;">
+          <span style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Select League:</span>
+          <select class="form-input" id="standingsLeagueSelect" style="width:220px;" onchange="loadAdminStandings()">
+            <!-- Loaded dynamically: League 1, League 2 -->
+          </select>
+          <button class="btn-secondary btn-sm" onclick="recalcAdminStandings()" title="Force recalculate NRR and points"><i class="fa fa-refresh"></i> Recalculate</button>
         </div>
 
         <div class="panel">
@@ -1681,62 +1875,461 @@
 <div class="modal-overlay" id="modalSchedule">
   <div class="modal-dialog">
     <div class="modal-head">
-      <div class="modal-head-title">Schedule Match</div>
+      <div class="modal-head-title">Create Fixture</div>
       <button onclick="closeModal('modalSchedule')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <label>Team A</label>
-        <select class="form-input" style="width:100%;" id="mTeamA" onchange="preventDuplicateTeam()"></select>
+        <label>League <span style="color:var(--hpl-red); font-weight:800;">*</span></label>
+        <select class="form-input" style="width:100%;" id="mLeague" onchange="onScheduleLeagueChange()"></select>
       </div>
-      <div class="form-group">
-        <label>Team B</label>
-        <select class="form-input" style="width:100%;" id="mTeamB" onchange="preventDuplicateTeam()"></select>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="form-group">
+          <label>Team A <span style="color:var(--hpl-red);">*</span></label>
+          <select class="form-input" style="width:100%;" id="mTeamA" onchange="preventDuplicateTeam()"></select>
+        </div>
+        <div class="form-group">
+          <label>Team B <span style="color:var(--hpl-red);">*</span></label>
+          <select class="form-input" style="width:100%;" id="mTeamB" onchange="preventDuplicateTeam()"></select>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Date</label>
-        <input type="text" class="form-input" style="width:100%;" id="mDate" value="Today">
+      
+      <!-- Match Format & Preset -->
+      <div style="background:var(--slate-50); border:1px solid var(--slate-200); border-radius:8px; padding:12px; margin:10px 0;">
+        <div style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--navy-900); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+          <span>Match Format Configuration</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="form-group">
+            <label>Format Preset</label>
+            <select class="form-input" style="width:100%;" id="mFormatPreset" onchange="onFormatPresetChange('m')">
+              <option value="T6">T6 (6 Overs, 8 Players)</option>
+              <option value="T10" selected>T10 (10 Overs, 11 Players)</option>
+              <option value="T20">T20 (20 Overs, 11 Players)</option>
+              <option value="Custom">Custom Format</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Format Name</label>
+            <input type="text" class="form-input" style="width:100%;" id="mFormatName" value="T10">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:6px;">
+          <div class="form-group">
+            <label>Total Overs</label>
+            <input type="number" class="form-input" style="width:100%;" id="mOvers" value="10" min="1" max="50">
+          </div>
+          <div class="form-group">
+            <label>Players / Team</label>
+            <input type="number" class="form-input" style="width:100%;" id="mPlayersPerTeam" value="11" min="2" max="20">
+          </div>
+          <div class="form-group">
+            <label>Balls / Over</label>
+            <input type="number" class="form-input" style="width:100%;" id="mBallsPerOver" value="6" min="1" max="10">
+          </div>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Time</label>
-        <input type="text" class="form-input" style="width:100%;" id="mTime" value="09:00 AM">
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="text" class="form-input" style="width:100%;" id="mDate" value="Today">
+        </div>
+        <div class="form-group">
+          <label>Time</label>
+          <input type="text" class="form-input" style="width:100%;" id="mTime" value="09:00 AM">
+        </div>
       </div>
       <div class="form-group">
         <label>Venue</label>
         <input type="text" class="form-input" style="width:100%;" id="mVenue" value="College Ground">
       </div>
-      <div class="form-group">
-        <label>Overs</label>
-        <input type="number" class="form-input" style="width:100%;" id="mOvers" value="10" min="1" max="50">
-      </div>
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalSchedule')">Cancel</button>
-      <button class="btn-primary" onclick="submitSchedule()">Schedule</button>
+      <button class="btn-primary" onclick="submitSchedule()">Schedule Fixture</button>
     </div>
   </div>
 </div>
 
-<!-- 7. WICKET MODAL -->
+<!-- 6B. EDIT FIXTURE -->
+<div class="modal-overlay" id="modalEditFixture">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title">Edit Fixture</div>
+      <button onclick="closeModal('modalEditFixture')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editFixtureId">
+      <div class="form-group">
+        <label>League</label>
+        <select class="form-input" style="width:100%;" id="editFixLeague"></select>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="form-group">
+          <label>Team A</label>
+          <select class="form-input" style="width:100%;" id="editFixTeamA"></select>
+        </div>
+        <div class="form-group">
+          <label>Team B</label>
+          <select class="form-input" style="width:100%;" id="editFixTeamB"></select>
+        </div>
+      </div>
+
+      <!-- Format Configuration -->
+      <div style="background:var(--slate-50); border:1px solid var(--slate-200); border-radius:8px; padding:12px; margin:10px 0;">
+        <div style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--navy-900); margin-bottom:8px;">
+          Match Format Settings
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="form-group">
+            <label>Format Preset</label>
+            <select class="form-input" style="width:100%;" id="editFixFormatPreset" onchange="onFormatPresetChange('editFix')">
+              <option value="T6">T6 (6 Overs, 8 Players)</option>
+              <option value="T10">T10 (10 Overs, 11 Players)</option>
+              <option value="T20">T20 (20 Overs, 11 Players)</option>
+              <option value="Custom">Custom Format</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Format Name</label>
+            <input type="text" class="form-input" style="width:100%;" id="editFixFormatName">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:6px;">
+          <div class="form-group">
+            <label>Overs</label>
+            <input type="number" class="form-input" style="width:100%;" id="editFixOvers" min="1" max="50">
+          </div>
+          <div class="form-group">
+            <label>Players / Team</label>
+            <input type="number" class="form-input" style="width:100%;" id="editFixPlayersPerTeam" min="2" max="20">
+          </div>
+          <div class="form-group">
+            <label>Balls / Over</label>
+            <input type="number" class="form-input" style="width:100%;" id="editFixBallsPerOver" min="1" max="10">
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="text" class="form-input" style="width:100%;" id="editFixDate">
+        </div>
+        <div class="form-group">
+          <label>Venue</label>
+          <input type="text" class="form-input" style="width:100%;" id="editFixVenue">
+        </div>
+      </div>
+      <div class="form-group" id="editFixStatusRow">
+        <label>Status</label>
+        <select class="form-input" style="width:100%;" id="editFixStatus">
+          <option value="UPCOMING">UPCOMING</option>
+          <option value="LIVE">LIVE</option>
+          <option value="PAUSED">PAUSED</option>
+          <option value="COMPLETED">COMPLETED</option>
+        </select>
+      </div>
+      <div id="editFixWarning" style="display:none; font-size:12px; color:var(--hpl-red); background:var(--hpl-red-light); padding:8px 10px; border-radius:6px; margin-top:8px;"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalEditFixture')">Cancel</button>
+      <button class="btn-primary" onclick="submitEditFixture()">Save Fixture</button>
+    </div>
+  </div>
+</div>
+
+<!-- 6C. MATCH SETUP & PLAYING XI MODAL -->
+<div class="modal-overlay" id="modalMatchSetup">
+  <div class="modal-dialog" style="max-width:850px; width:95%;">
+    <div class="modal-head">
+      <div>
+        <div class="modal-head-title" id="setupModalTitle">Match Setup & Playing XI</div>
+        <div style="font-size:12px; color:var(--slate-500); margin-top:2px;" id="setupModalSubtitle">Configure dynamic playing squads, captains and toss</div>
+      </div>
+      <button onclick="closeModal('modalMatchSetup')" style="background:none;border:none;cursor:pointer;font-size:18px;">&times;</button>
+    </div>
+    <div class="modal-body" style="max-height:75vh; overflow-y:auto; padding:18px;">
+      <input type="hidden" id="setupMatchId">
+      
+      <!-- Format Header Banner -->
+      <div style="background:linear-gradient(135deg, var(--navy-900), var(--navy-800)); color:#fff; padding:12px 16px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <div>
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.8px; color:var(--gold-400); font-weight:700;">Match Format</div>
+          <div style="font-size:16px; font-weight:800;" id="setupFormatBanner">T6 • 8 PLAYERS • 6 OVERS</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:11px; color:var(--slate-300);">Required XI Size</div>
+          <div style="font-size:18px; font-weight:800; color:#fff;" id="setupRequiredPlayersBanner">8 Players / Team</div>
+        </div>
+      </div>
+
+      <!-- Squad Selection 2 Columns -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:18px;">
+        <!-- Team A Column -->
+        <div style="background:#fff; border:1px solid var(--slate-200); border-radius:10px; padding:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--slate-100);">
+            <div style="font-weight:800; font-size:14px; color:var(--navy-900);" id="setupTeamAName">Team A</div>
+            <div id="setupBadgeA" style="font-size:11.5px; font-weight:700; padding:3px 8px; border-radius:20px; background:var(--slate-100); color:var(--slate-600);">
+              Selected: <span id="setupCountA">0</span> / <span id="setupReqA">8</span>
+            </div>
+          </div>
+          <div style="max-height:220px; overflow-y:auto; margin-bottom:12px; padding-right:4px;" id="setupSquadListA">
+            <!-- Dynamic Player Checkboxes -->
+          </div>
+          <div class="form-group" style="margin-bottom:8px;">
+            <label style="font-size:11.5px;">Captain <span style="color:var(--hpl-red);">*</span></label>
+            <select class="form-input" style="width:100%; font-size:12.5px; padding:6px 10px;" id="setupCaptainA"></select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label style="font-size:11.5px;">Wicketkeeper <span style="font-size:10px; color:var(--slate-400);">(Optional)</span></label>
+            <select class="form-input" style="width:100%; font-size:12.5px; padding:6px 10px;" id="setupWicketkeeperA"></select>
+          </div>
+        </div>
+
+        <!-- Team B Column -->
+        <div style="background:#fff; border:1px solid var(--slate-200); border-radius:10px; padding:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--slate-100);">
+            <div style="font-weight:800; font-size:14px; color:var(--navy-900);" id="setupTeamBName">Team B</div>
+            <div id="setupBadgeB" style="font-size:11.5px; font-weight:700; padding:3px 8px; border-radius:20px; background:var(--slate-100); color:var(--slate-600);">
+              Selected: <span id="setupCountB">0</span> / <span id="setupReqB">8</span>
+            </div>
+          </div>
+          <div style="max-height:220px; overflow-y:auto; margin-bottom:12px; padding-right:4px;" id="setupSquadListB">
+            <!-- Dynamic Player Checkboxes -->
+          </div>
+          <div class="form-group" style="margin-bottom:8px;">
+            <label style="font-size:11.5px;">Captain <span style="color:var(--hpl-red);">*</span></label>
+            <select class="form-input" style="width:100%; font-size:12.5px; padding:6px 10px;" id="setupCaptainB"></select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label style="font-size:11.5px;">Wicketkeeper <span style="font-size:10px; color:var(--slate-400);">(Optional)</span></label>
+            <select class="form-input" style="width:100%; font-size:12.5px; padding:6px 10px;" id="setupWicketkeeperB"></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toss Selection -->
+      <div style="background:var(--slate-50); border:1px solid var(--slate-200); border-radius:10px; padding:14px;">
+        <div style="font-weight:800; font-size:13px; color:var(--navy-900); text-transform:uppercase; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+          <span>🪙 Match Toss</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label style="font-size:11.5px;">Toss Winner</label>
+            <select class="form-input" style="width:100%;" id="setupTossWinner" onchange="updateTossPreview()"></select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label style="font-size:11.5px;">Elected Decision</label>
+            <select class="form-input" style="width:100%;" id="setupTossDecision" onchange="updateTossPreview()">
+              <option value="BAT">BAT First</option>
+              <option value="BOWL">BOWL First</option>
+            </select>
+          </div>
+        </div>
+        <div id="setupTossPreview" style="margin-top:10px; font-size:12.5px; font-weight:700; color:var(--navy-900); background:#fff; border:1px dashed var(--slate-300); padding:8px 12px; border-radius:6px;">
+          Toss not yet recorded.
+        </div>
+      </div>
+
+      <div id="setupValidationWarning" style="display:none; font-size:12.5px; color:var(--hpl-red); background:var(--hpl-red-light); padding:10px 14px; border-radius:8px; margin-top:12px; font-weight:600;"></div>
+    </div>
+    <div class="modal-actions" style="display:flex; justify-content:space-between; align-items:center;">
+      <button class="btn-secondary" onclick="closeModal('modalMatchSetup')">Close</button>
+      <div style="display:flex; gap:8px;">
+        <button class="btn-secondary" onclick="saveMatchSetupOnly()">Save Setup</button>
+        <button class="btn-primary" id="btnStartLiveMatch" onclick="saveAndStartMatch()" style="background:var(--forest-600); border-color:var(--forest-600);">Start Live Match</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 6C. ABANDON FIXTURE -->
+<div class="modal-overlay" id="modalAbandonFixture">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title" style="color:var(--hpl-red);">Abandon / Cancel Fixture?</div>
+      <button onclick="closeModal('modalAbandonFixture')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="abandonFixtureId">
+      <p style="font-size:13.5px; color:var(--navy-900); margin-bottom:10px;" id="abandonFixturePrompt">
+        Mark match as Abandoned / No Result?
+      </p>
+      <div class="form-group">
+        <label>Reason / Note</label>
+        <input type="text" class="form-input" style="width:100%;" id="abandonReason" placeholder="e.g. Match abandoned due to rain" value="Match Abandoned (Rain)">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalAbandonFixture')">Cancel</button>
+      <button class="btn-danger" onclick="submitAbandonFixture()">Confirm Abandon</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEAGUE CREATE / EDIT MODAL -->
+<div class="modal-overlay" id="modalLeague">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title" id="leagueModalTitle">Create League</div>
+      <button onclick="closeModal('modalLeague')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="leagueEditId">
+      <div class="form-group">
+        <label>League Name <span style="color:var(--hpl-red);">*</span></label>
+        <input type="text" class="form-input" style="width:100%;" id="lName" placeholder="e.g. League 1 or Premier Division">
+      </div>
+      <div class="form-group">
+        <label>Short Name</label>
+        <input type="text" class="form-input" style="width:100%;" id="lShortName" placeholder="e.g. L1 or DIV1">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" class="form-input" style="width:100%;" id="lDesc" placeholder="Tournament division or level details">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select class="form-input" style="width:100%;" id="lStatus">
+          <option value="active">Active</option>
+          <option value="disabled">Disabled</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalLeague')">Cancel</button>
+      <button class="btn-primary" onclick="submitSaveLeague()">Save League</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE LEAGUE MODAL -->
+<div class="modal-overlay" id="modalDeleteLeague">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title" style="color:var(--hpl-red);">Delete League?</div>
+      <button onclick="closeModal('modalDeleteLeague')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="delLeagueId">
+      <p style="font-size:13.5px; color:var(--navy-900); margin-bottom:6px;" id="delLeaguePrompt">
+        Delete League?
+      </p>
+      <p style="font-size:12px; color:var(--hpl-red); font-weight:600;">
+        Warning: This will delete all matches and points table standings associated with this league.
+      </p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalDeleteLeague')">Cancel</button>
+      <button class="btn-danger" onclick="submitDeleteLeague()">Delete League</button>
+    </div>
+  </div>
+</div>
+
+<!-- 7. WICKET MODAL (PROFESSIONAL DISMISSAL ENGINE) -->
 <div class="modal-overlay" id="modalWicket">
   <div class="modal-dialog">
     <div class="modal-head">
-      <div class="modal-head-title" style="color:var(--hpl-red);">Wicket</div>
+      <div class="modal-head-title" style="color:var(--hpl-red);"><i class="fa fa-times-circle"></i> Record Wicket</div>
       <button onclick="closeModal('modalWicket')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <label>Dismissed Batter</label>
-        <input type="text" class="form-input" style="width:100%; background:var(--bg-subtle);" id="wBatter" readonly>
+        <label>Dismissed Batter <span style="color:var(--hpl-red);">*</span></label>
+        <select class="form-input" style="width:100%; font-weight:700;" id="wBatterSelect">
+          <!-- Populated with Striker and Non-Striker -->
+        </select>
       </div>
       <div class="form-group">
-        <label>Next Incoming Batter</label>
-        <select class="form-input" style="width:100%;" id="wNewBatter"></select>
+        <label>Wicket Type <span style="color:var(--hpl-red);">*</span></label>
+        <select class="form-input" style="width:100%; font-weight:700;" id="wTypeSelect" onchange="onWicketTypeChange()">
+          <option value="BOWLED">Bowled</option>
+          <option value="CAUGHT">Caught</option>
+          <option value="LBW">LBW</option>
+          <option value="RUN OUT">Run Out</option>
+          <option value="STUMPED">Stumped</option>
+          <option value="HIT WICKET">Hit Wicket</option>
+          <option value="RETIRED HURT">Retired Hurt</option>
+        </select>
+      </div>
+      <div class="form-group" id="wFielderGroup" style="display:none;">
+        <label>Fielder (Catcher / Run-Out / Keeper)</label>
+        <select class="form-input" style="width:100%;" id="wFielderSelect">
+          <!-- Fielding team players -->
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Next Incoming Batter <span style="color:var(--hpl-red);">*</span></label>
+        <select class="form-input" style="width:100%; font-weight:700;" id="wNewBatterSelect">
+          <!-- Available unbatted players -->
+        </select>
       </div>
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalWicket')">Cancel</button>
-      <button class="btn-danger" onclick="submitWicket()">Confirm Wicket</button>
+      <button class="btn-danger" id="btnSubmitWicket" onclick="submitWicket()">Confirm Wicket</button>
+    </div>
+  </div>
+</div>
+
+<!-- 7B. EDIT LAST BALL MODAL -->
+<div class="modal-overlay" id="modalEditLastBall">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title"><i class="fa fa-pencil"></i> Edit Last Delivery</div>
+      <button onclick="closeModal('modalEditLastBall')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Runs off Bat</label>
+        <select class="form-input" style="width:100%;" id="elbRuns">
+          <option value="0">0 Runs (Dot)</option>
+          <option value="1">1 Run</option>
+          <option value="2">2 Runs</option>
+          <option value="3">3 Runs</option>
+          <option value="4">4 Runs (Boundary)</option>
+          <option value="6">6 Runs (Six)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Extras Type</label>
+        <select class="form-input" style="width:100%;" id="elbExtra">
+          <option value="">None (Legal Delivery)</option>
+          <option value="WIDE">Wide (+1 extra)</option>
+          <option value="NO BALL">No Ball (+1 extra)</option>
+          <option value="BYE">Bye</option>
+          <option value="LEG BYE">Leg Bye</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Is Wicket?</label>
+        <select class="form-input" style="width:100%;" id="elbWicket" onchange="document.getElementById('elbWTypeGroup').style.display = this.value === '1' ? 'block' : 'none'">
+          <option value="0">No Wicket</option>
+          <option value="1">Wicket</option>
+        </select>
+      </div>
+      <div class="form-group" id="elbWTypeGroup" style="display:none;">
+        <label>Wicket Type</label>
+        <select class="form-input" style="width:100%;" id="elbWType">
+          <option value="BOWLED">Bowled</option>
+          <option value="CAUGHT">Caught</option>
+          <option value="LBW">LBW</option>
+          <option value="RUN OUT">Run Out</option>
+          <option value="STUMPED">Stumped</option>
+          <option value="HIT WICKET">Hit Wicket</option>
+          <option value="RETIRED HURT">Retired Hurt</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Commentary Note (Optional)</label>
+        <input type="text" class="form-input" style="width:100%;" id="elbCommentary" placeholder="Auto-generated if left empty">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalEditLastBall')">Cancel</button>
+      <button class="btn-primary" onclick="submitEditLastBall()">Save Correction</button>
     </div>
   </div>
 </div>
@@ -1914,9 +2507,12 @@
      CONTROLLER (100% DB-DRIVEN · ZERO MOCK DATA)
      ======================================================================== -->
 <script>
-  let DB = { teams: [], players: [], matches: [], standings: [], settings: {} };
+  let DB = { leagues: [], teams: [], players: [], matches: [], standings: [], settings: {} };
   let currentDetailTeam = null;
-  let matchTabFilter = 'UPCOMING';
+  let matchTabFilter = 'ALL';
+  let fixtureViewMode = 'list';
+  let matchLeagueFilter = 'ALL';
+  let selectedAdminStandingsLeagueId = 1;
   let runPick = 0;
   let extraPick = null;
 
@@ -1924,15 +2520,24 @@
     const loader = document.getElementById('loadingIndicator');
     if (loader) loader.style.display = 'inline-flex';
     try {
-      const res = await fetch('/api/data');
-      const json = await res.json();
-      if (json.success && json.data) {
-        DB.teams = json.data.teams || [];
-        DB.players = json.data.players || [];
-        DB.matches = json.data.matches || [];
-        DB.standings = json.data.standings || [];
-        DB.settings = json.data.settings || {};
+      const [resData, resLeagues, resMatches] = await Promise.all([
+        fetch('/api/data').then(r => r.json()),
+        fetch('/api/leagues').then(r => r.json()).catch(() => ({ success: false })),
+        fetch('/api/matches').then(r => r.json()).catch(() => ({ success: false }))
+      ]);
+
+      if (resData && resData.success && resData.data) {
+        DB.teams = resData.data.teams || [];
+        DB.players = resData.data.players || [];
+        DB.settings = resData.data.settings || {};
       }
+      if (resLeagues && resLeagues.success && resLeagues.leagues) {
+        DB.leagues = resLeagues.leagues;
+      }
+      if (resMatches && resMatches.success && resMatches.matches) {
+        DB.matches = resMatches.matches;
+      }
+      populateLeagueSelects();
     } catch (e) {
       showToast('Unable to reach server database.');
     } finally {
@@ -1940,6 +2545,11 @@
       renderCurrentViews();
       if (cb) cb();
     }
+  }
+
+  function escHtml(s) {
+    if (s == null) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
   function showToast(msg) {
@@ -1973,6 +2583,7 @@
 
     const titles = {
       'dashboard': 'Dashboard',
+      'leagues': 'Leagues Management',
       'teams': 'Teams',
       'team-details': 'Team Details',
       'players': 'Players',
@@ -1987,6 +2598,9 @@
 
     if (viewId === 'settings') {
       loadAdmins();
+    }
+    if (viewId === 'standings') {
+      loadAdminStandings();
     }
     renderCurrentViews();
   }
@@ -2357,45 +2971,161 @@
   }
 
   // --------------------------------------------------------------------------
-  // MATCHES
+  // MATCHES & FIXTURE MANAGEMENT
   // --------------------------------------------------------------------------
+  function setFixtureViewMode(mode) {
+    fixtureViewMode = mode;
+    document.getElementById('viewModeList')?.classList.toggle('active', mode === 'list');
+    document.getElementById('viewModeCalendar')?.classList.toggle('active', mode === 'calendar');
+    renderMatches();
+  }
+
   function setMatchFilter(f) {
     matchTabFilter = f;
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    if (f === 'UPCOMING') document.getElementById('tabUp').classList.add('active');
-    if (f === 'LIVE') document.getElementById('tabLiv').classList.add('active');
-    if (f === 'COMPLETED') document.getElementById('tabComp').classList.add('active');
+    document.querySelectorAll('#page-matches .tab-strip:first-of-type .tab-btn').forEach(b => b.classList.remove('active'));
+    if (f === 'ALL') document.getElementById('tabFixAll')?.classList.add('active');
+    if (f === 'UPCOMING') document.getElementById('tabUp')?.classList.add('active');
+    if (f === 'LIVE') document.getElementById('tabLiv')?.classList.add('active');
+    if (f === 'COMPLETED') document.getElementById('tabComp')?.classList.add('active');
+    renderMatches();
+  }
+
+  function resetFixtureFilters() {
+    matchTabFilter = 'ALL';
+    document.querySelectorAll('#page-matches .tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tabFixAll')?.classList.add('active');
+    document.getElementById('viewModeList')?.classList.add('active');
+    document.getElementById('viewModeCalendar')?.classList.remove('active');
+    fixtureViewMode = 'list';
+    if (document.getElementById('matchLeagueFilter')) document.getElementById('matchLeagueFilter').value = 'ALL';
+    if (document.getElementById('matchTeamSearch')) document.getElementById('matchTeamSearch').value = '';
+    if (document.getElementById('matchDateFilter')) document.getElementById('matchDateFilter').value = '';
     renderMatches();
   }
 
   function renderMatches() {
     const container = document.getElementById('matchesContainer');
-    const filtered = DB.matches.filter(m => m.status === matchTabFilter);
+    if (!container) return;
+
+    const leagueFilter = document.getElementById('matchLeagueFilter')?.value || 'ALL';
+    const teamSearch = (document.getElementById('matchTeamSearch')?.value || '').trim().toLowerCase();
+    const dateFilter = (document.getElementById('matchDateFilter')?.value || '').trim().toLowerCase();
+
+    let filtered = DB.matches.slice();
+
+    // Status filter
+    if (matchTabFilter !== 'ALL') {
+      filtered = filtered.filter(m => m.status === matchTabFilter);
+    }
+
+    // League filter
+    if (leagueFilter !== 'ALL') {
+      const lid = parseInt(leagueFilter, 10);
+      filtered = filtered.filter(m => (m.league_id || 1) === lid);
+    }
+
+    // Team search
+    if (teamSearch) {
+      filtered = filtered.filter(m => {
+        const tA = (m.teamA || m.team_a || '').toLowerCase();
+        const tB = (m.teamB || m.team_b || '').toLowerCase();
+        return tA.includes(teamSearch) || tB.includes(teamSearch);
+      });
+    }
+
+    // Date filter
+    if (dateFilter) {
+      filtered = filtered.filter(m => {
+        const d = (m.date || m.match_date || '').toLowerCase();
+        return d.includes(dateFilter);
+      });
+    }
 
     if (filtered.length === 0) {
       container.innerHTML = `
         <div class="panel">
           <div class="empty-state">
-            <div class="empty-state-title">No matches scheduled.</div>
-            <div class="empty-state-desc">Schedule a match to get started.</div>
-            <button class="btn-primary" onclick="openModal('modalSchedule')">+ Schedule Match</button>
+            <div class="empty-state-title">No fixtures found matching your filters.</div>
+            <div class="empty-state-desc">Try clearing filters or create a new fixture.</div>
+            <button class="btn-primary" onclick="openCreateFixtureModal()">+ Create Fixture</button>
           </div>
         </div>
       `;
       return;
     }
 
+    // CALENDAR VIEW
+    if (fixtureViewMode === 'calendar') {
+      const dateMap = {};
+      filtered.forEach(m => {
+        const d = m.date || m.match_date || 'Unscheduled';
+        if (!dateMap[d]) dateMap[d] = [];
+        dateMap[d].push(m);
+      });
+
+      const dates = Object.keys(dateMap);
+      container.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          ${dates.map(d => `
+            <div class="panel" style="padding:16px 20px;">
+              <div style="font-size:14px; font-weight:800; color:var(--navy-900); display:flex; align-items:center; gap:8px; margin-bottom:12px; border-bottom:1px solid var(--border-light); padding-bottom:8px;">
+                <i class="fa fa-calendar-day" style="color:var(--hpl-blue);"></i> ${escHtml(d)}
+                <span style="font-size:11px; background:var(--bg-subtle); color:var(--text-muted); padding:2px 8px; border-radius:10px; font-weight:700;">${dateMap[d].length} match${dateMap[d].length > 1 ? 'es' : ''}</span>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">
+                ${dateMap[d].map(m => {
+                  const leagueName = m.league_name || (DB.leagues.find(l => l.id === (m.league_id || 1)) || {}).name || `League ${m.league_id || 1}`;
+                  const st = m.status || 'UPCOMING';
+                  const stClass = st === 'LIVE' ? 'live' : (st === 'COMPLETED' ? 'completed' : 'upcoming');
+                  return `
+                    <div style="background:var(--bg-subtle); border:1px solid var(--border-light); border-radius:8px; padding:12px 14px; display:flex; flex-direction:column; justify-content:space-between; gap:10px;">
+                      <div>
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                          <span style="font-size:10.5px; font-weight:800; color:var(--hpl-blue); text-transform:uppercase;">${escHtml(leagueName)}</span>
+                          <span class="badge-status ${stClass}">${st}</span>
+                        </div>
+                        <div style="font-size:13.5px; font-weight:700; color:var(--navy-900);">${escHtml(m.teamA || m.team_a)} vs ${escHtml(m.teamB || m.team_b)}</div>
+                        <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;"><i class="fa fa-location-dot"></i> ${escHtml(m.venue || 'College Ground')} · ${m.total_overs || 10} ov</div>
+                      </div>
+                      <div style="display:flex; gap:6px; align-items:center; border-top:1px solid rgba(0,0,0,0.05); padding-top:8px;">
+                        <button class="btn-primary btn-sm" style="flex:1;" onclick="openScoringMatch('${m.id}')"><i class="fa fa-arrow-up-right-from-square"></i> Open Scorer</button>
+                        <button class="btn-secondary btn-sm" onclick="openEditFixtureModal('${m.id}')" title="Edit Fixture"><i class="fa fa-pen"></i></button>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      return;
+    }
+
+    // LIST VIEW
     container.innerHTML = filtered.map(m => {
-      if (m.status === 'LIVE') {
+      const leagueName = m.league_name || (DB.leagues.find(l => l.id === (m.league_id || 1)) || {}).name || `League ${m.league_id || 1}`;
+      const leagueBadge = `<span class="badge-status" style="background:#e8f0fe; color:#1a73e8; margin-right:6px; font-weight:800;">${escHtml(leagueName)}</span>`;
+      const matchNoTag = `<span class="match-card-tag" style="margin-right:6px;">MATCH ${m.matchNo || m.id}</span>`;
+      const formatBadge = `<span style="font-size:10.5px; font-weight:800; color:var(--hpl-blue); background:rgba(26,115,232,0.08); padding:2px 8px; border-radius:4px; text-transform:uppercase; margin-right:6px;">${escHtml(m.format_name || 'T10')} • ${m.players_per_team || 11} PLAYERS • ${m.total_overs || 10} OVERS</span>`;
+
+      if (m.status === 'LIVE' || m.status === 'PAUSED') {
         return `
           <div class="match-card-unit" style="border-top:3px solid var(--hpl-blue);">
             <div>
-              <span class="badge-status live">LIVE</span>
-              <div class="match-card-teams" style="margin-top:4px;">${m.teamA} ${m.scoreA} vs ${m.teamB}</div>
-              <div class="match-card-info">${m.oversA} OVERS · ${m.venue}</div>
+              <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                ${leagueBadge}
+                ${matchNoTag}
+                ${formatBadge}
+                <span class="badge-status ${m.status === 'PAUSED' ? 'upcoming' : 'live'}">${m.status}</span>
+              </div>
+              <div class="match-card-teams" style="margin-top:6px;">${escHtml(m.teamA || m.team_a)} ${m.scoreA || ''} vs ${escHtml(m.teamB || m.team_b)}</div>
+              <div class="match-card-info">${m.oversA || m.total_overs || 10} OVERS · ${escHtml(m.venue)} · ${escHtml(m.date || m.match_date || 'Today')}</div>
             </div>
-            <div>
-              <button class="btn-primary btn-sm" onclick="showView('live-scoring')">[ UPDATE SCORE ]</button>
+            <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+              <button class="btn-secondary btn-sm" onclick="openMatchSetupModal('${m.id}')" title="Match Setup & XI"><i class="fa fa-users"></i> [ SETUP XI ]</button>
+              <button class="btn-secondary btn-sm" onclick="openEditFixtureModal('${m.id}')" title="Edit metadata"><i class="fa fa-pen"></i> Edit</button>
+              <button class="btn-primary btn-sm" onclick="openScoringMatch('${m.id}')"><i class="fa fa-circle-play"></i> [ OPEN SCORER ]</button>
             </div>
           </div>
         `;
@@ -2403,12 +3133,19 @@
         return `
           <div class="match-card-unit">
             <div>
-              <span class="badge-status completed">COMPLETED</span>
-              <div class="match-card-teams" style="margin-top:4px;">${m.teamA} ${m.scoreA} vs ${m.teamB} ${m.scoreB}</div>
-              <div class="match-card-info" style="color:var(--hpl-green); font-weight:700;">${m.winner}</div>
+              <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                ${leagueBadge}
+                ${matchNoTag}
+                ${formatBadge}
+                <span class="badge-status completed">COMPLETED</span>
+              </div>
+              <div class="match-card-teams" style="margin-top:6px;">${escHtml(m.teamA || m.team_a)} ${m.scoreA || ''} vs ${escHtml(m.teamB || m.team_b)} ${m.scoreB || ''}</div>
+              <div class="match-card-info" style="color:var(--hpl-green); font-weight:700;">${m.winner ? (escHtml(m.winner) + ' ' + escHtml(m.result_margin || '')) : 'Completed'}</div>
             </div>
-            <div>
-              <button class="btn-secondary btn-sm" onclick="showView('standings')">[ VIEW SCORECARD ]</button>
+            <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+              <button class="btn-secondary btn-sm" onclick="openMatchSetupModal('${m.id}')" title="View Playing XI"><i class="fa fa-users"></i> [ VIEW XI ]</button>
+              <button class="btn-secondary btn-sm" onclick="openEditFixtureModal('${m.id}')" title="Edit completed fixture info"><i class="fa fa-pen"></i> Edit</button>
+              <button class="btn-secondary btn-sm" onclick="openScoringMatch('${m.id}')"><i class="fa fa-table"></i> [ VIEW SCORER ]</button>
             </div>
           </div>
         `;
@@ -2416,18 +3153,73 @@
         return `
           <div class="match-card-unit">
             <div>
-              <div class="match-card-tag">HPL MATCH ${m.matchNo}</div>
-              <div class="match-card-teams">${m.teamA} vs ${m.teamB}</div>
-              <div class="match-card-info">${m.date} · ${m.time} · ${m.venue}</div>
+              <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px; flex-wrap:wrap;">
+                ${leagueBadge}
+                ${matchNoTag}
+                ${formatBadge}
+                <span class="badge-status upcoming">UPCOMING</span>
+              </div>
+              <div class="match-card-teams">${escHtml(m.teamA || m.team_a)} vs ${escHtml(m.teamB || m.team_b)}</div>
+              <div class="match-card-info">${escHtml(m.date || m.match_date || 'Today')} · ${escHtml(m.time || '09:00 AM')} · ${escHtml(m.venue || 'College Ground')} · ${m.total_overs || 10} ov</div>
             </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span class="badge-status upcoming">UPCOMING</span>
-              <button class="btn-primary btn-sm" onclick="startMatch('${m.id}')">Start Match</button>
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+              <button class="btn-secondary btn-sm" onclick="openMatchSetupModal('${m.id}')" title="Setup Playing XI & Toss"><i class="fa fa-users"></i> [ SETUP XI ]</button>
+              <button class="btn-secondary btn-sm" onclick="openEditFixtureModal('${m.id}')" title="Edit Fixture"><i class="fa fa-pen"></i> Edit</button>
+              <button class="btn-secondary btn-sm" onclick="openAbandonFixtureModal('${m.id}')" title="Cancel/Abandon"><i class="fa fa-ban"></i></button>
+              <button class="btn-primary btn-sm" onclick="openMatchSetupModal('${m.id}')"><i class="fa fa-play"></i> Start Match</button>
             </div>
           </div>
         `;
       }
     }).join('');
+  }
+
+  function onFormatPresetChange(prefix) {
+    const preset = document.getElementById(prefix + 'FormatPreset')?.value || 'Custom';
+    const ovEl = document.getElementById(prefix === 'm' ? 'mOvers' : 'editFixOvers');
+    const pptEl = document.getElementById(prefix === 'm' ? 'mPlayersPerTeam' : 'editFixPlayersPerTeam');
+    const bpoEl = document.getElementById(prefix === 'm' ? 'mBallsPerOver' : 'editFixBallsPerOver');
+    const nameEl = document.getElementById(prefix === 'm' ? 'mFormatName' : 'editFixFormatName');
+
+    if (preset === 'T6') {
+      if (ovEl) ovEl.value = 6;
+      if (pptEl) pptEl.value = 8;
+      if (bpoEl) bpoEl.value = 6;
+      if (nameEl) nameEl.value = 'T6';
+    } else if (preset === 'T10') {
+      if (ovEl) ovEl.value = 10;
+      if (pptEl) pptEl.value = 11;
+      if (bpoEl) bpoEl.value = 6;
+      if (nameEl) nameEl.value = 'T10';
+    } else if (preset === 'T20') {
+      if (ovEl) ovEl.value = 20;
+      if (pptEl) pptEl.value = 11;
+      if (bpoEl) bpoEl.value = 6;
+      if (nameEl) nameEl.value = 'T20';
+    }
+  }
+
+  function openCreateFixtureModal() {
+    onScheduleLeagueChange();
+    const presetSel = document.getElementById('mFormatPreset');
+    if (presetSel) {
+      presetSel.value = 'T10';
+      onFormatPresetChange('m');
+    }
+    openModal('modalSchedule');
+  }
+
+  function onScheduleLeagueChange() {
+    const lSel = document.getElementById('mLeague');
+    if (!lSel) return;
+    const lid = parseInt(lSel.value || '1', 10);
+    const leagueTeams = DB.teams.filter(t => (t.league_id || 1) === lid);
+    const opts = (leagueTeams.length > 0 ? leagueTeams : DB.teams).map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+    document.getElementById('mTeamA').innerHTML = opts;
+    document.getElementById('mTeamB').innerHTML = opts;
+    if (document.getElementById('mTeamB').options.length > 1) {
+      document.getElementById('mTeamB').selectedIndex = 1;
+    }
   }
 
   function preventDuplicateTeam() {
@@ -2436,20 +3228,28 @@
     if (a && b && a === b) {
       showToast('Team A and Team B cannot be the same!');
       const selB = document.getElementById('mTeamB');
-      selB.selectedIndex = (selB.selectedIndex + 1) % DB.teams.length;
+      selB.selectedIndex = (selB.selectedIndex + 1) % selB.options.length;
     }
   }
 
   async function submitSchedule() {
+    const league_id = parseInt(document.getElementById('mLeague')?.value || '1', 10);
     const teamA = document.getElementById('mTeamA').value;
     const teamB = document.getElementById('mTeamB').value;
     const date = document.getElementById('mDate').value.trim();
     const time = document.getElementById('mTime').value.trim();
     const venue = document.getElementById('mVenue').value.trim();
-    const overs = document.getElementById('mOvers').value;
+    const overs = parseInt(document.getElementById('mOvers').value, 10);
+    const format_name = document.getElementById('mFormatName')?.value.trim() || 'T10';
+    const players_per_team = parseInt(document.getElementById('mPlayersPerTeam')?.value || '11', 10);
+    const balls_per_over = parseInt(document.getElementById('mBallsPerOver')?.value || '6', 10);
 
     if (!teamA || !teamB || teamA === teamB) {
-      showToast('Select two distinct teams.');
+      showToast('Please select two distinct teams.');
+      return;
+    }
+    if (!overs || overs <= 0) {
+      showToast('Total overs must be greater than 0');
       return;
     }
 
@@ -2457,237 +3257,907 @@
       const res = await fetch('/api/matches', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ teamA, teamB, date, time, venue, overs })
+        body: JSON.stringify({
+          league_id, team_a: teamA, team_b: teamB, teamA, teamB, date, time, venue, 
+          overs, total_overs: overs, format_name, players_per_team, balls_per_over
+        })
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
         showToast(json.error || 'Failed to schedule match');
         return;
       }
-      showToast('Match scheduled.');
+      showToast('Fixture created successfully.');
       closeModal('modalSchedule');
       await fetchDb();
     } catch (e) {
-      showToast('Unable to schedule match.');
+      showToast('Unable to schedule fixture.');
+    }
+  }
+
+  function openEditFixtureModal(id) {
+    const m = DB.matches.find(x => String(x.id) === String(id));
+    if (!m) return;
+
+    document.getElementById('editFixtureId').value = m.id;
+
+    const lOpts = DB.leagues.map(l => `<option value="${l.id}" ${l.id === (m.league_id || 1) ? 'selected' : ''}>${l.name}</option>`).join('');
+    document.getElementById('editFixLeague').innerHTML = lOpts;
+
+    const tOpts = DB.teams.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+    document.getElementById('editFixTeamA').innerHTML = tOpts;
+    document.getElementById('editFixTeamB').innerHTML = tOpts;
+    document.getElementById('editFixTeamA').value = m.teamA || m.team_a;
+    document.getElementById('editFixTeamB').value = m.teamB || m.team_b;
+
+    document.getElementById('editFixDate').value = m.date || m.match_date || 'Today';
+    document.getElementById('editFixVenue').value = m.venue || 'College Ground';
+    document.getElementById('editFixOvers').value = m.total_overs || 10;
+    document.getElementById('editFixFormatName').value = m.format_name || 'T10';
+    document.getElementById('editFixPlayersPerTeam').value = m.players_per_team || 11;
+    document.getElementById('editFixBallsPerOver').value = m.balls_per_over || 6;
+    document.getElementById('editFixStatus').value = m.status || 'UPCOMING';
+
+    const presetSel = document.getElementById('editFixFormatPreset');
+    if (presetSel) {
+      if (m.total_overs === 6 && m.players_per_team === 8) presetSel.value = 'T6';
+      else if (m.total_overs === 10 && m.players_per_team === 11) presetSel.value = 'T10';
+      else if (m.total_overs === 20 && m.players_per_team === 11) presetSel.value = 'T20';
+      else presetSel.value = 'Custom';
+    }
+
+    const warn = document.getElementById('editFixWarning');
+    if (m.status === 'LIVE' || m.status === 'COMPLETED') {
+      warn.style.display = 'block';
+      warn.textContent = `Note: This match is ${m.status}. Team names cannot be changed.`;
+      document.getElementById('editFixTeamA').disabled = true;
+      document.getElementById('editFixTeamB').disabled = true;
+    } else {
+      warn.style.display = 'none';
+      document.getElementById('editFixTeamA').disabled = false;
+      document.getElementById('editFixTeamB').disabled = false;
+    }
+
+    openModal('modalEditFixture');
+  }
+
+  async function submitEditFixture() {
+    const id = document.getElementById('editFixtureId').value;
+    const league_id = parseInt(document.getElementById('editFixLeague').value, 10);
+    const team_a = document.getElementById('editFixTeamA').value;
+    const team_b = document.getElementById('editFixTeamB').value;
+    const match_date = document.getElementById('editFixDate').value.trim();
+    const venue = document.getElementById('editFixVenue').value.trim();
+    const total_overs = parseInt(document.getElementById('editFixOvers').value, 10);
+    const format_name = document.getElementById('editFixFormatName')?.value.trim() || 'T10';
+    const players_per_team = parseInt(document.getElementById('editFixPlayersPerTeam')?.value || '11', 10);
+    const balls_per_over = parseInt(document.getElementById('editFixBallsPerOver')?.value || '6', 10);
+    const status = document.getElementById('editFixStatus').value;
+
+    if (team_a === team_b) {
+      showToast('Team A and Team B cannot be the same');
+      return;
+    }
+    if (!total_overs || total_overs <= 0) {
+      showToast('Overs must be greater than 0');
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/matches/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ league_id, team_a, team_b, match_date, venue, total_overs, format_name, players_per_team, balls_per_over, status })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to update fixture');
+        return;
+      }
+      showToast('Fixture updated.');
+      closeModal('modalEditFixture');
+      await fetchDb();
+    } catch (e) {
+      showToast('Unable to update fixture.');
+    }
+  }
+
+  function openAbandonFixtureModal(id) {
+    document.getElementById('abandonFixtureId').value = id;
+    openModal('modalAbandonFixture');
+  }
+
+  async function submitAbandonFixture() {
+    const id = document.getElementById('abandonFixtureId').value;
+    const reason = document.getElementById('abandonReason').value.trim() || 'Match Abandoned';
+    try {
+      const res = await fetch(`/api/admin/matches/${id}/complete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ winner: 'No Result', margin: reason })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to abandon fixture');
+        return;
+      }
+      showToast('Fixture marked as Abandoned / No Result.');
+      closeModal('modalAbandonFixture');
+      await fetchDb();
+    } catch (e) {
+      showToast('Unable to abandon fixture.');
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // MATCH SETUP & PLAYING XI CONTROLLER
+  // --------------------------------------------------------------------------
+  let currentSetupMatch = null;
+  let setupXI_A = [];
+  let setupXI_B = [];
+
+  async function openMatchSetupModal(matchId) {
+    try {
+      const res = await fetch(`/api/matches/${matchId}/setup`);
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        showToast(data.error || 'Failed to load match setup');
+        return;
+      }
+
+      currentSetupMatch = data;
+      document.getElementById('setupMatchId').value = data.match_id;
+      document.getElementById('setupModalTitle').textContent = `Match Setup — ${data.team_a} vs ${data.team_b}`;
+      document.getElementById('setupModalSubtitle').textContent = `Match #${data.match_id} · ${data.format_name} Format`;
+      document.getElementById('setupFormatBanner').textContent = `${data.format_name} • ${data.players_per_team} PLAYERS • ${data.total_overs} OVERS`;
+      document.getElementById('setupRequiredPlayersBanner').textContent = `${data.players_per_team} Players / Team`;
+
+      document.getElementById('setupTeamAName').textContent = data.team_a;
+      document.getElementById('setupTeamBName').textContent = data.team_b;
+      document.getElementById('setupReqA').textContent = data.players_per_team;
+      document.getElementById('setupReqB').textContent = data.players_per_team;
+
+      // Initialize selected Playing XIs
+      const req = data.players_per_team || 11;
+      if (Array.isArray(data.playing_xi_a) && data.playing_xi_a.length === req) {
+        setupXI_A = [...data.playing_xi_a];
+      } else {
+        setupXI_A = data.squad_a.slice(0, req).map(p => p.name);
+      }
+
+      if (Array.isArray(data.playing_xi_b) && data.playing_xi_b.length === req) {
+        setupXI_B = [...data.playing_xi_b];
+      } else {
+        setupXI_B = data.squad_b.slice(0, req).map(p => p.name);
+      }
+
+      // Render Squad Checklists
+      renderSetupSquadList('A', data.squad_a, setupXI_A);
+      renderSetupSquadList('B', data.squad_b, setupXI_B);
+
+      // Populate Toss options
+      const tossWinSel = document.getElementById('setupTossWinner');
+      tossWinSel.innerHTML = `
+        <option value="${escHtml(data.team_a)}">${escHtml(data.team_a)}</option>
+        <option value="${escHtml(data.team_b)}">${escHtml(data.team_b)}</option>
+      `;
+      if (data.toss_winner) tossWinSel.value = data.toss_winner;
+      if (data.toss_decision) document.getElementById('setupTossDecision').value = data.toss_decision;
+
+      updateSetupControls();
+      openModal('modalMatchSetup');
+    } catch (e) {
+      showToast('Error loading match setup details.');
+    }
+  }
+
+  function renderSetupSquadList(teamLetter, squad, selectedList) {
+    const container = document.getElementById(teamLetter === 'A' ? 'setupSquadListA' : 'setupSquadListB');
+    if (!container) return;
+
+    if (!squad || squad.length === 0) {
+      container.innerHTML = '<div style="font-size:12px; color:var(--text-muted); padding:10px;">No squad players registered.</div>';
+      return;
+    }
+
+    container.innerHTML = squad.map(p => {
+      const isChecked = selectedList.includes(p.name);
+      return `
+        <label style="display:flex; align-items:center; justify-content:space-between; padding:6px 8px; border-radius:6px; margin-bottom:4px; background:${isChecked ? 'rgba(26,115,232,0.06)' : 'var(--slate-50)'}; cursor:pointer; font-size:12.5px; border:1px solid ${isChecked ? 'rgba(26,115,232,0.3)' : 'transparent'};">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSetupPlayer('${teamLetter}', '${escHtml(p.name)}', this.checked)">
+            <span style="font-weight:700; color:var(--navy-900);">${escHtml(p.name)}</span>
+          </div>
+          <span style="font-size:10px; font-weight:700; background:var(--slate-200); color:var(--slate-700); padding:2px 6px; border-radius:10px; text-transform:uppercase;">${escHtml(p.role || 'Player')}</span>
+        </label>
+      `;
+    }).join('');
+  }
+
+  function toggleSetupPlayer(teamLetter, playerName, isChecked) {
+    const list = teamLetter === 'A' ? setupXI_A : setupXI_B;
+    const req = currentSetupMatch?.players_per_team || 11;
+
+    if (isChecked) {
+      if (!list.includes(playerName)) {
+        if (list.length >= req) {
+          showToast(`Limit reached: Exactly ${req} players required.`);
+          renderSetupSquadList(teamLetter, teamLetter === 'A' ? currentSetupMatch.squad_a : currentSetupMatch.squad_b, list);
+          return;
+        }
+        list.push(playerName);
+      }
+    } else {
+      const idx = list.indexOf(playerName);
+      if (idx !== -1) list.splice(idx, 1);
+    }
+
+    renderSetupSquadList(teamLetter, teamLetter === 'A' ? currentSetupMatch.squad_a : currentSetupMatch.squad_b, list);
+    updateSetupControls();
+  }
+
+  function updateSetupControls() {
+    if (!currentSetupMatch) return;
+    const req = currentSetupMatch.players_per_team || 11;
+
+    // Team A Counter
+    const countA = document.getElementById('setupCountA');
+    const badgeA = document.getElementById('setupBadgeA');
+    if (countA) countA.textContent = setupXI_A.length;
+    if (badgeA) {
+      if (setupXI_A.length === req) {
+        badgeA.style.background = 'var(--forest-100)';
+        badgeA.style.color = 'var(--forest-800)';
+        badgeA.innerHTML = `Selected: ${setupXI_A.length} / ${req} ✓`;
+      } else {
+        badgeA.style.background = 'var(--slate-100)';
+        badgeA.style.color = 'var(--slate-600)';
+        badgeA.innerHTML = `Selected: <span id="setupCountA">${setupXI_A.length}</span> / ${req}`;
+      }
+    }
+
+    // Team B Counter
+    const countB = document.getElementById('setupCountB');
+    const badgeB = document.getElementById('setupBadgeB');
+    if (countB) countB.textContent = setupXI_B.length;
+    if (badgeB) {
+      if (setupXI_B.length === req) {
+        badgeB.style.background = 'var(--forest-100)';
+        badgeB.style.color = 'var(--forest-800)';
+        badgeB.innerHTML = `Selected: ${setupXI_B.length} / ${req} ✓`;
+      } else {
+        badgeB.style.background = 'var(--slate-100)';
+        badgeB.style.color = 'var(--slate-600)';
+        badgeB.innerHTML = `Selected: <span id="setupCountB">${setupXI_B.length}</span> / ${req}`;
+      }
+    }
+
+    // Captain A & Wicketkeeper A options
+    const capASel = document.getElementById('setupCaptainA');
+    const wkASel = document.getElementById('setupWicketkeeperA');
+    const curCapA = capASel?.value || currentSetupMatch.captain_a || setupXI_A[0] || '';
+    const curWkA = wkASel?.value || currentSetupMatch.wicketkeeper_a || '';
+
+    if (capASel) {
+      capASel.innerHTML = setupXI_A.map(p => `<option value="${escHtml(p)}" ${p === curCapA ? 'selected' : ''}>${escHtml(p)}</option>`).join('');
+    }
+    if (wkASel) {
+      wkASel.innerHTML = '<option value="">None / Optional</option>' + setupXI_A.map(p => `<option value="${escHtml(p)}" ${p === curWkA ? 'selected' : ''}>${escHtml(p)}</option>`).join('');
+    }
+
+    // Captain B & Wicketkeeper B options
+    const capBSel = document.getElementById('setupCaptainB');
+    const wkBSel = document.getElementById('setupWicketkeeperB');
+    const curCapB = capBSel?.value || currentSetupMatch.captain_b || setupXI_B[0] || '';
+    const curWkB = wkBSel?.value || currentSetupMatch.wicketkeeper_b || '';
+
+    if (capBSel) {
+      capBSel.innerHTML = setupXI_B.map(p => `<option value="${escHtml(p)}" ${p === curCapB ? 'selected' : ''}>${escHtml(p)}</option>`).join('');
+    }
+    if (wkBSel) {
+      wkBSel.innerHTML = '<option value="">None / Optional</option>' + setupXI_B.map(p => `<option value="${escHtml(p)}" ${p === curWkB ? 'selected' : ''}>${escHtml(p)}</option>`).join('');
+    }
+
+    updateTossPreview();
+  }
+
+  function updateTossPreview() {
+    if (!currentSetupMatch) return;
+    const winner = document.getElementById('setupTossWinner')?.value;
+    const decision = document.getElementById('setupTossDecision')?.value;
+    const previewEl = document.getElementById('setupTossPreview');
+    if (winner && decision && previewEl) {
+      previewEl.innerHTML = `⚡ <strong>${escHtml(winner)}</strong> won the toss and elected to <strong>${decision}</strong> first.`;
+    }
+  }
+
+  async function saveMatchSetupOnly() {
+    if (!currentSetupMatch) return;
+    const matchId = currentSetupMatch.match_id;
+    const req = currentSetupMatch.players_per_team || 11;
+
+    const captain_a = document.getElementById('setupCaptainA')?.value;
+    const captain_b = document.getElementById('setupCaptainB')?.value;
+    const wicketkeeper_a = document.getElementById('setupWicketkeeperA')?.value;
+    const wicketkeeper_b = document.getElementById('setupWicketkeeperB')?.value;
+    const toss_winner = document.getElementById('setupTossWinner')?.value;
+    const toss_decision = document.getElementById('setupTossDecision')?.value;
+
+    if (setupXI_A.length !== req) {
+      showToast(`${currentSetupMatch.team_a} requires exactly ${req} players.`);
+      return;
+    }
+    if (setupXI_B.length !== req) {
+      showToast(`${currentSetupMatch.team_b} requires exactly ${req} players.`);
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/matches/${matchId}/setup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          playing_xi_a: setupXI_A,
+          playing_xi_b: setupXI_B,
+          captain_a, captain_b,
+          wicketkeeper_a, wicketkeeper_b,
+          toss_winner, toss_decision
+        })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to save setup');
+        return;
+      }
+      showToast('Match Setup saved successfully.');
+      closeModal('modalMatchSetup');
+      await fetchDb();
+    } catch (e) {
+      showToast('Error saving match setup.');
+    }
+  }
+
+  async function saveAndStartMatch() {
+    if (!currentSetupMatch) return;
+    const matchId = currentSetupMatch.match_id;
+    const req = currentSetupMatch.players_per_team || 11;
+
+    const captain_a = document.getElementById('setupCaptainA')?.value;
+    const captain_b = document.getElementById('setupCaptainB')?.value;
+    const wicketkeeper_a = document.getElementById('setupWicketkeeperA')?.value;
+    const wicketkeeper_b = document.getElementById('setupWicketkeeperB')?.value;
+    const toss_winner = document.getElementById('setupTossWinner')?.value;
+    const toss_decision = document.getElementById('setupTossDecision')?.value;
+
+    const warn = document.getElementById('setupValidationWarning');
+
+    if (setupXI_A.length !== req) {
+      warn.style.display = 'block';
+      warn.textContent = `Validation Error: ${currentSetupMatch.team_a} has ${setupXI_A.length} players selected. Exactly ${req} players required.`;
+      return;
+    }
+    if (setupXI_B.length !== req) {
+      warn.style.display = 'block';
+      warn.textContent = `Validation Error: ${currentSetupMatch.team_b} has ${setupXI_B.length} players selected. Exactly ${req} players required.`;
+      return;
+    }
+    if (!captain_a) {
+      warn.style.display = 'block';
+      warn.textContent = `Validation Error: Please select a Captain for ${currentSetupMatch.team_a}.`;
+      return;
+    }
+    if (!captain_b) {
+      warn.style.display = 'block';
+      warn.textContent = `Validation Error: Please select a Captain for ${currentSetupMatch.team_b}.`;
+      return;
+    }
+    if (!toss_winner || !toss_decision) {
+      warn.style.display = 'block';
+      warn.textContent = `Validation Error: Please complete the toss before starting the match.`;
+      return;
+    }
+
+    warn.style.display = 'none';
+
+    try {
+      // 1. Save setup
+      const resSetup = await fetch(`/api/admin/matches/${matchId}/setup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          playing_xi_a: setupXI_A,
+          playing_xi_b: setupXI_B,
+          captain_a, captain_b,
+          wicketkeeper_a, wicketkeeper_b,
+          toss_winner, toss_decision
+        })
+      });
+      const jsonSetup = await resSetup.json();
+      if (!resSetup.ok || !jsonSetup.success) {
+        showToast(jsonSetup.error || 'Failed to save setup');
+        return;
+      }
+
+      // 2. Start Match
+      const resStart = await fetch(`/api/admin/matches/${matchId}/start`, { method: 'POST' });
+      const jsonStart = await resStart.json();
+      if (!resStart.ok || !jsonStart.success) {
+        showToast(jsonStart.error || 'Failed to start match');
+        return;
+      }
+
+      showToast('Match is now LIVE!');
+      closeModal('modalMatchSetup');
+      await fetchDb();
+      openScoringMatch(matchId);
+    } catch (e) {
+      showToast('Unable to start match.');
     }
   }
 
   async function startMatch(id) {
     try {
-      const res = await fetch(`/api/matches/${id}/start`, { method: 'POST' });
+      const res = await fetch(`/api/admin/matches/${id}/start`, { method: 'POST' });
       const json = await res.json();
       if (!res.ok || !json.success) {
         showToast(json.error || 'Failed to start match');
         return;
       }
       showToast('Match is now LIVE.');
-      await fetchDb(() => {
-        showView('live-scoring');
-      });
+      await fetchDb();
     } catch (e) {
       showToast('Unable to start match.');
     }
   }
 
+  async function startMatchAndScore(id) {
+    openMatchSetupModal(id);
+  }
+
   // --------------------------------------------------------------------------
-  // 11. LIVE SCORING CONSOLE (FAST & TOUCH-FRIENDLY)
+  // 11. LIVE SCORING CONSOLE (PRODUCTION ENGINE)
   // --------------------------------------------------------------------------
+  var activeScoringMatchId = null;
+  var scoringIsSubmitting = false;
+
+  function openScoringMatch(matchId) {
+    activeScoringMatchId = parseInt(matchId, 10);
+    showView('live-scoring');
+  }
+
+  function closeScoringMatch() {
+    activeScoringMatchId = null;
+    renderLiveScoring();
+  }
+
+  async function startMatchAndScore(matchId) {
+    await startMatch(matchId);
+    openScoringMatch(matchId);
+  }
+
   function renderLiveScoring() {
     const container = document.getElementById('liveConsoleContainer');
-    const liveMatch = DB.matches.find(m => m.status === 'LIVE');
+    if (!container) return;
 
-    if (!liveMatch || !liveMatch.liveScorecard) {
-      container.innerHTML = `
-        <div class="panel">
-          <div class="empty-state">
-            <div class="empty-state-title" style="letter-spacing:0.8px;">NO LIVE MATCH</div>
-            <div class="empty-state-desc">Select an upcoming match and click [Start Match].</div>
-            <button class="btn-primary" onclick="showView('matches')">Go to Matches</button>
+    // ── CASE A: NO MATCH SELECTED -> RENDER MATCH SELECTOR HUB ──
+    if (!activeScoringMatchId) {
+      document.getElementById('liveMatchSubtitle').textContent = 'Select a Match to Open Scoring Console';
+
+      const liveMatches = DB.matches.filter(m => m.status === 'LIVE' || m.status === 'PAUSED');
+      const upMatches = DB.matches.filter(m => m.status === 'UPCOMING');
+      const compMatches = DB.matches.filter(m => m.status === 'COMPLETED');
+
+      function getLeagueBadge(m) {
+        const leagueName = m.league_name || (DB.leagues.find(l => l.id === (m.league_id || 1)) || {}).name || `League ${m.league_id || 1}`;
+        return `<span class="badge-status" style="background:#e8f0fe; color:#1a73e8; font-weight:800;"><i class="fa fa-trophy"></i> ${leagueName}</span>`;
+      }
+
+      let liveHtml = '';
+      if (liveMatches.length === 0) {
+        liveHtml = '<div class="match-selector-empty"><i class="fa fa-circle-o" style="margin-right:6px;"></i>No match is currently live.</div>';
+      } else {
+        liveHtml = liveMatches.map(m => {
+          const sc = m.liveScorecard || {};
+          const scoreStr = sc.runs !== undefined ? `${sc.runs}/${sc.wickets} (${sc.oversCompleted}.${sc.ballsInOver} ov)` : (m.scoreA || '0/0');
+          const isPaused = m.status === 'PAUSED';
+          return `
+            <div class="match-selector-card" style="border-left:4px solid ${isPaused ? 'var(--navy-700)' : 'var(--hpl-red)'};">
+              <div>
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                  ${getLeagueBadge(m)}
+                  <span class="badge-status ${isPaused ? 'upcoming' : 'live'}">${m.status}</span>
+                </div>
+                <div style="font-size:16px; font-weight:900; color:var(--navy-900);">${m.teamA || m.team_a} vs ${m.teamB || m.team_b}</div>
+                <div style="font-size:14px; font-weight:800; color:var(--hpl-blue); margin-top:2px;">${scoreStr} · ${m.total_overs || 10} Overs</div>
+                <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">${m.venue || 'Main Ground'}</div>
+              </div>
+              <div>
+                <button class="btn-primary" onclick="openScoringMatch('${m.id}')" style="padding:10px 18px; font-size:13px; font-weight:800;">
+                  <i class="fa fa-circle-play"></i> OPEN SCORER
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      let upHtml = '';
+      if (upMatches.length === 0) {
+        upHtml = '<div class="match-selector-empty">No upcoming fixtures scheduled.</div>';
+      } else {
+        upHtml = upMatches.map(m => `
+          <div class="match-selector-card">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                ${getLeagueBadge(m)}
+                <span class="badge-status upcoming">UPCOMING</span>
+              </div>
+              <div style="font-size:15px; font-weight:800; color:var(--navy-900);">${m.teamA || m.team_a} vs ${m.teamB || m.team_b}</div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">${m.date || m.match_date || 'Today'} · ${m.venue || 'Ground'} · ${m.total_overs || 10} Overs</div>
+            </div>
+            <div>
+              <button class="btn-primary btn-sm" onclick="startMatchAndScore('${m.id}')" style="font-weight:800;">
+                <i class="fa fa-play"></i> Start Match
+              </button>
+            </div>
           </div>
+        `).join('');
+      }
+
+      let compHtml = '';
+      if (compMatches.length === 0) {
+        compHtml = '<div class="match-selector-empty">No completed matches yet.</div>';
+      } else {
+        compHtml = compMatches.map(m => `
+          <div class="match-selector-card">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                ${getLeagueBadge(m)}
+                <span class="badge-status completed">COMPLETED</span>
+              </div>
+              <div style="font-size:14.5px; font-weight:800; color:var(--navy-900);">${m.teamA || m.team_a} vs ${m.teamB || m.team_b}</div>
+              <div style="font-size:12px; font-weight:700; color:var(--hpl-green); margin-top:2px;">${m.winner ? (m.winner + ' ' + (m.result_margin || '')) : 'Completed'}</div>
+            </div>
+            <div>
+              <button class="btn-secondary btn-sm" onclick="openScoringMatch('${m.id}')">
+                <i class="fa fa-table"></i> Scorecard
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      container.innerHTML = `
+        <div class="match-selector-section" style="border-top:3px solid var(--hpl-red);">
+          <div class="match-selector-header">
+            <h3 class="match-selector-title"><i class="fa fa-circle" style="color:var(--hpl-red); font-size:9px;"></i> Live Matches</h3>
+          </div>
+          <div class="match-selector-list">${liveHtml}</div>
+        </div>
+
+        <div class="match-selector-section" style="border-top:3px solid var(--hpl-blue);">
+          <div class="match-selector-header">
+            <h3 class="match-selector-title"><i class="fa fa-calendar" style="color:var(--hpl-blue);"></i> Upcoming Fixtures</h3>
+          </div>
+          <div class="match-selector-list">${upHtml}</div>
+        </div>
+
+        <div class="match-selector-section" style="border-top:3px solid var(--text-muted);">
+          <div class="match-selector-header">
+            <h3 class="match-selector-title"><i class="fa fa-check-circle" style="color:var(--text-muted);"></i> Completed Matches</h3>
+          </div>
+          <div class="match-selector-list">${compHtml}</div>
         </div>
       `;
-      document.getElementById('liveMatchSubtitle').textContent = 'No match is currently live.';
       return;
     }
 
-    const sc = liveMatch.liveScorecard;
-    document.getElementById('liveMatchSubtitle').textContent = `${liveMatch.teamA.toUpperCase()} vs ${liveMatch.teamB.toUpperCase()} · HPL MATCH ${liveMatch.matchNo || '01'}`;
+    // ── CASE B: DEDICATED SCORING WORKSPACE FOR ACTIVE MATCH ──
+    const match = DB.matches.find(m => m.id === activeScoringMatchId);
+    if (!match) {
+      activeScoringMatchId = null;
+      renderLiveScoring();
+      return;
+    }
+
+    const sc = match.liveScorecard || { runs: 0, wickets: 0, oversCompleted: 0, ballsInOver: 0, currentOverBalls: [] };
+    const teamA = match.teamA || match.team_a;
+    const teamB = match.teamB || match.team_b;
+    const isLive = match.status === 'LIVE';
+    const isPaused = match.status === 'PAUSED';
+    const isCompleted = match.status === 'COMPLETED';
+    const leagueName = match.league_name || (DB.leagues.find(l => l.id === (match.league_id || 1)) || {}).name || `League ${match.league_id || 1}`;
+
+    document.getElementById('liveMatchSubtitle').textContent = `${teamA.toUpperCase()} vs ${teamB.toUpperCase()} · ${leagueName}`;
+
+    // Over track pills
+    let overTrackHtml = '';
+    const currentBalls = sc.currentOverBalls || [];
+    if (currentBalls.length > 0) {
+      overTrackHtml = currentBalls.map(b => {
+        const s = String(b);
+        let cls = 'runs';
+        if (s === '0') cls = 'dot';
+        else if (s === '4') cls = 'four';
+        else if (s === '6') cls = 'six';
+        else if (s === 'W') cls = 'wkt';
+        else if (s.startsWith('Wd') || s.startsWith('Nb') || s.startsWith('B') || s.startsWith('Lb')) cls = 'extra';
+        return `<span class="over-ball-item ${cls}">${s}</span>`;
+      }).join('');
+    } else {
+      overTrackHtml = '<span style="font-size:12px; color:var(--text-subtle);">Over underway</span>';
+    }
+
+    // Striker and non-striker
+    const striker = sc.striker || { name: 'Striker', runs: 0, balls: 0, fours: 0, sixes: 0, sr: '0.00' };
+    const nonStriker = sc.nonStriker || { name: 'Non-Striker', runs: 0, balls: 0, fours: 0, sixes: 0, sr: '0.00' };
+    const bowler = sc.bowler || { name: 'Bowler', overs: 0, maidens: 0, runs: 0, wickets: 0, economy: '0.00' };
+
+    // Chasing calculation if 2nd innings
+    let targetHtml = '';
+    if (sc.target) {
+      const need = sc.target - sc.runs;
+      const totalBalls = (match.total_overs || 10) * 6;
+      const ballsBowled = sc.oversCompleted * 6 + sc.ballsInOver;
+      const ballsLeft = Math.max(0, totalBalls - ballsBowled);
+      targetHtml = `
+        <div class="console-target-strip">
+          <span>Target: <strong>${sc.target}</strong></span>
+          <span style="color:var(--hpl-red);">Need: <strong>${need > 0 ? need : 'WON'}</strong> off ${ballsLeft}b</span>
+          <span>CRR: <strong>${(sc.runs / Math.max(0.1, (sc.oversCompleted + sc.ballsInOver / 6))).toFixed(2)}</strong></span>
+        </div>
+      `;
+    }
+
+    // Bowler selector options (players from fielding team)
+    const bowlingTeamName = (match.current_innings === 2) ? teamA : teamB;
+    const fieldingPlayers = DB.players.filter(p => p.team === bowlingTeamName);
+    const bowlerOpts = fieldingPlayers.map(p => `<option value="${p.name}" ${p.name === bowler.name ? 'selected' : ''}>${p.name}</option>`).join('');
 
     container.innerHTML = `
       <div class="console-shell">
+
+        <!-- Back to Selector Header Bar -->
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+          <button class="btn-secondary btn-sm" onclick="closeScoringMatch()">
+            <i class="fa fa-arrow-left"></i> Match Selector
+          </button>
+          <div style="display:inline-flex; gap:6px; flex-wrap:wrap;">
+            ${isLive ? `<button class="btn-secondary btn-sm" onclick="pauseScoringMatch(${match.id})" title="Pause Match"><i class="fa fa-pause"></i> Pause</button>` : ''}
+            ${isPaused ? `<button class="btn-primary btn-sm" onclick="resumeScoringMatch(${match.id})" title="Resume Match"><i class="fa fa-play"></i> Resume</button>` : ''}
+            <button class="btn-secondary btn-sm" onclick="switchInnings(${match.id})" title="Switch Innings"><i class="fa fa-exchange"></i> 2nd Innings</button>
+            <button class="btn-danger btn-sm" onclick="openEndMatchDialog()" title="Complete Match"><i class="fa fa-flag-checkered"></i> Complete</button>
+          </div>
+        </div>
+
+        <!-- Offline Banner (shown if network drops) -->
+        <div class="offline-alert-banner" id="scoringOfflineBanner" style="display:none;">
+          <i class="fa fa-wifi"></i> OFFLINE — Attempting to reconnect...
+        </div>
+
+        <!-- Scoreboard Display -->
         <div class="scoreboard-box">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
-            <div class="console-header-match" style="margin:0;">HPL MATCH ${liveMatch.matchNo || '01'} · ${liveMatch.status}</div>
-            <div style="display:inline-flex; gap:6px;">
-              <button class="btn-secondary btn-sm" onclick="pauseMatch('${liveMatch.id}')" title="Pause Match"><i class="fa fa-pause"></i> Pause</button>
-              <button class="btn-secondary btn-sm" onclick="switchInnings('${liveMatch.id}')" title="Switch to 2nd Innings"><i class="fa fa-exchange"></i> 2nd Innings</button>
-              <button class="btn-danger btn-sm" onclick="openEndMatchDialog()" title="Complete Match"><i class="fa fa-flag-checkered"></i> Complete</button>
-            </div>
+          <div class="console-header-match">
+            <span style="display:flex; align-items:center; gap:6px;">
+              <span class="badge-status" style="background:#e8f0fe; color:#1a73e8; font-weight:800;"><i class="fa fa-trophy"></i> ${leagueName}</span>
+              <span>MATCH #${match.id}</span>
+            </span>
+            <span class="badge-status ${isLive ? 'live' : (isPaused ? 'upcoming' : 'completed')}">${match.status}</span>
           </div>
-          <div class="console-batting-name">${liveMatch.teamA}</div>
+
+          <div class="console-batting-name">${match.current_innings === 2 ? teamB : teamA} (Batting)</div>
           <div class="console-runs-wickets num-bold">${sc.runs} / ${sc.wickets}</div>
-          <div class="console-overs-figure num-bold">${sc.oversCompleted}.${sc.ballsInOver} OVERS</div>
+          <div class="console-overs-figure num-bold">${sc.oversCompleted}.${sc.ballsInOver} / ${match.total_overs || 10} OVERS</div>
 
+          ${targetHtml}
+
+          <div style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--text-muted); margin-top:14px; letter-spacing:0.5px;">
+            Current Over (${sc.oversCompleted + 1})
+          </div>
           <div class="over-balls-track">
-            ${(sc.currentOverBalls || []).map(b => {
-              let cls = 'over-ball-item';
-              if (b === 'W') cls += ' wkt';
-              if (b === '4') cls += ' four';
-              if (b === '6') cls += ' six';
-              return `<span class="${cls}">${b}</span>`;
-            }).join('') || '<span style="font-size:11.5px; color:var(--text-subtle);">Over underway</span>'}
+            ${overTrackHtml}
           </div>
 
+          <!-- On-Pitch Batters & Bowler -->
           <div class="pitch-strip">
-            <div class="pitch-stat-cell">
-              <div class="pitch-stat-lbl">Striker *</div>
-              <div class="pitch-stat-name">${sc.striker ? sc.striker.name : 'Striker'}</div>
-              <div class="pitch-stat-val num-bold">${sc.striker ? `${sc.striker.runs} (${sc.striker.balls})` : '0 (0)'}</div>
+            <div class="pitch-stat-cell striker-cell">
+              <div class="pitch-stat-lbl">
+                <span>STRIKER ★</span>
+                <span style="font-size:10px; color:var(--hpl-blue);">ON STRIKE</span>
+              </div>
+              <div class="pitch-stat-name">${striker.name}</div>
+              <div class="pitch-stat-val num-bold">${striker.runs} <span style="font-size:11px; color:var(--text-muted); font-weight:600;">(${striker.balls}b · 4s:${striker.fours || 0} · 6s:${striker.sixes || 0})</span></div>
             </div>
+
             <div class="pitch-stat-cell">
-              <div class="pitch-stat-lbl">Non-Striker</div>
-              <div class="pitch-stat-name">${sc.nonStriker ? sc.nonStriker.name : 'Non-Striker'}</div>
-              <div class="pitch-stat-val num-bold">${sc.nonStriker ? `${sc.nonStriker.runs} (${sc.nonStriker.balls})` : '0 (0)'}</div>
+              <div class="pitch-stat-lbl">
+                <span>NON-STRIKER</span>
+                <button onclick="swapStrikeManual(${match.id})" style="background:none; border:none; color:var(--hpl-blue); font-size:11px; font-weight:800; cursor:pointer; padding:0;" title="Swap Strike">
+                  ⇄ SWAP
+                </button>
+              </div>
+              <div class="pitch-stat-name">${nonStriker.name}</div>
+              <div class="pitch-stat-val num-bold">${nonStriker.runs} <span style="font-size:11px; color:var(--text-muted); font-weight:600;">(${nonStriker.balls}b · 4s:${nonStriker.fours || 0} · 6s:${nonStriker.sixes || 0})</span></div>
             </div>
+
             <div class="pitch-stat-cell" style="grid-column: span 2;">
-              <div class="pitch-stat-lbl">Bowler (${liveMatch.teamB})</div>
-              <div class="pitch-stat-name">${sc.bowler ? sc.bowler.name : 'Bowler'}</div>
-              <div class="pitch-stat-val num-bold">${sc.bowler ? `${sc.bowler.wickets} / ${sc.bowler.runs}` : '0 / 0'}</div>
+              <div class="pitch-stat-lbl">
+                <span>CURRENT BOWLER (${bowlingTeamName})</span>
+                <span style="font-size:11px; color:var(--text-muted);">Eco: ${bowler.economy || '0.00'}</span>
+              </div>
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px; gap:8px;">
+                <select class="form-input" style="font-size:12.5px; font-weight:700; height:32px; padding:2px 8px; flex:1;" onchange="changeCurrentBowler(${match.id}, this.value)">
+                  ${bowlerOpts || `<option value="${bowler.name}">${bowler.name}</option>`}
+                </select>
+                <div class="num-bold" style="font-size:13.5px; color:var(--navy-900); white-space:nowrap;">
+                  ${bowler.overs || 0}-${bowler.maidens || 0}-${bowler.runs || 0}-${bowler.wickets || 0}
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
+        <!-- Interactive Scoring Keypad -->
         <div class="keypad-shell">
+          <div style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px;">
+            1. Runs off Bat (Click to Record)
+          </div>
           <div class="keypad-grid-runs">
-            <button class="keypad-btn-run active" id="btn0" onclick="chooseRun(0)">0</button>
-            <button class="keypad-btn-run" id="btn1" onclick="chooseRun(1)">1</button>
-            <button class="keypad-btn-run" id="btn2" onclick="chooseRun(2)">2</button>
-            <button class="keypad-btn-run" id="btn3" onclick="chooseRun(3)">3</button>
-            <button class="keypad-btn-run" id="btn4" onclick="chooseRun(4)">4</button>
-            <button class="keypad-btn-run" id="btn6" onclick="chooseRun(6)">6</button>
+            <button class="keypad-btn-run" id="kbRun0" onclick="recordDelivery(${match.id}, 0)">
+              <span>0</span><small style="font-size:9px; font-weight:600; color:var(--text-muted);">DOT</small>
+            </button>
+            <button class="keypad-btn-run" id="kbRun1" onclick="recordDelivery(${match.id}, 1)">
+              <span>1</span><small style="font-size:9px; font-weight:600; color:var(--text-muted);">RUN</small>
+            </button>
+            <button class="keypad-btn-run" id="kbRun2" onclick="recordDelivery(${match.id}, 2)">
+              <span>2</span><small style="font-size:9px; font-weight:600; color:var(--text-muted);">RUNS</small>
+            </button>
+            <button class="keypad-btn-run" id="kbRun3" onclick="recordDelivery(${match.id}, 3)">
+              <span>3</span><small style="font-size:9px; font-weight:600; color:var(--text-muted);">RUNS</small>
+            </button>
+            <button class="keypad-btn-run" id="kbRun4" onclick="recordDelivery(${match.id}, 4)" style="color:#047857; border-color:#a7f3d0;">
+              <span>4</span><small style="font-size:9px; font-weight:800; color:#059669;">FOUR</small>
+            </button>
+            <button class="keypad-btn-run" id="kbRun6" onclick="recordDelivery(${match.id}, 6)" style="color:#b45309; border-color:#fde68a;">
+              <span>6</span><small style="font-size:9px; font-weight:800; color:#d97706;">SIX</small>
+            </button>
           </div>
 
+          <div style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; margin:12px 0 6px 0;">
+            2. Extras Delivery
+          </div>
           <div class="keypad-extras-row">
-            <button class="btn-opt-extra" id="extWIDE" onclick="chooseExtra('WIDE')">Wide</button>
-            <button class="btn-opt-extra" id="extNO_BALL" onclick="chooseExtra('NO BALL')">No Ball</button>
-            <button class="btn-opt-extra" id="extBYE" onclick="chooseExtra('BYE')">Bye</button>
-            <button class="btn-opt-extra" id="extLEG_BYE" onclick="chooseExtra('LEG BYE')">Leg Bye</button>
+            <button class="btn-opt-extra" id="extBtnWIDE" onclick="recordDelivery(${match.id}, 0, 'WIDE')">
+              +1 Wide
+            </button>
+            <button class="btn-opt-extra" id="extBtnNO_BALL" onclick="recordDelivery(${match.id}, 0, 'NO BALL')">
+              +1 No Ball
+            </button>
+            <button class="btn-opt-extra" id="extBtnBYE" onclick="recordDelivery(${match.id}, 1, 'BYE')">
+              1 Bye
+            </button>
+            <button class="btn-opt-extra" id="extBtnLEG_BYE" onclick="recordDelivery(${match.id}, 1, 'LEG BYE')">
+              1 Leg-Bye
+            </button>
           </div>
 
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
-            <button class="btn-wicket-action" style="margin-bottom:0;" onclick="openWicketDialog()">
+          <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; margin-top:14px;">
+            <button class="btn-wicket-action" onclick="openWicketDialog()">
               <i class="fa fa-times-circle"></i> WICKET
             </button>
-            <button class="btn-undo-action" onclick="undoBall('${liveMatch.id}')">
+            <button class="btn-undo-action" onclick="undoDelivery(${match.id})">
               <i class="fa fa-undo"></i> UNDO
             </button>
+            <button class="btn-edit-ball-action" onclick="openEditLastBallDialog()">
+              <i class="fa fa-pencil"></i> EDIT BALL
+            </button>
           </div>
-
-          <button class="btn-confirm-ball" onclick="confirmBall('${liveMatch.id}')">
-            <span id="btnConfirmText">[ CONFIRM (0 RUNS) ]</span>
-          </button>
         </div>
+
       </div>
     `;
-
-    chooseRun(0);
   }
 
-  function chooseRun(n) {
-    runPick = n;
-    document.querySelectorAll('.keypad-btn-run').forEach(b => b.classList.remove('active'));
-    const btn = document.getElementById('btn' + n);
-    if (btn) btn.classList.add('active');
-    updateConfirmText();
-  }
+  // ── 1-CLICK BALL RECORDING WITH DEBOUNCE & IDEMPOTENCY ──
+  async function recordDelivery(matchId, runs, extra) {
+    if (scoringIsSubmitting) return;
+    scoringIsSubmitting = true;
+    disableScoringKeypad(true);
 
-  function chooseExtra(extra) {
-    if (extraPick === extra) {
-      extraPick = null;
-      const el = document.getElementById('ext' + extra.replace(' ', '_'));
-      if (el) el.classList.remove('active');
-    } else {
-      document.querySelectorAll('.btn-opt-extra').forEach(b => b.classList.remove('active'));
-      extraPick = extra;
-      const el = document.getElementById('ext' + extra.replace(' ', '_'));
-      if (el) el.classList.add('active');
-    }
-    updateConfirmText();
-  }
-
-  function updateConfirmText() {
-    const el = document.getElementById('btnConfirmText');
-    if (!el) return;
-    let txt = `[ CONFIRM (${runPick} RUN${runPick === 1 ? '' : 'S'}`;
-    if (extraPick) txt += ` + ${extraPick}`;
-    txt += ') ]';
-    el.textContent = txt;
-  }
-
-  async function confirmBall(mId) {
     try {
-      const res = await fetch(`/api/admin/matches/${mId}/ball`, {
+      const res = await fetch(`/api/admin/matches/${matchId}/ball`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ runs: runPick, extra: extraPick })
+        body: JSON.stringify({ runs: runs, extra: extra || null })
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
-        showToast(json.error || 'Failed to record ball');
+        showToast(json.error || 'Failed to record ball delivery');
         return;
       }
-      runPick = 0;
-      extraPick = null;
-      showToast('Delivery recorded.');
+      showToast(extra ? `Recorded: ${extra}` : (runs === 4 ? 'FOUR!' : (runs === 6 ? 'SIX!' : `${runs} run(s)`)));
       await fetchDb();
     } catch (e) {
-      showToast('Unable to record ball delivery.');
+      showToast('Connection error recording ball delivery.');
+    } finally {
+      scoringIsSubmitting = false;
+      disableScoringKeypad(false);
     }
   }
 
-  async function undoBall(mId) {
+  function disableScoringKeypad(disabled) {
+    document.querySelectorAll('.keypad-btn-run, .btn-opt-extra, .btn-wicket-action, .btn-undo-action, .btn-edit-ball-action').forEach(b => {
+      b.disabled = disabled;
+    });
+  }
+
+  // ── UNDO DELIVERY ──
+  async function undoDelivery(matchId) {
+    if (scoringIsSubmitting) return;
+    scoringIsSubmitting = true;
     try {
-      const res = await fetch(`/api/admin/matches/${mId}/undo`, {
+      const res = await fetch(`/api/admin/matches/${matchId}/undo`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
-        showToast(json.error || 'Failed to undo delivery');
+        showToast(json.error || 'Failed to undo last delivery');
         return;
       }
-      showToast('Delivery reverted & score recalculated.');
+      showToast('Last delivery reverted & statistics updated.');
       await fetchDb();
     } catch (e) {
-      showToast('Unable to undo delivery.');
+      showToast('Connection error performing undo.');
+    } finally {
+      scoringIsSubmitting = false;
     }
   }
 
-  async function switchInnings(mId) {
-    if (!confirm('Switch to 2nd Innings? Target score will be calculated automatically.')) return;
+  // ── MANUAL STRIKE SWAP ──
+  async function swapStrikeManual(matchId) {
     try {
-      const res = await fetch(`/api/admin/matches/${mId}/innings/switch`, {
+      const res = await fetch(`/api/admin/matches/${matchId}/swap-strike`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
-        showToast(json.error || 'Failed to switch innings');
+        showToast(json.error || 'Failed to swap strike');
         return;
       }
-      showToast('Switched to 2nd Innings!');
+      showToast('Strike swapped.');
       await fetchDb();
     } catch (e) {
-      showToast('Unable to switch innings.');
+      showToast('Connection error swapping strike.');
     }
   }
 
-  async function pauseMatch(mId) {
+  // ── CHANGE CURRENT BOWLER ──
+  async function changeCurrentBowler(matchId, bowlerName) {
+    if (!bowlerName) return;
     try {
-      const res = await fetch(`/api/admin/matches/${mId}/pause`, {
+      const res = await fetch(`/api/admin/matches/${matchId}/set-bowler`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ player_name: bowlerName })
       });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to assign bowler');
+        return;
+      }
+      showToast(`Current bowler set to ${bowlerName}.`);
+      await fetchDb();
+    } catch (e) {
+      showToast('Connection error setting bowler.');
+    }
+  }
+
+  // ── PAUSE / RESUME ──
+  async function pauseScoringMatch(matchId) {
+    try {
+      const res = await fetch(`/api/admin/matches/${matchId}/pause`, { method: 'POST' });
       const json = await res.json();
       if (!res.ok || !json.success) {
         showToast(json.error || 'Failed to pause match');
@@ -2700,33 +4170,100 @@
     }
   }
 
+  async function resumeScoringMatch(matchId) {
+    try {
+      const res = await fetch(`/api/admin/matches/${matchId}/resume`, { method: 'POST' });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to resume match');
+        return;
+      }
+      showToast('Match resumed.');
+      await fetchDb();
+    } catch (e) {
+      showToast('Unable to resume match.');
+    }
+  }
+
+  // ── SWITCH INNINGS ──
+  async function switchInnings(matchId) {
+    if (!confirm('Switch to 2nd Innings? Target score will be computed automatically.')) return;
+    try {
+      const res = await fetch(`/api/admin/matches/${matchId}/innings/switch`, { method: 'POST' });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to switch innings');
+        return;
+      }
+      showToast('Switched to 2nd Innings! Chasing target set.');
+      await fetchDb();
+    } catch (e) {
+      showToast('Unable to switch innings.');
+    }
+  }
+
+  // ── WICKET DIALOG & SUBMISSION ──
   function openWicketDialog() {
-    const liveMatch = DB.matches.find(m => m.status === 'LIVE');
-    if (!liveMatch) return;
+    const match = DB.matches.find(m => m.id === activeScoringMatchId);
+    if (!match) return;
 
-    const sc = liveMatch.liveScorecard;
-    document.getElementById('wBatter').value = sc.striker ? sc.striker.name : 'Striker';
+    const sc = match.liveScorecard || {};
+    const strikerName = sc.striker ? sc.striker.name : 'Striker';
+    const nonStrikerName = sc.nonStriker ? sc.nonStriker.name : 'Non-Striker';
 
-    const squad = DB.players.filter(p => p.team === liveMatch.teamA);
-    const newOpts = squad
-      .filter(p => p.name !== (sc.striker && sc.striker.name) && p.name !== (sc.nonStriker && sc.nonStriker.name))
-      .map(p => `<option value="${p.name}">${p.name} (#${p.jersey})</option>`)
-      .join('');
-    document.getElementById('wNewBatter').innerHTML = newOpts || '<option value="Next Batter">Next Batter</option>';
+    // Populate dismissed batter
+    const bSel = document.getElementById('wBatterSelect');
+    bSel.innerHTML = `
+      <option value="${strikerName}">${strikerName} (Striker ★)</option>
+      <option value="${nonStrikerName}">${nonStrikerName} (Non-Striker)</option>
+    `;
 
+    // Populate fielding team players
+    const battingTeam = match.current_innings === 2 ? (match.teamB || match.team_b) : (match.teamA || match.team_a);
+    const bowlingTeam = match.current_innings === 2 ? (match.teamA || match.team_a) : (match.teamB || match.team_b);
+
+    const fPlayers = DB.players.filter(p => p.team === bowlingTeam);
+    const fSel = document.getElementById('wFielderSelect');
+    fSel.innerHTML = fPlayers.map(p => `<option value="${p.name}">${p.name}</option>`).join('') || '<option value="">Fielding Team</option>';
+
+    // Populate available new batters
+    const bPlayers = DB.players.filter(p => p.team === battingTeam);
+    const nSel = document.getElementById('wNewBatterSelect');
+    const availableBatters = bPlayers.filter(p => p.name !== strikerName && p.name !== nonStrikerName);
+    nSel.innerHTML = availableBatters.map(p => `<option value="${p.name}">${p.name} (#${p.jersey || ''})</option>`).join('') +
+      '<option value="Next Batter">Next Batter (Default)</option>';
+
+    onWicketTypeChange();
     openModal('modalWicket');
   }
 
-  async function submitWicket() {
-    const liveMatch = DB.matches.find(m => m.status === 'LIVE');
-    if (!liveMatch) return;
+  function onWicketTypeChange() {
+    const wt = document.getElementById('wTypeSelect').value;
+    const fGroup = document.getElementById('wFielderGroup');
+    if (wt === 'CAUGHT' || wt === 'RUN OUT' || wt === 'STUMPED') {
+      fGroup.style.display = 'block';
+    } else {
+      fGroup.style.display = 'none';
+    }
+  }
 
-    const newBatter = document.getElementById('wNewBatter').value;
+  async function submitWicket() {
+    const matchId = activeScoringMatchId;
+    if (!matchId) return;
+
+    const out_batter = document.getElementById('wBatterSelect').value;
+    const wicket_type = document.getElementById('wTypeSelect').value;
+    const fielder_name = document.getElementById('wFielderSelect').value;
+    const new_batter = document.getElementById('wNewBatterSelect').value;
+
+    const btn = document.getElementById('btnSubmitWicket');
+    if (btn) btn.disabled = true;
+
     try {
-      const res = await fetch(`/api/matches/${liveMatch.id}/wicket`, {
+      const res = await fetch(`/api/admin/matches/${matchId}/wicket`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ newBatter })
+        body: JSON.stringify({ out_batter, wicket_type, fielder_name, new_batter })
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
@@ -2734,39 +4271,80 @@
         return;
       }
       closeModal('modalWicket');
-      showToast('Wicket recorded.');
+      showToast('Wicket recorded & fall-of-wicket added.');
       await fetchDb();
     } catch (e) {
-      showToast('Unable to record wicket.');
+      showToast('Connection error recording wicket.');
+    } finally {
+      if (btn) btn.disabled = false;
     }
   }
 
+  // ── EDIT LAST BALL MODAL ──
+  function openEditLastBallDialog() {
+    if (!activeScoringMatchId) return;
+    openModal('modalEditLastBall');
+  }
+
+  async function submitEditLastBall() {
+    const matchId = activeScoringMatchId;
+    if (!matchId) return;
+
+    const runs = parseInt(document.getElementById('elbRuns').value, 10);
+    const extra_type = document.getElementById('elbExtra').value;
+    const isWicket = document.getElementById('elbWicket').value === '1';
+    const wicket_type = isWicket ? document.getElementById('elbWType').value : null;
+    const commentary = document.getElementById('elbCommentary').value.trim();
+
+    try {
+      const res = await fetch(`/api/admin/matches/${matchId}/edit-last-ball`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ runs, extra_type, wicket: isWicket ? 1 : 0, wicket_type, commentary })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to edit last delivery');
+        return;
+      }
+      closeModal('modalEditLastBall');
+      showToast('Last delivery updated & statistics re-projected.');
+      await fetchDb();
+    } catch (e) {
+      showToast('Connection error saving delivery correction.');
+    }
+  }
+
+  // ── COMPLETE MATCH ──
   function openEndMatchDialog() {
-    const liveMatch = DB.matches.find(m => m.status === 'LIVE');
-    if (!liveMatch) {
+    const match = DB.matches.find(m => m.id === activeScoringMatchId) || DB.matches.find(m => m.status === 'LIVE');
+    if (!match) {
       showToast('No active match to complete.');
       return;
     }
+    const tA = match.teamA || match.team_a;
+    const tB = match.teamB || match.team_b;
     document.getElementById('endWinner').innerHTML = `
-      <option value="${liveMatch.teamA}">${liveMatch.teamA}</option>
-      <option value="${liveMatch.teamB}">${liveMatch.teamB}</option>
+      <option value="${tA}">${tA}</option>
+      <option value="${tB}">${tB}</option>
+      <option value="Match Tied">Match Tied</option>
+      <option value="No Result">No Result</option>
     `;
     openModal('modalEndMatch');
   }
 
   async function submitCompleteMatch() {
-    const liveMatch = DB.matches.find(m => m.status === 'LIVE');
-    if (!liveMatch) return;
+    const matchId = activeScoringMatchId || (DB.matches.find(m => m.status === 'LIVE') || {}).id;
+    if (!matchId) return;
 
     const winner = document.getElementById('endWinner').value;
     const margin = document.getElementById('endMargin').value.trim();
-    const scoreB = document.getElementById('endScoreB').value.trim();
 
     try {
-      const res = await fetch(`/api/matches/${liveMatch.id}/complete`, {
+      const res = await fetch(`/api/admin/matches/${matchId}/complete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ winner, margin, scoreB })
+        body: JSON.stringify({ winner, result_margin: margin, margin })
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
@@ -2774,12 +4352,254 @@
         return;
       }
       closeModal('modalEndMatch');
-      showToast('Match completed! Points table updated.');
+      showToast('Match completed! Tournament standings recalculated.');
+      activeScoringMatchId = null;
       await fetchDb(() => {
         showView('standings');
       });
     } catch (e) {
-      showToast('Unable to finalize match.');
+      showToast('Unable to complete match.');
+    }
+  }
+
+  // ── NETWORK STATUS EVENT LISTENERS ──
+  window.addEventListener('offline', () => {
+    const el = document.getElementById('scoringOfflineBanner');
+    if (el) el.style.display = 'flex';
+  });
+  window.addEventListener('online', () => {
+    const el = document.getElementById('scoringOfflineBanner');
+    if (el) el.style.display = 'none';
+    fetchDb();
+  });
+
+  // --------------------------------------------------------------------------
+  // LEAGUES MANAGEMENT
+  // --------------------------------------------------------------------------
+  function renderLeagues() {
+    const tbody = document.getElementById('leaguesBody');
+    if (!tbody) return;
+    if (!DB.leagues || DB.leagues.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6">
+            <div class="empty-state">
+              <div class="empty-state-title">No leagues found.</div>
+              <div class="empty-state-desc">Create your first tournament division.</div>
+              <button class="btn-primary" onclick="openCreateLeague()">+ Create League</button>
+            </div>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = DB.leagues.map(l => {
+      const isAct = (l.status === 'active');
+      const badgeCls = isAct ? 'active' : 'disabled';
+      return `
+        <tr>
+          <td class="num-bold" style="color:var(--text-muted);">${l.id}</td>
+          <td><strong>${l.name}</strong></td>
+          <td>${l.short_name || '—'}</td>
+          <td style="color:var(--text-muted); font-size:12px;">${l.description || '—'}</td>
+          <td>
+            <span class="status-badge ${badgeCls}">${l.status}</span>
+          </td>
+          <td style="text-align:right;">
+            <div style="display:inline-flex; gap:6px;">
+              <button class="btn-secondary btn-sm" onclick="openEditLeague(${l.id})">Edit</button>
+              <button class="btn-secondary btn-sm" onclick="toggleLeagueStatus(${l.id}, '${l.status}')">
+                ${isAct ? 'Disable' : 'Enable'}
+              </button>
+              <button class="btn-danger btn-sm" onclick="openDeleteLeague(${l.id}, '${l.name}')">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function openCreateLeague() {
+    document.getElementById('leagueModalTitle').textContent = 'Create League';
+    document.getElementById('leagueEditId').value = '';
+    document.getElementById('lName').value = '';
+    document.getElementById('lShortName').value = '';
+    document.getElementById('lDesc').value = '';
+    document.getElementById('lStatus').value = 'active';
+    openModal('modalLeague');
+  }
+
+  function openEditLeague(id) {
+    const l = DB.leagues.find(x => x.id === id);
+    if (!l) return;
+    document.getElementById('leagueModalTitle').textContent = 'Edit League';
+    document.getElementById('leagueEditId').value = l.id;
+    document.getElementById('lName').value = l.name;
+    document.getElementById('lShortName').value = l.short_name || '';
+    document.getElementById('lDesc').value = l.description || '';
+    document.getElementById('lStatus').value = l.status || 'active';
+    openModal('modalLeague');
+  }
+
+  async function submitSaveLeague() {
+    const editId = document.getElementById('leagueEditId').value;
+    const name = document.getElementById('lName').value.trim();
+    const short_name = document.getElementById('lShortName').value.trim();
+    const description = document.getElementById('lDesc').value.trim();
+    const status = document.getElementById('lStatus').value;
+
+    if (!name) {
+      showToast('Please enter a league name.');
+      return;
+    }
+
+    try {
+      let res;
+      if (editId) {
+        res = await fetch('/api/leagues/' + editId, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, short_name, description, status })
+        });
+      } else {
+        res = await fetch('/api/leagues', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, short_name, description, status })
+        });
+      }
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to save league.');
+        return;
+      }
+      showToast(editId ? 'League updated successfully.' : 'League created successfully.');
+      closeModal('modalLeague');
+      await fetchDb();
+    } catch (e) {
+      showToast('Unable to save league.');
+    }
+  }
+
+  async function toggleLeagueStatus(id, currentStatus) {
+    const nextStatus = (currentStatus === 'active') ? 'disabled' : 'active';
+    try {
+      const res = await fetch('/api/leagues/' + id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: nextStatus })
+      });
+      const json = await res.json();
+      if (json.success) {
+        showToast(`League marked as ${nextStatus}.`);
+        await fetchDb();
+      } else {
+        showToast(json.error || 'Failed to update status.');
+      }
+    } catch (e) {
+      showToast('Unable to toggle league status.');
+    }
+  }
+
+  function openDeleteLeague(id, name) {
+    document.getElementById('delLeagueId').value = id;
+    document.getElementById('delLeaguePrompt').textContent = `Delete ${name}?`;
+    openModal('modalDeleteLeague');
+  }
+
+  async function submitDeleteLeague() {
+    const id = document.getElementById('delLeagueId').value;
+    try {
+      const res = await fetch('/api/leagues/' + id, { method: 'DELETE' });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to delete league.');
+        return;
+      }
+      showToast('League deleted.');
+      closeModal('modalDeleteLeague');
+      await fetchDb();
+    } catch (e) {
+      showToast('Unable to delete league.');
+    }
+  }
+
+  function populateLeagueSelects() {
+    if (!DB.leagues) return;
+    // 1. Match Creation Modal
+    const mLeague = document.getElementById('mLeague');
+    if (mLeague) {
+      const curVal = mLeague.value;
+      mLeague.innerHTML = DB.leagues.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
+      if (curVal) mLeague.value = curVal;
+      onScheduleLeagueChange();
+    }
+
+    // 2. Match Filter
+    const mFilter = document.getElementById('matchLeagueFilter');
+    if (mFilter) {
+      const cur = mFilter.value;
+      mFilter.innerHTML = '<option value="ALL">All Leagues</option>' +
+        DB.leagues.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
+      if (cur) mFilter.value = cur;
+    }
+
+    // 3. Standings Division Select
+    const sSelect = document.getElementById('standingsLeagueSelect');
+    if (sSelect) {
+      const cur = sSelect.value || selectedAdminStandingsLeagueId;
+      sSelect.innerHTML = DB.leagues.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
+      if (cur) sSelect.value = cur;
+    }
+  }
+
+  function onScheduleLeagueChange() {
+    const selLeagueId = parseInt(document.getElementById('mLeague')?.value || '1', 10);
+    const leagueTeams = DB.teams.filter(t => !t.league_id || t.league_id === selLeagueId);
+    const options = (leagueTeams.length > 0 ? leagueTeams : DB.teams).map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+    
+    const selA = document.getElementById('mTeamA');
+    const selB = document.getElementById('mTeamB');
+    if (selA) selA.innerHTML = options;
+    if (selB) {
+      selB.innerHTML = options;
+      if (selB.options.length > 1) selB.selectedIndex = 1;
+    }
+  }
+
+  async function loadAdminStandings() {
+    const sel = document.getElementById('standingsLeagueSelect');
+    const leagueId = sel ? parseInt(sel.value, 10) : (selectedAdminStandingsLeagueId || 1);
+    selectedAdminStandingsLeagueId = leagueId;
+    try {
+      const res = await fetch(`/api/leagues/${leagueId}/points-table`);
+      const json = await res.json();
+      if (json.success && json.standings) {
+        DB.standings = json.standings;
+        renderStandings();
+      }
+    } catch (e) {
+      console.error('Error loading admin standings:', e);
+    }
+  }
+
+  async function recalcAdminStandings() {
+    const sel = document.getElementById('standingsLeagueSelect');
+    const leagueId = sel ? parseInt(sel.value, 10) : (selectedAdminStandingsLeagueId || 1);
+    try {
+      const res = await fetch('/api/standings/recalculate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ league_id: leagueId })
+      });
+      const json = await res.json();
+      if (json.success) {
+        showToast('Standings & NRR recalculated.');
+        await loadAdminStandings();
+      }
+    } catch (e) {
+      showToast('Recalculation error.');
     }
   }
 
@@ -2788,12 +4608,13 @@
   // --------------------------------------------------------------------------
   function renderStandings() {
     const tbody = document.getElementById('standingsBody');
-    if (DB.standings.length === 0) {
+    if (!tbody) return;
+    if (!DB.standings || DB.standings.length === 0) {
       tbody.innerHTML = `
         <tr>
           <td colspan="8">
             <div class="empty-state">
-              <div class="empty-state-title">No standings available yet.</div>
+              <div class="empty-state-title">No standings available yet for this league.</div>
               <div class="empty-state-desc">Standings will automatically calculate as matches finish.</div>
             </div>
           </td>
@@ -2809,9 +4630,9 @@
         <td style="text-align:center;" class="num-bold">${s.p}</td>
         <td style="text-align:center;" class="num-bold">${s.w}</td>
         <td style="text-align:center;" class="num-bold">${s.l}</td>
-        <td style="text-align:center;" class="num-bold">${s.nr}</td>
+        <td style="text-align:center;" class="num-bold">${(s.t || 0) + (s.nr || 0)}</td>
         <td style="text-align:center; color:var(--hpl-blue);" class="num-bold">${s.pts}</td>
-        <td style="text-align:right;" class="num-bold">${s.nrr || '+0.00'}</td>
+        <td style="text-align:right;" class="num-bold ${String(s.nrr).startsWith('-') ? 'text-danger' : ''}">${s.nrr || '+0.00'}</td>
       </tr>
     `).join('');
   }
@@ -3147,6 +4968,7 @@
   // --------------------------------------------------------------------------
   function renderCurrentViews() {
     renderDashboard();
+    renderLeagues();
     renderTeams();
     renderPlayers();
     renderMatches();

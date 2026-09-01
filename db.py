@@ -455,7 +455,7 @@ def delete_player(player_id):
 # --------------------------------------------------------------------------
 # MATCH SCHEDULING & AUTHORITATIVE SCORING
 # --------------------------------------------------------------------------
-def schedule_match(team_a, team_b, date, time_str, venue, overs=10):
+def schedule_match(team_a, team_b, date, time_str, venue, overs=10, league_id=1):
     if not team_a or not team_b:
         return False, "Both Team A and Team B are required"
     if team_a == team_b:
@@ -477,6 +477,7 @@ def schedule_match(team_a, team_b, date, time_str, venue, overs=10):
         "matchNo": match_no,
         "teamA": team_a,
         "teamB": team_b,
+        "league_id": int(league_id) if league_id else 1,
         "date": date or "TBD",
         "time": time_str or "TBD",
         "venue": venue or "College Ground",
@@ -672,60 +673,68 @@ def complete_match(match_id, winner_team, score_b="Yet to Bat", margin=""):
 # --------------------------------------------------------------------------
 # AUTOMATIC POINTS TABLE STANDINGS
 # --------------------------------------------------------------------------
-def recalculate_standings_internal():
-    data = load_local_db()
-    teams = data.get("teams", [])
-    matches = data.get("matches", [])
+def recalculate_standings_internal(league_id=None):
+    try:
+        import cricket_db
+        standings_list = cricket_db.recalculate_standings(league_id)
+        set_collection("standings", standings_list)
+        return standings_list
+    except Exception as e:
+        print("Error recalculating via cricket_db:", e)
+        data = load_local_db()
+        teams = data.get("teams", [])
+        matches = data.get("matches", [])
 
-    standings_map = {}
-    for t in teams:
-        standings_map[t["name"]] = {
-            "pos": 1,
-            "team": t["name"],
-            "color": t.get("color", "#1a73e8"),
-            "p": 0, "w": 0, "l": 0, "nr": 0, "pts": 0,
-            "nrr": "+0.00"
-        }
+        standings_map = {}
+        for t in teams:
+            standings_map[t["name"]] = {
+                "pos": 1,
+                "team": t["name"],
+                "color": t.get("color", "#1a73e8"),
+                "p": 0, "w": 0, "l": 0, "nr": 0, "pts": 0,
+                "nrr": "+0.00"
+            }
 
-    for m in matches:
-        if m.get("status") == "COMPLETED":
-            tA = m.get("teamA")
-            tB = m.get("teamB")
-            winner = m.get("winner", "")
+        for m in matches:
+            if m.get("status") == "COMPLETED":
+                if league_id is not None and m.get("league_id") != int(league_id):
+                    continue
+                tA = m.get("teamA")
+                tB = m.get("teamB")
+                winner = m.get("winner", "")
 
-            if tA in standings_map:
-                standings_map[tA]["p"] += 1
-            if tB in standings_map:
-                standings_map[tB]["p"] += 1
-
-            if winner and tA and tA in winner:
                 if tA in standings_map:
-                    standings_map[tA]["w"] += 1
-                    standings_map[tA]["pts"] += 2
+                    standings_map[tA]["p"] += 1
                 if tB in standings_map:
-                    standings_map[tB]["l"] += 1
-            elif winner and tB and tB in winner:
-                if tB in standings_map:
-                    standings_map[tB]["w"] += 1
-                    standings_map[tB]["pts"] += 2
-                if tA in standings_map:
-                    standings_map[tA]["l"] += 1
-            else:
-                if tA in standings_map:
-                    standings_map[tA]["nr"] += 1
-                    standings_map[tA]["pts"] += 1
-                if tB in standings_map:
-                    standings_map[tB]["nr"] += 1
-                    standings_map[tB]["pts"] += 1
+                    standings_map[tB]["p"] += 1
 
-    standings_list = list(standings_map.values())
-    # Sort by Points desc, then name
-    standings_list.sort(key=lambda x: (-x["pts"], x["team"]))
-    for idx, s in enumerate(standings_list):
-        s["pos"] = idx + 1
+                if winner and tA and tA in winner:
+                    if tA in standings_map:
+                        standings_map[tA]["w"] += 1
+                        standings_map[tA]["pts"] += 2
+                    if tB in standings_map:
+                        standings_map[tB]["l"] += 1
+                elif winner and tB and tB in winner:
+                    if tB in standings_map:
+                        standings_map[tB]["w"] += 1
+                        standings_map[tB]["pts"] += 2
+                    if tA in standings_map:
+                        standings_map[tA]["l"] += 1
+                else:
+                    if tA in standings_map:
+                        standings_map[tA]["nr"] += 1
+                        standings_map[tA]["pts"] += 1
+                    if tB in standings_map:
+                        standings_map[tB]["nr"] += 1
+                        standings_map[tB]["pts"] += 1
 
-    set_collection("standings", standings_list)
-    return standings_list
+        standings_list = list(standings_map.values())
+        standings_list.sort(key=lambda x: (-x["pts"], x["team"]))
+        for idx, s in enumerate(standings_list):
+            s["pos"] = idx + 1
+
+        set_collection("standings", standings_list)
+        return standings_list
 
 def get_live_match():
     matches, _ = get_collection("matches")
@@ -742,8 +751,8 @@ def bootstrap_first_admin_if_empty():
     data = load_local_db()
     admins = data.get("admins", [])
     if not admins:
-        default_email = os.getenv("ADMIN_EMAIL", "admin@hpl.cricket").strip().lower()
-        default_pass = os.getenv("ADMIN_PASSWORD", "admin123")
+        default_email = os.getenv("ADMIN_EMAIL", "gowthamkrishna18v@gmail.com").strip().lower()
+        default_pass = os.getenv("ADMIN_PASSWORD", "0724")
         admin_obj = {
             "id": "A001",
             "name": "Tournament Admin",

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="House Premiere League (HPL) Team Profile — Squad roster, tournament standings, win-loss statistics, and match history.">
+  <meta property="og:title" content="Team Profile — House Premiere League">
+  <meta property="og:description" content="View squad roster, tournament record, and match history for tournament teams.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="/images/hpl-logo.png">
+  <title>Team Profile — House Premiere League</title>
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --card-subtle: #f0f9ff;
+      --border: #e2e8f0;
+      --border-subtle: #f1f5f9;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+      
+      --blue: #0284c7;
+      --blue-dark: #0369a1;
+      --blue-light: #e0f2fe;
+      --blue-border: #bae6fd;
+      
+      --red: #e11d48;
+      --red-dark: #be123c;
+      --red-light: #ffe4e6;
+      --red-border: #fecdd3;
+      
+      --green: #059669;
+      --green-light: #ecfdf5;
+
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
+    .tp-navbar {
+      background: #ffffff;
+      border-bottom: 2px solid var(--blue);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      padding: 0 20px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .tp-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #0f172a;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+    }
+    .tp-nav-tag {
+      font-size: 10px;
+      font-weight: 800;
+      background: var(--blue-light);
+      color: var(--blue);
+      border: 1px solid var(--blue-border);
+      padding: 2px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .tp-back-btn {
+      color: var(--blue);
+      text-decoration: none;
+      font-size: 12.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--blue-light);
+      border: 1px solid var(--blue-border);
+      transition: all 0.15s ease;
+    }
+    .tp-back-btn:hover { background: #bae6fd; color: #0369a1; }
+
+    .tp-container {
+      max-width: 1000px;
+      width: 100%;
+      margin: 28px auto;
+      padding: 0 16px;
+      flex: 1;
+    }
+    .tp-hero {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+    }
+    .tp-team-info { display: flex; align-items: center; gap: 18px; margin-bottom: 20px; }
+    .tp-team-badge {
+      width: 58px;
+      height: 58px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      color: #fff;
+    }
+    .tp-team-name { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; color: var(--text); }
+    .tp-league-tag {
+      display: inline-block;
+      font-size: 11px;
+      color: var(--blue);
+      background: var(--blue-light);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+    .tp-stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .tp-stat-box {
+      background: var(--card-subtle);
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .tp-stat-label { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .tp-stat-val { font-size: 20px; font-weight: 800; font-family: 'Outfit', sans-serif; color: var(--text); }
+    
+    .tp-section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin: 28px 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+    }
+    .tp-matches-grid { display: flex; flex-direction: column; gap: 10px; }
+    .tp-match-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: var(--shadow);
+      transition: all 0.15s ease;
+    }
+    .tp-match-card:hover {
+      border-color: var(--blue);
+      background: #f8fbff;
+      transform: translateY(-1px);
+    }
+    .tp-m-teams { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); }
+    .tp-m-scores { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+    .tp-m-status {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tp-m-status.live { background: var(--green-light); color: var(--green); }
+    .tp-m-status.completed { background: #f1f5f9; color: var(--text-muted); }
+    .tp-m-status.upcoming { background: var(--blue-light); color: var(--blue); }
+    .tp-empty { text-align: center; padding: 36px; color: var(--text-dim); font-size: 14px; }
+
+    /* Squad roster */
+    .tp-squad-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .tp-player-pill {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: var(--shadow);
+      transition: all 0.15s ease;
+    }
+    .tp-player-pill:hover {
+      border-color: var(--blue);
+      background: #f8fbff;
+    }
+    .tp-player-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--blue-light);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+    }
+    .tp-player-name { font-size: 13.5px; font-weight: 700; color: var(--text); }
+    .tp-player-role { font-size: 11px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <nav class="tp-navbar">
+    <a href="/" class="tp-brand">
+      <img src="/images/hpl-logo.png" style="width:30px;height:30px;object-fit:contain;" alt="CSD & CSIT Logo" onerror="this.style.display='none'">
+      <span>CSD & CSIT</span>
+    </a>
+    <a href="/" class="tp-back-btn"><i class="fa-solid fa-arrow-left"></i> Home</a>
+  </nav>
+
+  <div class="tp-container">
+    <div id="teamHero" class="tp-hero">
+      <div style="text-align:center;width:100%;padding:20px;color:var(--text-dim);">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:24px;margin-bottom:8px;"></i>
+        <p>Loading team profile...</p>
+      </div>
+    </div>
+
+    <h3 class="tp-section-title"><i class="fa-solid fa-users" style="color:var(--blue);"></i> Squad Roster</h3>
+    <div id="teamSquad" class="tp-squad-grid">
+      <div class="tp-empty"><i class="fa-solid fa-spinner fa-spin"></i> Loading squad...</div>
+    </div>
+
+    <h3 class="tp-section-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--blue);"></i> Match Schedule & Results</h3>
+    <div id="teamMatches" class="tp-matches-grid">
+      <div class="tp-empty"><i class="fa-solid fa-spinner fa-spin"></i> Loading matches...</div>
+    </div>
+  </div>
+
+  <script>
+    const teamId = (function() {
+      const parts = window.location.pathname.split('/');
+      for (let i = 0; i < parts.length; i++) {
+        if (parts[i] === 'team' && parts[i+1]) {
+          return decodeURIComponent(parts[i+1]);
+        }
+      }
+      return null;
+    })();
+
+    async function loadTeam() {
+      if (!teamId) return;
+      try {
+        const res = await fetch(`/api/teams/${encodeURIComponent(teamId)}`);
+        const data = await res.json();
+        if (!data.success || !data.team_details) throw new Error('Team not found');
+
+        const d = data.team_details;
+        const t = d.team || {};
+        const s = d.standing || {};
+        const matches = d.matches || [];
+        const players = d.players || [];
+
+        const color = t.color || '#1a73e8';
+        const initial = (t.name || 'T').charAt(0);
+
+        document.title = `${t.name || teamId} — Team Profile`;
+
+        document.getElementById('teamHero').innerHTML = `
+          <div style="width:100%;">
+            <div class="tp-team-info">
+              <div class="tp-team-badge" style="background:${color};">${initial}</div>
+              <div>
+                <div class="tp-team-name">${t.name || teamId}</div>
+                <div class="tp-league-tag"><i class="fa-solid fa-trophy"></i> Tournament Team</div>
+              </div>
+            </div>
+            <div class="tp-stats-row">
+              <div class="tp-stat-box"><div class="tp-stat-label">Position</div><div class="tp-stat-val">#${s.pos || '—'}</div></div>
+              <div class="tp-stat-box"><div class="tp-stat-label">Played</div><div class="tp-stat-val">${s.played !== undefined ? s.played : (s.p || 0)}</div></div>
+              <div class="tp-stat-box"><div class="tp-stat-label">Wins</div><div class="tp-stat-val" style="color:var(--green);">${s.wins !== undefined ? s.wins : (s.w || 0)}</div></div>
+              <div class="tp-stat-box"><div class="tp-stat-label">Losses</div><div class="tp-stat-val" style="color:var(--red);">${s.losses !== undefined ? s.losses : (s.l || 0)}</div></div>
+              <div class="tp-stat-box"><div class="tp-stat-label">Points</div><div class="tp-stat-val" style="color:var(--blue);">${s.points !== undefined ? s.points : (s.pts || 0)}</div></div>
+              <div class="tp-stat-box"><div class="tp-stat-label">NRR</div><div class="tp-stat-val">${s.nrr || '0.00'}</div></div>
+            </div>
+          </div>
+        `;
+
+        // Render Squad
+        const sqEl = document.getElementById('teamSquad');
+        if (players.length === 0) {
+          sqEl.innerHTML = '<div class="tp-empty" style="grid-column: 1/-1;">No players registered in this squad.</div>';
+        } else {
+          sqEl.innerHTML = players.map(p => `
+            <a href="/player/${p.id}" class="tp-player-pill">
+              <div class="tp-player-avatar">${(p.name || 'P').charAt(0)}</div>
+              <div>
+                <div class="tp-player-name">${p.name}</div>
+                <div class="tp-player-role">${p.role || 'Player'}</div>
+              </div>
+            </a>
+          `).join('');
+        }
+
+        // Render Matches
+        const mEl = document.getElementById('teamMatches');
+        if (matches.length === 0) {
+          mEl.innerHTML = '<div class="tp-empty">No matches scheduled for this team.</div>';
+        } else {
+          mEl.innerHTML = matches.map(m => {
+            const statusClass = (m.status || 'UPCOMING').toLowerCase();
+            const scoreText = (m.scoreA || m.scoreB) ? `${m.teamA} (${m.scoreA || '—'}) vs ${m.teamB} (${m.scoreB || '—'})` : `${m.teamA} vs ${m.teamB}`;
+            const resultText = m.winner ? `· ${m.winner} won ${m.result_margin || ''}` : '';
+            return `
+              <a href="/match/${m.id}" class="tp-match-card">
+                <div>
+                  <div class="tp-m-teams">${m.teamA} vs ${m.teamB}</div>
+                  <div class="tp-m-scores">${scoreText} ${resultText}</div>
+                </div>
+                <div class="tp-m-status ${statusClass}">${m.status || 'UPCOMING'}</div>
+              </a>
+            `;
+          }).join('');
+        }
+      } catch (err) {
+        document.getElementById('teamHero').innerHTML = `<div class="tp-empty"><i class="fa-solid fa-triangle-exclamation"></i> Team profile not found.</div>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadTeam);
+  </script>
+</body>
+</html>
