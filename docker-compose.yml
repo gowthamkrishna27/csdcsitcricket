@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  cricket-app:
+    build: .
+    container_name: hpl-cricket-server
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_ENV=production
+      - PORT=8080
+      - SECRET_KEY=${SECRET_KEY:-replace_with_a_secure_random_string_2026}
+      - SESSION_COOKIE_SECURE=${SESSION_COOKIE_SECURE:-false}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-gowthamkrishna18v@gmail.com}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-0724}
+    volumes:
+      - cricket-data:/app/data
+
+volumes:
+  cricket-data:
+    name: hpl-cricket-data

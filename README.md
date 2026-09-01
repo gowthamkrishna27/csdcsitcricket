@@ -90,14 +90,21 @@ python -m unittest test_integration.py
 
 ## 🌐 Production Deployment
 
-### Production WSGI (Gunicorn / Linux)
+For the complete step-by-step production deployment guide covering Linux Systemd, Nginx SSL reverse proxies, Docker Compose, Cloud PaaS (Render, Railway, Fly.io), and Windows Server, refer to the [Deployment Guide](DEPLOYMENT.md).
+
+### Quick Start: Production WSGI (Gunicorn / Linux)
 ```bash
-gunicorn --workers 4 --threads 2 --bind 0.0.0.0:8080 server:app
+gunicorn --workers 1 --threads 16 --worker-class gthread --bind 0.0.0.0:8080 server:app
 ```
 
-### Production WSGI (Waitress / Windows)
+### Quick Start: Docker Compose
 ```bash
-waitress-serve --listen=0.0.0.0:8080 server:app
+docker compose up -d --build
+```
+
+### Quick Start: Production WSGI (Waitress / Windows)
+```bash
+waitress-serve --listen=0.0.0.0:8080 --threads=16 server:app
 ```
 
 ---

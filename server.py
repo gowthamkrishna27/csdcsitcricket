@@ -41,7 +41,10 @@ app.secret_key = os.getenv("SECRET_KEY", "hpl_cricket_tournament_secure_session_
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=7)
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["SESSION_COOKIE_SECURE"] = False  # Set to True when using HTTPS in production
+app.config["SESSION_COOKIE_SECURE"] = os.getenv("SESSION_COOKIE_SECURE", "false").lower() in ("true", "1", "yes")
+
+# Ensure bootstrap admin exists across any WSGI runner (Gunicorn, Waitress, etc.)
+bootstrap_first_admin_if_empty()
 
 CORS(app, supports_credentials=True)
 
