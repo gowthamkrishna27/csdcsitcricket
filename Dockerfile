@@ -25,15 +25,12 @@ COPY . .
 # Ensure data directory exists with write permissions
 RUN mkdir -p /app/data
 
-# Volume mount point for persistent SQLite database
-VOLUME ["/app/data"]
-
 # Expose standard application port
 EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8080/api/health || exit 1
+    CMD curl -f http://localhost:${PORT:-8080}/api/health || exit 1
 
-# Start production server with Gunicorn (threaded worker model for Server-Sent Events)
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "1", "--threads", "16", "--timeout", "120", "server:app"]
+# Start production server with dynamic port support for Railway / Render ($PORT)
+CMD ["sh", "-c", "exec gunicorn --bind 0.0.0.0:${PORT:-8080} --workers 1 --threads 16 --timeout 120 server:app"]
