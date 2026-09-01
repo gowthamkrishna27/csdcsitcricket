@@ -1,0 +1,390 @@
+/* ==========================================================================
+   HPL CRICKET SCORECARD · DESIGN SYSTEM & WIDGETS
+   ========================================================================== */
+
+:root {
+  --hpl-navy: #0a192f;
+  --hpl-dark-card: #112240;
+  --hpl-blue: #1a73e8;
+  --hpl-blue-light: #e8f0fe;
+  --hpl-cyan: #00d2ff;
+  --hpl-green: #00e676;
+  --hpl-red: #ff3366;
+  --hpl-purple: #7928ca;
+  --hpl-gold: #f59e0b;
+  --hpl-text-light: #ccd6f6;
+  --hpl-text-dim: #8892b0;
+  --hpl-border: #e2ecf5;
+  --hpl-card-bg: #ffffff;
+}
+
+/* Score Header Hero Card */
+.score-header-card {
+  background: #ffffff;
+  border-radius: 8px;
+  border-top: 4px solid var(--hpl-blue);
+  box-shadow: 0 4px 14px rgba(10, 25, 47, 0.08);
+  padding: 18px 22px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.score-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.match-league-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: var(--hpl-blue);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.live-pill {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.live-pill.live {
+  background: #e6f9f0;
+  color: #0d8a4a;
+  border: 1px solid #a3e6cb;
+}
+
+.live-pill.completed {
+  background: #f1f3f4;
+  color: #5f6368;
+}
+
+.live-pill.paused {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.score-teams-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0 16px;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.team-block {
+  flex: 1;
+}
+
+.team-block.team-b {
+  text-align: right;
+}
+
+.team-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 4px;
+}
+
+.team-score {
+  font-size: 26px;
+  font-weight: 900;
+  color: #0f172a;
+  font-feature-settings: "tnum";
+  letter-spacing: -0.5px;
+}
+
+.team-overs {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.vs-divider {
+  padding: 0 16px;
+  font-weight: 800;
+  font-size: 12px;
+  color: #94a3b8;
+  letter-spacing: 1px;
+}
+
+.status-banner {
+  margin-top: 12px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-banner.live {
+  background: #f0f7ff;
+  color: #1d4ed8;
+}
+
+.status-banner.completed {
+  background: #f0fdf4;
+  color: #15803d;
+  font-weight: 700;
+}
+
+.status-banner.chase {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.live-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+  animation: pulse-green 1.8s infinite;
+}
+
+@keyframes pulse-green {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* Cricket Tables (Batting & Bowling) */
+.cricket-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.cricket-stat-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: right;
+}
+
+.cricket-stat-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  font-size: 11.5px;
+  letter-spacing: 0.5px;
+  padding: 10px 14px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.cricket-stat-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  font-feature-settings: "tnum";
+}
+
+.cricket-stat-table tr:hover {
+  background: #f8fafc;
+}
+
+.cricket-stat-table tr.on-strike {
+  background: #f0f7ff;
+}
+
+.player-name-cell {
+  text-align: left !important;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.strike-star {
+  color: var(--hpl-blue);
+  font-weight: 900;
+  margin-left: 4px;
+}
+
+.stat-cell.runs-cell strong {
+  color: #0f172a;
+  font-size: 14px;
+}
+
+.stat-cell.wickets-cell strong {
+  color: #dc2626;
+  font-size: 14px;
+}
+
+.bowling-badge {
+  font-size: 10px;
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 6px;
+  font-weight: 600;
+}
+
+/* Recent Overs View */
+.recent-overs-container {
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin-top: 15px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.recent-overs-header {
+  margin-bottom: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.over-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.over-row:last-child {
+  border-bottom: none;
+}
+
+.over-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 110px;
+}
+
+.over-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.over-runs-tag {
+  font-size: 11px;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.over-balls-track {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Ball Badges */
+.ball-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 800;
+  font-feature-settings: "tnum";
+}
+
+.ball-badge.dot {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.ball-badge.single {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.ball-badge.four {
+  background: #e0f2fe;
+  color: #0284c7;
+  border: 1px solid #7dd3fc;
+}
+
+.ball-badge.six {
+  background: #f3e8ff;
+  color: #9333ea;
+  border: 1px solid #d8b4fe;
+}
+
+.ball-badge.wicket {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+  font-weight: 900;
+}
+
+.ball-badge.extra {
+  background: #fef3c7;
+  color: #b45309;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+/* Full Scorecard Details */
+.scorecard-innings-card {
+  margin-bottom: 24px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.scorecard-innings-header h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  color: #1e293b;
+}
+
+.scorecard-innings-header h4 {
+  margin: 0 0 10px;
+  font-size: 13.5px;
+  color: #334155;
+}
+
+.extras-summary {
+  padding: 10px 14px;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+  font-size: 12px;
+  color: #475569;
+}
+
+.fow-summary {
+  padding: 10px 14px;
+  background: #ffffff;
+  border-top: 1px solid #f1f5f9;
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.table-empty {
+  padding: 20px;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 13px;
+}

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Access · House Premiere League</title>
+
+  <!-- Google Fonts: Inter & Lato -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+  <style>
+    :root {
+      --bg-body: #f4f8fb;
+      --bg-white: #ffffff;
+      --navy-950: #060e1a;
+      --navy-900: #0a1728;
+      --navy-800: #10233b;
+      --navy-700: #193150;
+      --text-muted: #5e7796;
+      --hpl-blue: #1a73e8;
+      --hpl-blue-hover: #1557b0;
+      --hpl-blue-light: #e8f2fe;
+      --hpl-red: #d93025;
+      --hpl-red-light: #fce8e6;
+      --border-light: #e2ecf5;
+      --border-focus: #1a73e8;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --shadow-card: 0 4px 20px rgba(10, 23, 40, 0.08);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--navy-800);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .login-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+      padding: 36px 32px 32px 32px;
+      text-align: center;
+    }
+
+    .brand-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 26px;
+    }
+
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      margin-bottom: 12px;
+    }
+
+    .brand-hpl {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--hpl-blue);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .brand-title {
+      font-size: 19px;
+      font-weight: 900;
+      color: var(--navy-900);
+      letter-spacing: 0.2px;
+    }
+
+    .error-alert {
+      display: none;
+      background: var(--hpl-red-light);
+      color: var(--hpl-red);
+      border: 1px solid rgba(217, 48, 37, 0.2);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 12.5px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group {
+      text-align: left;
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--navy-700);
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 42px;
+      padding: 0 14px;
+      font-size: 13.5px;
+      font-family: inherit;
+      color: var(--navy-900);
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .form-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
+    }
+
+    .btn-submit {
+      width: 100%;
+      height: 44px;
+      background: var(--hpl-blue);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.15s ease, transform 0.05s ease;
+    }
+
+    .btn-submit:hover {
+      background: var(--hpl-blue-hover);
+    }
+
+    .btn-submit:active {
+      transform: scale(0.99);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .login-footer {
+      margin-top: 24px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .pancha-bhuta-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 14px;
+    }
+    .bhuta-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .dot-vayu { background: #2980b9; }
+    .dot-agni { background: #e67e22; }
+    .dot-akasha { background: #8e44ad; }
+    .dot-jala { background: #16a085; }
+    .dot-prithvi { background: #27ae60; }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+  <div class="login-card">
+    <div class="brand-header">
+      <img src="images/hpl-logo.png" alt="HPL Logo" class="brand-logo">
+      <div class="brand-hpl">House Premiere League</div>
+      <h1 class="brand-title">ADMIN ACCESS</h1>
+    </div>
+
+    <div class="error-alert" id="errorAlert"></div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label class="form-label" for="adminEmail">Email</label>
+        <input 
+          type="email" 
+          id="adminEmail" 
+          class="form-input" 
+          placeholder="admin@example.com" 
+          autocomplete="username" 
+          required 
+          autofocus
+        >
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="adminPassword">Password</label>
+        <input 
+          type="password" 
+          id="adminPassword" 
+          class="form-input" 
+          placeholder="••••••••••••" 
+          autocomplete="current-password" 
+          required
+        >
+      </div>
+
+      <button type="submit" class="btn-submit" id="btnSubmit">
+        SIGN IN
+      </button>
+    </form>
+
+    <div class="pancha-bhuta-dots" title="Pancha Bhuta">
+      <span class="bhuta-dot dot-vayu" title="Vayu"></span>
+      <span class="bhuta-dot dot-agni" title="Agni"></span>
+      <span class="bhuta-dot dot-akasha" title="Akasha"></span>
+      <span class="bhuta-dot dot-jala" title="Jala"></span>
+      <span class="bhuta-dot dot-prithvi" title="Prithvi"></span>
+    </div>
+  </div>
+
+  <div class="login-footer">
+    &copy; 2026 House Premiere League · Authorized Personnel Only
+  </div>
+</div>
+
+<script>
+  // Check if already authenticated
+  fetch('/api/auth/me')
+    .then(r => r.json())
+    .then(data => {
+      if (data.authenticated) {
+        window.location.href = '/admin';
+      }
+    })
+    .catch(() => {});
+
+  async function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('adminEmail').value.trim();
+    const password = document.getElementById('adminPassword').value;
+    const errEl = document.getElementById('errorAlert');
+    const btn = document.getElementById('btnSubmit');
+
+    errEl.style.display = 'none';
+    errEl.textContent = '';
+    btn.disabled = true;
+    btn.textContent = 'SIGNING IN...';
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        window.location.href = '/admin';
+      } else {
+        errEl.textContent = data.error || 'Invalid email or password';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'SIGN IN';
+      }
+    } catch (err) {
+      errEl.textContent = 'Unable to connect to server. Please try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'SIGN IN';
+    }
+  }
+</script>
+
+</body>
+</html>

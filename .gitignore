@@ -58,6 +58,11 @@ docs/_build/
 # PyBuilder
 target/
 
+# Environment files
+.env
+*.env
+.env.*
+
 #Ipython Notebook
 .ipynb_checkpoints
 node_modules/*

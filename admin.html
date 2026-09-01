@@ -1,0 +1,3165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HPL Tournament Control · House Premiere League</title>
+
+  <!-- Google Fonts: Inter & Lato for Sports Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+  <script src="js/api/matches.js"></script>
+  <script src="js/api/scoring.js"></script>
+  <script src="js/api/admin.js"></script>
+  <script src="js/hooks/useAdminScoring.js"></script>
+
+  <style>
+    /* ==========================================================================
+       HPL MINIMAL ADMIN PANEL · DESIGN SYSTEM
+       Theme: Light blue + Deep navy + Pure white
+       IPL-style sports branding + Apple-level minimalism
+       ========================================================================== */
+    :root {
+      --bg-body: #f4f8fb;
+      --bg-white: #ffffff;
+      --bg-subtle: #f8fafc;
+      --bg-blue-tint: #f0f6ff;
+
+      --navy-950: #060e1a;
+      --navy-900: #0a1728;
+      --navy-800: #10233b;
+      --navy-700: #193150;
+      --text-muted: #5e7796;
+      --text-subtle: #8a9cb0;
+
+      --hpl-blue: #1a73e8;
+      --hpl-blue-hover: #1557b0;
+      --hpl-blue-light: #e8f2fe;
+      --hpl-green: #0d8a4a;
+      --hpl-green-light: #e6f7ef;
+      --hpl-red: #d93025;
+      --hpl-red-light: #fce8e6;
+
+      --border-light: #e2ecf5;
+      --border-focus: #1a73e8;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+
+      --shadow-subtle: 0 1px 3px rgba(10, 23, 40, 0.04);
+      --shadow-card: 0 2px 6px rgba(10, 23, 40, 0.05);
+      --shadow-float: 0 12px 30px rgba(10, 23, 40, 0.10);
+
+      --sidebar-w: 220px;
+      --header-h: 56px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', 'Lato', -apple-system, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--navy-800);
+      font-size: 13.5px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: var(--hpl-blue);
+      text-decoration: none;
+    }
+
+    .num-bold {
+      font-family: 'Inter', sans-serif;
+      font-feature-settings: "tnum";
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    /* --------------------------------------------------------------------------
+       APP SHELL & SIDEBAR NAVIGATION (NARROW & ELEGANT)
+       -------------------------------------------------------------------------- */
+    .app-wrap {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--bg-white);
+      border-right: 1px solid var(--border-light);
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+    }
+
+    .brand-box {
+      height: var(--header-h);
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .brand-logo-img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+    .brand-title {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      color: var(--navy-900);
+    }
+
+    .nav-menu {
+      flex: 1;
+      padding: 14px 10px;
+      overflow-y: auto;
+    }
+    .nav-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      margin-bottom: 3px;
+      background: transparent;
+      border: none;
+      border-radius: var(--radius-sm);
+      color: var(--navy-700);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+    .nav-btn i {
+      width: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    .nav-btn:hover {
+      background: var(--bg-blue-tint);
+      color: var(--hpl-blue);
+    }
+    .nav-btn:hover i {
+      color: var(--hpl-blue);
+    }
+    .nav-btn.active {
+      background: var(--hpl-blue-light);
+      color: var(--hpl-blue);
+      font-weight: 700;
+    }
+    .nav-btn.active i {
+      color: var(--hpl-blue);
+    }
+    .nav-live-dot {
+      margin-left: auto;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--hpl-red);
+      animation: pulseLive 1.5s infinite;
+    }
+    @keyframes pulseLive {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .sidebar-footer {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border-light);
+      background: var(--bg-white);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .admin-indicator {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .indicator-green {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--hpl-green);
+    }
+    .link-to-public {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--hpl-blue);
+    }
+    .link-to-public:hover {
+      text-decoration: underline;
+    }
+
+    /* --------------------------------------------------------------------------
+       MAIN CONTENT CANVAS & TOP BAR
+       -------------------------------------------------------------------------- */
+    .main-wrap {
+      flex: 1;
+      margin-left: var(--sidebar-w);
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .top-bar {
+      height: var(--header-h);
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border-light);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+    .top-bar-title {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: var(--navy-900);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mobile-menu-trigger {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      color: var(--navy-900);
+      margin-right: 6px;
+    }
+
+    .content-canvas {
+      flex: 1;
+      padding: 24px;
+      max-width: 1040px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .page-view {
+      display: none;
+    }
+    .page-view.active {
+      display: block;
+      animation: fadeIn 0.12s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* --------------------------------------------------------------------------
+       COMMON TYPOGRAPHY & BUTTONS (SPORTS MINIMAL)
+       -------------------------------------------------------------------------- */
+    .page-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .page-title {
+      font-size: 19px;
+      font-weight: 900;
+      color: var(--navy-900);
+      letter-spacing: -0.3px;
+    }
+    .page-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .panel {
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-subtle);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .panel-head {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .panel-title {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--navy-900);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .panel-body {
+      padding: 18px;
+    }
+
+    .btn-primary {
+      background: var(--hpl-blue);
+      color: #ffffff;
+      border: 1px solid var(--hpl-blue);
+      border-radius: var(--radius-sm);
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.15s ease;
+    }
+    .btn-primary:hover {
+      background: var(--hpl-blue-hover);
+    }
+    .btn-secondary {
+      background: var(--bg-white);
+      color: var(--navy-700);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+    .btn-secondary:hover {
+      background: var(--bg-subtle);
+      border-color: var(--text-subtle);
+    }
+    .btn-danger {
+      background: var(--bg-white);
+      color: var(--hpl-red);
+      border: 1px solid var(--hpl-red-light);
+      border-radius: var(--radius-sm);
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+    .btn-danger:hover {
+      background: var(--hpl-red-light);
+      border-color: var(--hpl-red);
+    }
+    .btn-sm {
+      padding: 4px 9px;
+      font-size: 11px;
+    }
+
+    /* Clean Sports Table */
+    .clean-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .clean-table th {
+      background: var(--bg-subtle);
+      color: var(--navy-700);
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 9px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .clean-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border-light);
+      color: var(--navy-800);
+      vertical-align: middle;
+    }
+    .clean-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Minimal Empty State */
+    .empty-state {
+      padding: 44px 20px;
+      text-align: center;
+    }
+    .empty-state-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--navy-900);
+      margin-bottom: 4px;
+    }
+    .empty-state-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      max-width: 320px;
+      margin: 0 auto 14px auto;
+    }
+
+    /* --------------------------------------------------------------------------
+       5. DASHBOARD SPECIFIC
+       -------------------------------------------------------------------------- */
+    .stats-row-strip {
+      display: flex;
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 16px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-subtle);
+      gap: 36px;
+    }
+    .stat-block {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-block .stat-lbl {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 2px;
+    }
+    .stat-block .stat-num {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--navy-900);
+      line-height: 1;
+    }
+
+    .dash-live-panel {
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-top: 3px solid var(--hpl-blue);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-card);
+    }
+    .dash-live-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .dash-live-tag {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--hpl-red);
+      background: var(--hpl-red-light);
+      padding: 3px 8px;
+      border-radius: 12px;
+      letter-spacing: 0.8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .dash-live-scores {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .dash-live-team h3 {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--navy-900);
+      letter-spacing: 0.4px;
+    }
+    .dash-live-team .big-score {
+      font-size: 30px;
+      font-weight: 900;
+      color: var(--hpl-blue);
+      margin: 2px 0;
+    }
+    .dash-live-team .sub-overs {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+    .dash-vs-label {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--text-subtle);
+      padding: 0 12px;
+    }
+
+    .dash-next-panel {
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .dash-next-panel h4 {
+      font-size: 10.5px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 3px;
+    }
+    .dash-next-fixture {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--navy-900);
+    }
+    .dash-next-details {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    /* --------------------------------------------------------------------------
+       6. TEAMS & PLAYERS
+       -------------------------------------------------------------------------- */
+    .team-badge-initial {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #fff;
+      font-size: 11.5px;
+    }
+    .team-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .team-title-row strong {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .form-input {
+      padding: 6px 11px;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-family: inherit;
+      color: var(--navy-900);
+      background: var(--bg-white);
+      outline: none;
+    }
+    .form-input:focus {
+      border-color: var(--border-focus);
+    }
+
+    .back-btn-strip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      margin-bottom: 14px;
+    }
+    .back-btn-strip:hover {
+      color: var(--hpl-blue);
+    }
+
+    /* --------------------------------------------------------------------------
+       9. MATCHES
+       -------------------------------------------------------------------------- */
+    .tab-strip {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .tab-btn {
+      padding: 5px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-light);
+      background: var(--bg-white);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--navy-700);
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tab-btn.active {
+      background: var(--hpl-blue);
+      border-color: var(--hpl-blue);
+      color: #ffffff;
+    }
+
+    .match-card-unit {
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .match-card-tag {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+    .match-card-teams {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--navy-900);
+    }
+    .match-card-info {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+    .badge-status {
+      font-size: 9.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 7px;
+      border-radius: var(--radius-sm);
+    }
+    .badge-status.live { background: var(--hpl-red-light); color: var(--hpl-red); }
+    .badge-status.upcoming { background: var(--bg-blue-tint); color: var(--hpl-blue); }
+    .badge-status.completed { background: var(--hpl-green-light); color: var(--hpl-green); }
+
+    /* --------------------------------------------------------------------------
+       11. CRICKET SCORING CONSOLE (CLEAN & TOUCH FRIENDLY)
+       -------------------------------------------------------------------------- */
+    .console-shell {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .scoreboard-box {
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      text-align: center;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-subtle);
+    }
+    .console-header-match {
+      font-size: 10.5px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+    .console-batting-name {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--navy-900);
+      letter-spacing: 0.5px;
+    }
+    .console-runs-wickets {
+      font-size: 44px;
+      font-weight: 900;
+      color: var(--hpl-blue);
+      line-height: 1.1;
+      margin: 3px 0;
+    }
+    .console-overs-figure {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--navy-700);
+    }
+
+    .over-balls-track {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin: 14px 0 10px 0;
+    }
+    .over-ball-item {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--navy-800);
+    }
+    .over-ball-item.four { background: #e8f0fe; color: var(--hpl-blue); border-color: var(--hpl-blue); }
+    .over-ball-item.six { background: #fef08a; color: #854d0e; border-color: #eab308; }
+    .over-ball-item.wkt { background: var(--hpl-red-light); color: var(--hpl-red); border-color: var(--hpl-red); }
+
+    .pitch-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-light);
+      text-align: left;
+    }
+    .pitch-stat-cell {
+      background: var(--bg-subtle);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+    }
+    .pitch-stat-lbl {
+      font-size: 9.5px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .pitch-stat-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--navy-900);
+      margin-top: 1px;
+    }
+    .pitch-stat-val {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--hpl-blue);
+    }
+
+    /* Keypad */
+    .keypad-shell {
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      box-shadow: var(--shadow-subtle);
+    }
+    .keypad-grid-runs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .keypad-btn-run {
+      height: 48px;
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      font-size: 19px;
+      font-weight: 900;
+      color: var(--navy-900);
+      cursor: pointer;
+      transition: all 0.1s ease;
+    }
+    .keypad-btn-run:hover {
+      background: var(--bg-blue-tint);
+      border-color: var(--hpl-blue);
+      color: var(--hpl-blue);
+    }
+    .keypad-btn-run.active {
+      background: var(--hpl-blue);
+      color: #fff;
+      border-color: var(--hpl-blue);
+    }
+
+    .keypad-extras-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .btn-opt-extra {
+      height: 34px;
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--navy-700);
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .btn-opt-extra:hover { background: var(--bg-subtle); }
+    .btn-opt-extra.active { background: var(--navy-800); color: #fff; border-color: var(--navy-800); }
+
+    .btn-wicket-action {
+      width: 100%;
+      height: 38px;
+      background: var(--bg-white);
+      color: var(--hpl-red);
+      border: 1px solid var(--hpl-red-light);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: background 0.15s ease;
+    }
+    .btn-wicket-action:hover {
+      background: var(--hpl-red-light);
+    }
+
+    .btn-undo-action {
+      height: 38px;
+      background: var(--bg-white);
+      color: #475569;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-undo-action:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+      border-color: #94a3b8;
+    }
+
+    .btn-confirm-ball {
+      width: 100%;
+      height: 48px;
+      background: var(--hpl-blue);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.6px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: background 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-confirm-ball:hover {
+      background: var(--hpl-blue-hover);
+    }
+
+    /* --------------------------------------------------------------------------
+       MODALS & TOAST
+       -------------------------------------------------------------------------- */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(6, 14, 26, 0.4);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-dialog {
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-float);
+      width: 100%;
+      max-width: 400px;
+      overflow: hidden;
+      animation: modalScale 0.15s ease-out;
+    }
+    @keyframes modalScale {
+      from { transform: scale(0.97); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-head {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-head-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--navy-900);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .modal-body {
+      padding: 18px;
+    }
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--navy-700);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .modal-actions {
+      padding: 12px 18px;
+      background: var(--bg-subtle);
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .toast-box {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--navy-950);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-weight: 600;
+      box-shadow: var(--shadow-float);
+      display: none;
+      z-index: 2000;
+      animation: toastIn 0.15s ease;
+    }
+    @keyframes toastIn {
+      from { transform: translateY(8px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .loading-pulse {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+    .loading-spinner-circle {
+      width: 12px;
+      height: 12px;
+      border: 2px solid var(--border-light);
+      border-top-color: var(--hpl-blue);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.2s ease;
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .main-wrap {
+        margin-left: 0;
+      }
+      .mobile-menu-trigger {
+        display: block;
+      }
+      .stats-row-strip {
+        gap: 18px;
+      }
+    }
+
+    /* Admin Profile Dropdown & Controls */
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .admin-profile-wrapper {
+      position: relative;
+    }
+    .admin-profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--navy-900);
+      transition: all 0.15s ease;
+    }
+    .admin-profile-btn:hover {
+      background: var(--bg-blue-tint);
+      border-color: var(--hpl-blue);
+      color: var(--hpl-blue);
+    }
+    .admin-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--hpl-blue-light);
+      color: var(--hpl-blue);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+    }
+    .admin-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      width: 220px;
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-float);
+      padding: 6px;
+      z-index: 1000;
+      animation: fadeIn 0.12s ease-out;
+    }
+    .admin-dropdown-menu.show {
+      display: block;
+    }
+    .admin-dropdown-header {
+      padding: 10px 12px 8px 12px;
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: 4px;
+    }
+    .dropdown-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--navy-900);
+    }
+    .dropdown-email {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      word-break: break-all;
+    }
+    .dropdown-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: none;
+      border: none;
+      border-radius: var(--radius-sm);
+      color: var(--navy-700);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.12s ease;
+    }
+    .dropdown-item:hover {
+      background: var(--bg-subtle);
+      color: var(--hpl-blue);
+    }
+    .dropdown-item.text-danger {
+      color: var(--hpl-red);
+    }
+    .dropdown-item.text-danger:hover {
+      background: var(--hpl-red-light);
+      color: var(--hpl-red);
+    }
+    .dropdown-divider {
+      height: 1px;
+      background: var(--border-light);
+      margin: 4px 0;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+    .status-badge.active {
+      background: var(--hpl-green-light);
+      color: var(--hpl-green);
+    }
+    .status-badge.disabled {
+      background: var(--hpl-red-light);
+      color: var(--hpl-red);
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-wrap">
+
+  <!-- ========================================================================
+       3. FINAL NAVIGATION (CLEAN & COMPACT)
+       ======================================================================== -->
+  <aside class="sidebar" id="appSidebar">
+    <div class="brand-box">
+      <img src="images/hpl-logo.png" alt="HPL" class="brand-logo-img">
+      <span class="brand-title">HPL</span>
+    </div>
+
+    <div class="nav-menu">
+      <button class="nav-btn active" onclick="showView('dashboard')">
+        <i class="fa fa-th-large"></i> Dashboard
+      </button>
+      <button class="nav-btn" onclick="showView('teams')">
+        <i class="fa fa-shield"></i> Teams
+      </button>
+      <button class="nav-btn" onclick="showView('players')">
+        <i class="fa fa-users"></i> Players
+      </button>
+      <button class="nav-btn" onclick="showView('matches')">
+        <i class="fa fa-calendar"></i> Matches
+      </button>
+      <button class="nav-btn" onclick="showView('live-scoring')">
+        <i class="fa fa-circle"></i> Live Scoring <span class="nav-live-dot" id="navLiveDot" style="display:none;"></span>
+      </button>
+      <button class="nav-btn" onclick="showView('standings')">
+        <i class="fa fa-list-ol"></i> Points Table
+      </button>
+      <button class="nav-btn" onclick="showView('settings')">
+        <i class="fa fa-cog"></i> Settings
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="admin-indicator">
+        <span class="indicator-green"></span> Online
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <a href="/" target="_blank" class="link-to-public" title="View Public Tournament Scoreboard">Scoreboard &rarr;</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================================================
+       MAIN CANVAS
+       ======================================================================== -->
+  <div class="main-wrap">
+    
+    <header class="top-bar">
+      <div class="top-bar-title">
+        <button class="mobile-menu-trigger" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+        <span id="barTitle">Dashboard</span>
+      </div>
+      
+      <div class="top-bar-right">
+        <div id="loadingIndicator" class="loading-pulse">
+          <span class="loading-spinner-circle"></span> Syncing...
+        </div>
+
+        <div class="admin-profile-wrapper" id="adminProfileWrapper">
+          <button class="admin-profile-btn" onclick="toggleAdminDropdown(event)">
+            <span class="admin-avatar"><i class="fa fa-user"></i></span>
+            <span class="admin-name-text" id="topAdminName">Admin</span>
+            <i class="fa fa-angle-down" style="font-size:11px; color:var(--text-muted);"></i>
+          </button>
+
+          <div class="admin-dropdown-menu" id="adminDropdownMenu">
+            <div class="admin-dropdown-header">
+              <div class="dropdown-name" id="dropAdminName">Admin</div>
+              <div class="dropdown-email" id="dropAdminEmail">admin@hpl.cricket</div>
+            </div>
+            <button class="dropdown-item" onclick="openChangePasswordModal()"><i class="fa fa-key"></i> Change Password</button>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item text-danger" onclick="logoutAdmin()"><i class="fa fa-sign-out"></i> Logout</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-canvas">
+
+      <!-- ====================================================================
+           5. DASHBOARD VIEW (EXTREMELY MINIMAL)
+           ==================================================================== -->
+      <div class="page-view active" id="page-dashboard">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-subtitle">Tournament control center.</p>
+          </div>
+        </div>
+
+        <!-- Small Statistics Row -->
+        <div class="stats-row-strip">
+          <div class="stat-block">
+            <span class="stat-lbl">Teams</span>
+            <span class="stat-num num-bold" id="dashTeams">0</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-lbl">Players</span>
+            <span class="stat-num num-bold" id="dashPlayers">0</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-lbl">Upcoming</span>
+            <span class="stat-num num-bold" id="dashUpcoming">0</span>
+          </div>
+        </div>
+
+        <!-- Live Match Container -->
+        <div class="panel-title" style="margin-bottom: 8px;">LIVE MATCH</div>
+        <div class="dash-live-panel" id="dashLivePanel">
+          <div class="empty-state" style="padding: 24px 16px;">
+            <div class="empty-state-title" style="letter-spacing:0.8px;">NO LIVE MATCH</div>
+            <div class="empty-state-desc">The next match will appear here.</div>
+          </div>
+        </div>
+
+        <!-- Next Match Container -->
+        <div class="panel-title" style="margin-bottom: 8px;">NEXT MATCH</div>
+        <div class="dash-next-panel" id="dashNextPanel">
+          <div class="empty-state-desc" style="margin: 0; text-align: left;">No upcoming matches scheduled.</div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           6. TEAMS VIEW
+           ==================================================================== -->
+      <div class="page-view" id="page-teams">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Teams</h1>
+            <p class="page-subtitle">Manage tournament franchises.</p>
+          </div>
+          <div>
+            <button class="btn-primary" onclick="openModal('modalAddTeam')">+ Add Team</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <table class="clean-table">
+            <thead>
+              <tr>
+                <th>TEAM</th>
+                <th>CAPTAIN</th>
+                <th style="text-align:center;">PLAYERS</th>
+                <th style="text-align:right;">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="teamsBody">
+              <!-- Rendered via DB -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           7. TEAM DETAILS (SQUAD) VIEW
+           ==================================================================== -->
+      <div class="page-view" id="page-team-details">
+        <div class="back-btn-strip" onclick="showView('teams')">
+          <i class="fa fa-arrow-left"></i> Teams
+        </div>
+        <div class="page-head">
+          <div>
+            <h1 class="page-title" id="tdTitle">TEAM</h1>
+            <p class="page-subtitle" id="tdMeta">Captain: - · 0 Players</p>
+          </div>
+          <div>
+            <button class="btn-primary" onclick="openAddPlayerCurrentTeam()">+ Add Player</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">SQUAD</span>
+          </div>
+          <table class="clean-table">
+            <thead>
+              <tr>
+                <th>PLAYER</th>
+                <th>ROLE</th>
+                <th style="text-align:center;">JERSEY</th>
+                <th style="text-align:right;">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="teamSquadBody">
+              <!-- Rendered via DB -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           8. PLAYERS VIEW
+           ==================================================================== -->
+      <div class="page-view" id="page-players">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Players</h1>
+            <p class="page-subtitle">Registered player roster.</p>
+          </div>
+          <div>
+            <button class="btn-primary" onclick="openModal('modalAddPlayer')">+ Add Player</button>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" class="form-input" id="playerSearchInput" placeholder="Search players..." style="width: 200px;" oninput="renderPlayers()">
+          <select class="form-input" id="playerTeamSelect" style="width: 160px;" onchange="renderPlayers()">
+            <option value="ALL">All Teams</option>
+          </select>
+        </div>
+
+        <div class="panel">
+          <table class="clean-table">
+            <thead>
+              <tr>
+                <th>PLAYER</th>
+                <th>TEAM</th>
+                <th>ROLE</th>
+                <th style="text-align:center;">JERSEY</th>
+                <th style="text-align:right;">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="playersBody">
+              <!-- Rendered via DB -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           9. MATCHES VIEW
+           ==================================================================== -->
+      <div class="page-view" id="page-matches">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Matches</h1>
+            <p class="page-subtitle">Tournament schedule and fixtures.</p>
+          </div>
+          <div>
+            <button class="btn-primary" onclick="openModal('modalSchedule')">+ Schedule Match</button>
+          </div>
+        </div>
+
+        <div class="tab-strip">
+          <button class="tab-btn active" id="tabUp" onclick="setMatchFilter('UPCOMING')">Upcoming</button>
+          <button class="tab-btn" id="tabLiv" onclick="setMatchFilter('LIVE')">Live</button>
+          <button class="tab-btn" id="tabComp" onclick="setMatchFilter('COMPLETED')">Completed</button>
+        </div>
+
+        <div id="matchesContainer">
+          <!-- Rendered via DB -->
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           11. LIVE SCORING CONSOLE
+           ==================================================================== -->
+      <div class="page-view" id="page-live-scoring">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Live Scoring</h1>
+            <p class="page-subtitle" id="liveMatchSubtitle">Match Console</p>
+          </div>
+          <div>
+            <button class="btn-secondary btn-sm" onclick="openModal('modalEndMatch')"><i class="fa fa-check-circle"></i> Complete Match</button>
+          </div>
+        </div>
+
+        <div id="liveConsoleContainer">
+          <!-- Rendered via DB -->
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           13. POINTS TABLE VIEW
+           ==================================================================== -->
+      <div class="page-view" id="page-standings">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Points Table</h1>
+            <p class="page-subtitle">Automatically calculated from match outcomes.</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <table class="clean-table">
+            <thead>
+              <tr>
+                <th style="width:40px;">POS</th>
+                <th>TEAM</th>
+                <th style="text-align:center;">P</th>
+                <th style="text-align:center;">W</th>
+                <th style="text-align:center;">L</th>
+                <th style="text-align:center;">NR</th>
+                <th style="text-align:center;">PTS</th>
+                <th style="text-align:right;">NRR</th>
+              </tr>
+            </thead>
+            <tbody id="standingsBody">
+              <!-- Rendered via DB -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           14. SETTINGS VIEW (TOURNAMENT · DATABASE · ADMINISTRATORS)
+           ==================================================================== -->
+      <div class="page-view" id="page-settings">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Settings</h1>
+            <p class="page-subtitle">Tournament configuration, administrators, and database control.</p>
+          </div>
+        </div>
+
+        <!-- 1. Tournament Configuration -->
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Tournament</span>
+          </div>
+          <div class="panel-body">
+            <div style="font-size:13px; color:var(--navy-900); line-height:2;">
+              <div><strong>Name:</strong> House Premiere League (HPL)</div>
+              <div><strong>Season:</strong> HPL 2026</div>
+              <div><strong>Format:</strong> T10 Match Play</div>
+              <div><strong>Points:</strong> Win = 2 pts, Tie/NR = 1 pt, Loss = 0 pts</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Administrators Management -->
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Administrators</span>
+            <button class="btn-primary btn-sm" onclick="openAddAdminModal()">
+              + Add Admin
+            </button>
+          </div>
+          <div class="panel-body" style="padding-bottom:8px;">
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">
+              Manage authorized users who can access the HPL admin panel.
+            </p>
+            <table class="clean-table" style="margin-top:4px;">
+              <thead>
+                <tr>
+                  <th>ADMIN</th>
+                  <th>EMAIL</th>
+                  <th style="text-align:center;">STATUS</th>
+                  <th style="text-align:right;">ACTION</th>
+                </tr>
+              </thead>
+              <tbody id="adminsBody">
+                <!-- Rendered via DB -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 3. Database Operations -->
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Database</span>
+          </div>
+          <div class="panel-body">
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">
+              Manage database records. Use Seed for default HPL data, or Wipe to clear all tournament records.
+            </p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn-primary" onclick="openModal('modalSeed')">
+                <i class="fa fa-database"></i> Seed Clean HPL Data
+              </button>
+              <button class="btn-danger" onclick="openModal('modalWipe')">
+                <i class="fa fa-trash"></i> Wipe All Tournament Data
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ========================================================================
+     15. MODALS (CONSISTENT & MINIMAL)
+     ======================================================================== -->
+
+<!-- 1. ADD TEAM -->
+<div class="modal-overlay" id="modalAddTeam">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title">Add Team</div>
+      <button onclick="closeModal('modalAddTeam')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Team Name</label>
+        <input type="text" class="form-input" style="width:100%;" id="tName" placeholder="e.g. House Vayu">
+      </div>
+      <div class="form-group">
+        <label>Short Name</label>
+        <input type="text" class="form-input" style="width:100%;" id="tShort" placeholder="e.g. VAY" maxlength="4">
+      </div>
+      <div class="form-group">
+        <label>Captain</label>
+        <input type="text" class="form-input" style="width:100%;" id="tCaptain" placeholder="e.g. Rahul Sharma">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalAddTeam')">Cancel</button>
+      <button class="btn-primary" onclick="submitAddTeam()">Create Team</button>
+    </div>
+  </div>
+</div>
+
+<!-- 2. EDIT TEAM -->
+<div class="modal-overlay" id="modalEditTeam">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title">Edit Team</div>
+      <button onclick="closeModal('modalEditTeam')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="eTeamId">
+      <div class="form-group">
+        <label>Team Name</label>
+        <input type="text" class="form-input" style="width:100%;" id="eTeamName">
+      </div>
+      <div class="form-group">
+        <label>Short Name</label>
+        <input type="text" class="form-input" style="width:100%;" id="eTeamShort" maxlength="4">
+      </div>
+      <div class="form-group">
+        <label>Captain</label>
+        <input type="text" class="form-input" style="width:100%;" id="eTeamCaptain">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalEditTeam')">Cancel</button>
+      <button class="btn-primary" onclick="submitEditTeam()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- 3. DELETE TEAM CONFIRMATION -->
+<div class="modal-overlay" id="modalDeleteTeam">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title" style="color:var(--hpl-red);">Delete Team?</div>
+      <button onclick="closeModal('modalDeleteTeam')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="delTeamId">
+      <p style="font-size:13.5px; color:var(--navy-900); margin-bottom:6px;" id="delTeamPrompt">
+        Delete Team?
+      </p>
+      <p style="font-size:12px; color:var(--text-muted);">
+        This will remove the team from the tournament.
+      </p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalDeleteTeam')">Cancel</button>
+      <button class="btn-danger" onclick="submitDeleteTeam()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- 4. ADD PLAYER -->
+<div class="modal-overlay" id="modalAddPlayer">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title">Add Player</div>
+      <button onclick="closeModal('modalAddPlayer')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Player Name</label>
+        <input type="text" class="form-input" style="width:100%;" id="pName" placeholder="Full name">
+      </div>
+      <div class="form-group">
+        <label>Team</label>
+        <select class="form-input" style="width:100%;" id="pTeam"></select>
+      </div>
+      <div class="form-group">
+        <label>Jersey Number</label>
+        <input type="number" class="form-input" style="width:100%;" id="pJersey" placeholder="e.g. 7" min="0" max="999">
+      </div>
+      <div class="form-group">
+        <label>Role</label>
+        <select class="form-input" style="width:100%;" id="pRole">
+          <option value="Batsman">Batsman</option>
+          <option value="Bowler">Bowler</option>
+          <option value="All-Rounder">All-Rounder</option>
+          <option value="Wicket Keeper">Wicket Keeper</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalAddPlayer')">Cancel</button>
+      <button class="btn-primary" onclick="submitAddPlayer()">Add Player</button>
+    </div>
+  </div>
+</div>
+
+<!-- 5. DELETE PLAYER CONFIRMATION -->
+<div class="modal-overlay" id="modalDeletePlayer">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title" style="color:var(--hpl-red);">Delete Player?</div>
+      <button onclick="closeModal('modalDeletePlayer')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="delPlayerId">
+      <p style="font-size:13.5px; color:var(--navy-900);" id="delPlayerPrompt">
+        Remove player from team?
+      </p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalDeletePlayer')">Cancel</button>
+      <button class="btn-danger" onclick="submitDeletePlayer()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- 6. SCHEDULE MATCH -->
+<div class="modal-overlay" id="modalSchedule">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title">Schedule Match</div>
+      <button onclick="closeModal('modalSchedule')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Team A</label>
+        <select class="form-input" style="width:100%;" id="mTeamA" onchange="preventDuplicateTeam()"></select>
+      </div>
+      <div class="form-group">
+        <label>Team B</label>
+        <select class="form-input" style="width:100%;" id="mTeamB" onchange="preventDuplicateTeam()"></select>
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="text" class="form-input" style="width:100%;" id="mDate" value="Today">
+      </div>
+      <div class="form-group">
+        <label>Time</label>
+        <input type="text" class="form-input" style="width:100%;" id="mTime" value="09:00 AM">
+      </div>
+      <div class="form-group">
+        <label>Venue</label>
+        <input type="text" class="form-input" style="width:100%;" id="mVenue" value="College Ground">
+      </div>
+      <div class="form-group">
+        <label>Overs</label>
+        <input type="number" class="form-input" style="width:100%;" id="mOvers" value="10" min="1" max="50">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalSchedule')">Cancel</button>
+      <button class="btn-primary" onclick="submitSchedule()">Schedule</button>
+    </div>
+  </div>
+</div>
+
+<!-- 7. WICKET MODAL -->
+<div class="modal-overlay" id="modalWicket">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title" style="color:var(--hpl-red);">Wicket</div>
+      <button onclick="closeModal('modalWicket')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Dismissed Batter</label>
+        <input type="text" class="form-input" style="width:100%; background:var(--bg-subtle);" id="wBatter" readonly>
+      </div>
+      <div class="form-group">
+        <label>Next Incoming Batter</label>
+        <select class="form-input" style="width:100%;" id="wNewBatter"></select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalWicket')">Cancel</button>
+      <button class="btn-danger" onclick="submitWicket()">Confirm Wicket</button>
+    </div>
+  </div>
+</div>
+
+<!-- 8. COMPLETE MATCH MODAL -->
+<div class="modal-overlay" id="modalEndMatch">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title">Complete Match</div>
+      <button onclick="closeModal('modalEndMatch')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Winning Team</label>
+        <select class="form-input" style="width:100%;" id="endWinner"></select>
+      </div>
+      <div class="form-group">
+        <label>Margin</label>
+        <input type="text" class="form-input" style="width:100%;" id="endMargin" placeholder="e.g. by 12 runs">
+      </div>
+      <div class="form-group">
+        <label>Team B Score</label>
+        <input type="text" class="form-input" style="width:100%;" id="endScoreB" placeholder="e.g. 116/8">
+      </div>
+      <p style="font-size:11.5px; color:var(--text-muted); margin-top:8px;">
+        Points Table will update automatically in the database.
+      </p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalEndMatch')">Cancel</button>
+      <button class="btn-primary" onclick="submitCompleteMatch()">Finalize</button>
+    </div>
+  </div>
+</div>
+
+<!-- 9. SEED CONFIRMATION MODAL -->
+<div class="modal-overlay" id="modalSeed">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title">Seed HPL Data?</div>
+      <button onclick="closeModal('modalSeed')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13.5px; color:var(--navy-900); margin-bottom:6px;">
+        Seed HPL data?
+      </p>
+      <p style="font-size:12px; color:var(--text-muted);">
+        This will create the initial HPL teams, players and fixtures.
+      </p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalSeed')">Cancel</button>
+      <button class="btn-primary" onclick="submitSeed()">Seed Tournament Data</button>
+    </div>
+  </div>
+</div>
+
+<!-- 10. WIPE CONFIRMATION MODAL -->
+<div class="modal-overlay" id="modalWipe">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title" style="color:var(--hpl-red);">Wipe All HPL Data?</div>
+      <button onclick="closeModal('modalWipe')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13.5px; font-weight:800; color:var(--hpl-red); margin-bottom:8px;">
+        This will permanently remove:
+      </p>
+      <ul style="font-size:12px; color:var(--text-muted); padding-left:18px; line-height:1.7;">
+        <li>Teams</li>
+        <li>Players</li>
+        <li>Matches</li>
+        <li>Standings</li>
+      </ul>
+      <p style="font-size:12px; font-weight:700; color:var(--navy-900); margin-top:10px;">
+        This action cannot be undone.
+      </p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalWipe')">Cancel</button>
+      <button class="btn-danger" onclick="submitWipe()">Wipe Everything</button>
+    </div>
+  </div>
+</div>
+
+<!-- 11. ADD ADMINISTRATOR MODAL -->
+<div class="modal-overlay" id="modalAddAdmin">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title">Add Administrator</div>
+      <button onclick="closeModal('modalAddAdmin')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" class="form-input" style="width:100%;" id="adminNameInput" placeholder="Full name">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" class="form-input" style="width:100%;" id="adminEmailInput" placeholder="admin@example.com">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" class="form-input" style="width:100%;" id="adminPassInput" placeholder="Minimum 6 characters">
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="password" class="form-input" style="width:100%;" id="adminPassConfirmInput" placeholder="Re-enter password">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalAddAdmin')">Cancel</button>
+      <button class="btn-primary" onclick="submitAddAdmin()">Add Admin</button>
+    </div>
+  </div>
+</div>
+
+<!-- 12. EDIT ADMINISTRATOR MODAL -->
+<div class="modal-overlay" id="modalEditAdmin">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title">Edit Administrator</div>
+      <button onclick="closeModal('modalEditAdmin')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editAdminIdInput">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" class="form-input" style="width:100%;" id="editAdminNameInput">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" class="form-input" style="width:100%;" id="editAdminEmailInput">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalEditAdmin')">Cancel</button>
+      <button class="btn-primary" onclick="submitEditAdmin()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- 13. CHANGE PASSWORD MODAL -->
+<div class="modal-overlay" id="modalChangePassword">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title">Change Password</div>
+      <button onclick="closeModal('modalChangePassword')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Current Password</label>
+        <input type="password" class="form-input" style="width:100%;" id="cpCurrentInput" placeholder="Enter current password">
+      </div>
+      <div class="form-group">
+        <label>New Password</label>
+        <input type="password" class="form-input" style="width:100%;" id="cpNewInput" placeholder="Minimum 6 characters">
+      </div>
+      <div class="form-group">
+        <label>Confirm New Password</label>
+        <input type="password" class="form-input" style="width:100%;" id="cpConfirmInput" placeholder="Re-enter new password">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalChangePassword')">Cancel</button>
+      <button class="btn-primary" onclick="submitChangePassword()">Update Password</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Box -->
+<div class="toast-box" id="toast">Message</div>
+
+<!-- ========================================================================
+     CONTROLLER (100% DB-DRIVEN · ZERO MOCK DATA)
+     ======================================================================== -->
+<script>
+  let DB = { teams: [], players: [], matches: [], standings: [], settings: {} };
+  let currentDetailTeam = null;
+  let matchTabFilter = 'UPCOMING';
+  let runPick = 0;
+  let extraPick = null;
+
+  async function fetchDb(cb) {
+    const loader = document.getElementById('loadingIndicator');
+    if (loader) loader.style.display = 'inline-flex';
+    try {
+      const res = await fetch('/api/data');
+      const json = await res.json();
+      if (json.success && json.data) {
+        DB.teams = json.data.teams || [];
+        DB.players = json.data.players || [];
+        DB.matches = json.data.matches || [];
+        DB.standings = json.data.standings || [];
+        DB.settings = json.data.settings || {};
+      }
+    } catch (e) {
+      showToast('Unable to reach server database.');
+    } finally {
+      if (loader) loader.style.display = 'none';
+      renderCurrentViews();
+      if (cb) cb();
+    }
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 2600);
+  }
+
+  function openModal(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('active');
+  }
+  function closeModal(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  }
+
+  function showView(viewId) {
+    document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+    const target = document.getElementById('page-' + viewId);
+    if (target) target.classList.add('active');
+
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(viewId)) {
+        btn.classList.add('active');
+      }
+    });
+
+    const titles = {
+      'dashboard': 'Dashboard',
+      'teams': 'Teams',
+      'team-details': 'Team Details',
+      'players': 'Players',
+      'matches': 'Matches',
+      'live-scoring': 'Live Scoring',
+      'standings': 'Points Table',
+      'settings': 'Settings'
+    };
+    document.getElementById('barTitle').textContent = titles[viewId] || 'Admin';
+    document.getElementById('appSidebar').classList.remove('open');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (viewId === 'settings') {
+      loadAdmins();
+    }
+    renderCurrentViews();
+  }
+
+  function toggleSidebar() {
+    document.getElementById('appSidebar').classList.toggle('open');
+  }
+
+  // --------------------------------------------------------------------------
+  // DASHBOARD
+  // --------------------------------------------------------------------------
+  function renderDashboard() {
+    document.getElementById('dashTeams').textContent = DB.teams.length;
+    document.getElementById('dashPlayers').textContent = DB.players.length;
+    const upcoming = DB.matches.filter(m => m.status === 'UPCOMING');
+    document.getElementById('dashUpcoming').textContent = upcoming.length;
+
+    const liveMatch = DB.matches.find(m => m.status === 'LIVE');
+    const liveDot = document.getElementById('navLiveDot');
+    if (liveDot) liveDot.style.display = liveMatch ? 'inline-block' : 'none';
+
+    // Live Match Panel
+    const livePanel = document.getElementById('dashLivePanel');
+    if (liveMatch && liveMatch.liveScorecard) {
+      const sc = liveMatch.liveScorecard;
+      livePanel.innerHTML = `
+        <div class="dash-live-header">
+          <span class="dash-live-tag"><span class="indicator-green" style="background:var(--hpl-red);"></span> LIVE</span>
+          <span style="font-size:11px; font-weight:800; color:var(--text-muted);">HPL MATCH ${liveMatch.matchNo || '01'}</span>
+        </div>
+        <div class="dash-live-scores">
+          <div class="dash-live-team">
+            <h3>${liveMatch.teamA}</h3>
+            <div class="big-score num-bold">${sc.runs}/${sc.wickets}</div>
+            <div class="sub-overs">${sc.oversCompleted}.${sc.ballsInOver} OVERS</div>
+          </div>
+          <div class="dash-vs-label">VS</div>
+          <div class="dash-live-team">
+            <h3>${liveMatch.teamB}</h3>
+            <div style="font-size:15px; font-weight:700; color:var(--text-muted); margin-top:8px;">${liveMatch.scoreB || 'Yet to Bat'}</div>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="showView('live-scoring')">
+          [ UPDATE SCORE ]
+        </button>
+      `;
+    } else {
+      livePanel.innerHTML = `
+        <div class="empty-state" style="padding:24px 16px;">
+          <div class="empty-state-title" style="letter-spacing:0.8px;">NO LIVE MATCH</div>
+          <div class="empty-state-desc">The next match will appear here.</div>
+        </div>
+      `;
+    }
+
+    // Next Match Panel
+    const nextPanel = document.getElementById('dashNextPanel');
+    if (upcoming.length > 0) {
+      const n = upcoming[0];
+      nextPanel.innerHTML = `
+        <div>
+          <h4>NEXT MATCH</h4>
+          <div class="dash-next-fixture">${n.teamA} vs ${n.teamB}</div>
+          <div class="dash-next-details">${n.date} · ${n.time} · ${n.venue}</div>
+        </div>
+        <div>
+          <button class="btn-primary btn-sm" onclick="startMatch('${n.id}')">Start Match</button>
+        </div>
+      `;
+    } else {
+      nextPanel.innerHTML = `
+        <div class="empty-state-desc" style="margin: 0; text-align: left;">No upcoming matches scheduled.</div>
+      `;
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // TEAMS
+  // --------------------------------------------------------------------------
+  function renderTeams() {
+    const tbody = document.getElementById('teamsBody');
+    if (DB.teams.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="4">
+            <div class="empty-state">
+              <div class="empty-state-title">No teams yet.</div>
+              <div class="empty-state-desc">Create your first HPL team.</div>
+              <button class="btn-primary" onclick="openModal('modalAddTeam')">+ Add Team</button>
+            </div>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = DB.teams.map(t => {
+      const pCount = DB.players.filter(p => p.team === t.name).length;
+      return `
+        <tr>
+          <td>
+            <div class="team-title-row">
+              <div class="team-badge-initial" style="background:${t.color || '#1a73e8'};">${t.short ? t.short[0] : t.name[0]}</div>
+              <div>
+                <strong>${t.name}</strong>
+              </div>
+            </div>
+          </td>
+          <td>${t.captain || 'TBD'}</td>
+          <td style="text-align:center;" class="num-bold">${pCount}</td>
+          <td style="text-align:right;">
+            <div style="display:inline-flex; gap:6px;">
+              <button class="btn-secondary btn-sm" onclick="viewTeam('${t.name}')">Squad</button>
+              <button class="btn-secondary btn-sm" onclick="openEditTeam('${t.id}')">Edit</button>
+              <button class="btn-danger btn-sm" onclick="openDeleteTeam('${t.id}', '${t.name}')">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    populateTeamSelects();
+  }
+
+  async function submitAddTeam() {
+    const name = document.getElementById('tName').value.trim();
+    const short = document.getElementById('tShort').value.trim();
+    const cap = document.getElementById('tCaptain').value.trim();
+    if (!name) { showToast('Please enter a team name'); return; }
+
+    try {
+      const res = await fetch('/api/teams', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, short, captain: cap })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to create team');
+        return;
+      }
+      showToast('Team created successfully.');
+      closeModal('modalAddTeam');
+      document.getElementById('tName').value = '';
+      document.getElementById('tShort').value = '';
+      document.getElementById('tCaptain').value = '';
+      await fetchDb();
+    } catch (e) {
+      showToast('Unable to save changes.');
+    }
+  }
+
+  function openEditTeam(id) {
+    const t = DB.teams.find(x => x.id === id);
+    if (!t) return;
+    document.getElementById('eTeamId').value = t.id;
+    document.getElementById('eTeamName').value = t.name;
+    document.getElementById('eTeamShort').value = t.short || '';
+    document.getElementById('eTeamCaptain').value = t.captain || '';
+    openModal('modalEditTeam');
+  }
+
+  async function submitEditTeam() {
+    const id = document.getElementById('eTeamId').value;
+    const name = document.getElementById('eTeamName').value.trim();
+    const short = document.getElementById('eTeamShort').value.trim();
+    const cap = document.getElementById('eTeamCaptain').value.trim();
+
+    try {
+      const res = await fetch(`/api/teams/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, short, captain: cap })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to update team');
+        return;
+      }
+      showToast('Team updated.');
+      closeModal('modalEditTeam');
+      await fetchDb();
+    } catch (e) {
+      showToast('Unable to save changes.');
+    }
+  }
+
+  function openDeleteTeam(id, name) {
+    document.getElementById('delTeamId').value = id;
+    document.getElementById('delTeamPrompt').textContent = `Are you sure you want to delete ${name}?`;
+    openModal('modalDeleteTeam');
+  }
+
+  async function submitDeleteTeam() {
+    const id = document.getElementById('delTeamId').value;
+    try {
+      const res = await fetch(`/api/teams/${id}`, { method: 'DELETE' });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Cannot delete team');
+        closeModal('modalDeleteTeam');
+        return;
+      }
+      showToast('Team deleted.');
+      closeModal('modalDeleteTeam');
+      await fetchDb();
+    } catch (e) {
+      showToast('Unable to delete team.');
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // SQUAD DETAILS
+  // --------------------------------------------------------------------------
+  function viewTeam(tName) {
+    currentDetailTeam = tName;
+    const team = DB.teams.find(t => t.name === tName);
+    if (!team) return;
+
+    const squad = DB.players.filter(p => p.team === tName);
+    document.getElementById('tdTitle').textContent = team.name.toUpperCase();
+    document.getElementById('tdMeta').textContent = `Captain: ${team.captain} · ${squad.length} Players`;
+
+    const tbody = document.getElementById('teamSquadBody');
+    if (squad.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="4">
+            <div class="empty-state">
+              <div class="empty-state-title">No players in squad.</div>
+              <div class="empty-state-desc">Assign players to ${team.name}.</div>
+              <button class="btn-primary" onclick="openAddPlayerCurrentTeam()">+ Add Player</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    } else {
+      tbody.innerHTML = squad.map(p => `
+        <tr>
+          <td><strong>${p.name}</strong></td>
+          <td>${p.role}</td>
+          <td style="text-align:center;" class="num-bold">${p.jersey || '-'}</td>
+          <td style="text-align:right;">
+            <button class="btn-danger btn-sm" onclick="openDeletePlayer('${p.id}', '${p.name}')">Remove</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    showView('team-details');
+  }
+
+  function openAddPlayerCurrentTeam() {
+    if (currentDetailTeam) {
+      document.getElementById('pTeam').value = currentDetailTeam;
+    }
+    openModal('modalAddPlayer');
+  }
+
+  // --------------------------------------------------------------------------
+  // PLAYERS
+  // --------------------------------------------------------------------------
+  function renderPlayers() {
+    const q = (document.getElementById('playerSearchInput').value || '').toLowerCase();
+    const tFilter = document.getElementById('playerTeamSelect').value;
+
+    const filtered = DB.players.filter(p => {
+      const matchQ = p.name.toLowerCase().includes(q) || (p.jersey && p.jersey.toString().includes(q));
+      const matchT = tFilter === 'ALL' || p.team === tFilter;
+      return matchQ && matchT;
+    });
+
+    const tbody = document.getElementById('playersBody');
+    if (filtered.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5">
+            <div class="empty-state">
+              <div class="empty-state-title">No players added.</div>
+              <button class="btn-primary" onclick="openModal('modalAddPlayer')">+ Add Player</button>
+            </div>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(p => `
+      <tr>
+        <td><strong>${p.name}</strong></td>
+        <td>${p.team}</td>
+        <td>${p.role}</td>
+        <td style="text-align:center;" class="num-bold">${p.jersey || '-'}</td>
+        <td style="text-align:right;">
+          <button class="btn-danger btn-sm" onclick="openDeletePlayer('${p.id}', '${p.name}')">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  async function submitAddPlayer() {
+    const name = document.getElementById('pName').value.trim();
+    const team = document.getElementById('pTeam').value;
+    const jersey = document.getElementById('pJersey').value;
+    const role = document.getElementById('pRole').value;
+
+    if (!name) { showToast('Player name is required'); return; }
+    if (!team) { showToast('Please select a team'); return; }
+
+    try {
+      const res = await fetch('/api/players', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, team, jersey, role })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to add player');
+        return;
+      }
+      showToast('Player added.');
+      closeModal('modalAddPlayer');
+      document.getElementById('pName').value = '';
+      document.getElementById('pJersey').value = '';
+      await fetchDb(() => {
+        if (currentDetailTeam) viewTeam(currentDetailTeam);
+      });
+    } catch (e) {
+      showToast('Unable to save changes.');
+    }
+  }
+
+  function openDeletePlayer(id, name) {
+    document.getElementById('delPlayerId').value = id;
+    document.getElementById('delPlayerPrompt').textContent = `Are you sure you want to delete ${name}?`;
+    openModal('modalDeletePlayer');
+  }
+
+  async function submitDeletePlayer() {
+    const id = document.getElementById('delPlayerId').value;
+    try {
+      const res = await fetch(`/api/players/${id}`, { method: 'DELETE' });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to delete player');
+        closeModal('modalDeletePlayer');
+        return;
+      }
+      showToast('Player deleted.');
+      closeModal('modalDeletePlayer');
+      await fetchDb(() => {
+        if (currentDetailTeam) viewTeam(currentDetailTeam);
+      });
+    } catch (e) {
+      showToast('Unable to delete player.');
+    }
+  }
+
+  function populateTeamSelects() {
+    const opts = DB.teams.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+    document.getElementById('pTeam').innerHTML = opts;
+    document.getElementById('mTeamA').innerHTML = opts;
+    document.getElementById('mTeamB').innerHTML = opts;
+    if (DB.teams.length > 1) {
+      document.getElementById('mTeamB').selectedIndex = 1;
+    }
+    document.getElementById('playerTeamSelect').innerHTML = '<option value="ALL">All Teams</option>' + opts;
+  }
+
+  // --------------------------------------------------------------------------
+  // MATCHES
+  // --------------------------------------------------------------------------
+  function setMatchFilter(f) {
+    matchTabFilter = f;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    if (f === 'UPCOMING') document.getElementById('tabUp').classList.add('active');
+    if (f === 'LIVE') document.getElementById('tabLiv').classList.add('active');
+    if (f === 'COMPLETED') document.getElementById('tabComp').classList.add('active');
+    renderMatches();
+  }
+
+  function renderMatches() {
+    const container = document.getElementById('matchesContainer');
+    const filtered = DB.matches.filter(m => m.status === matchTabFilter);
+
+    if (filtered.length === 0) {
+      container.innerHTML = `
+        <div class="panel">
+          <div class="empty-state">
+            <div class="empty-state-title">No matches scheduled.</div>
+            <div class="empty-state-desc">Schedule a match to get started.</div>
+            <button class="btn-primary" onclick="openModal('modalSchedule')">+ Schedule Match</button>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = filtered.map(m => {
+      if (m.status === 'LIVE') {
+        return `
+          <div class="match-card-unit" style="border-top:3px solid var(--hpl-blue);">
+            <div>
+              <span class="badge-status live">LIVE</span>
+              <div class="match-card-teams" style="margin-top:4px;">${m.teamA} ${m.scoreA} vs ${m.teamB}</div>
+              <div class="match-card-info">${m.oversA} OVERS · ${m.venue}</div>
+            </div>
+            <div>
+              <button class="btn-primary btn-sm" onclick="showView('live-scoring')">[ UPDATE SCORE ]</button>
+            </div>
+          </div>
+        `;
+      } else if (m.status === 'COMPLETED') {
+        return `
+          <div class="match-card-unit">
+            <div>
+              <span class="badge-status completed">COMPLETED</span>
+              <div class="match-card-teams" style="margin-top:4px;">${m.teamA} ${m.scoreA} vs ${m.teamB} ${m.scoreB}</div>
+              <div class="match-card-info" style="color:var(--hpl-green); font-weight:700;">${m.winner}</div>
+            </div>
+            <div>
+              <button class="btn-secondary btn-sm" onclick="showView('standings')">[ VIEW SCORECARD ]</button>
+            </div>
+          </div>
+        `;
+      } else {
+        return `
+          <div class="match-card-unit">
+            <div>
+              <div class="match-card-tag">HPL MATCH ${m.matchNo}</div>
+              <div class="match-card-teams">${m.teamA} vs ${m.teamB}</div>
+              <div class="match-card-info">${m.date} · ${m.time} · ${m.venue}</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="badge-status upcoming">UPCOMING</span>
+              <button class="btn-primary btn-sm" onclick="startMatch('${m.id}')">Start Match</button>
+            </div>
+          </div>
+        `;
+      }
+    }).join('');
+  }
+
+  function preventDuplicateTeam() {
+    const a = document.getElementById('mTeamA').value;
+    const b = document.getElementById('mTeamB').value;
+    if (a && b && a === b) {
+      showToast('Team A and Team B cannot be the same!');
+      const selB = document.getElementById('mTeamB');
+      selB.selectedIndex = (selB.selectedIndex + 1) % DB.teams.length;
+    }
+  }
+
+  async function submitSchedule() {
+    const teamA = document.getElementById('mTeamA').value;
+    const teamB = document.getElementById('mTeamB').value;
+    const date = document.getElementById('mDate').value.trim();
+    const time = document.getElementById('mTime').value.trim();
+    const venue = document.getElementById('mVenue').value.trim();
+    const overs = document.getElementById('mOvers').value;
+
+    if (!teamA || !teamB || teamA === teamB) {
+      showToast('Select two distinct teams.');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/matches', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teamA, teamB, date, time, venue, overs })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to schedule match');
+        return;
+      }
+      showToast('Match scheduled.');
+      closeModal('modalSchedule');
+      await fetchDb();
+    } catch (e) {
+      showToast('Unable to schedule match.');
+    }
+  }
+
+  async function startMatch(id) {
+    try {
+      const res = await fetch(`/api/matches/${id}/start`, { method: 'POST' });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to start match');
+        return;
+      }
+      showToast('Match is now LIVE.');
+      await fetchDb(() => {
+        showView('live-scoring');
+      });
+    } catch (e) {
+      showToast('Unable to start match.');
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // 11. LIVE SCORING CONSOLE (FAST & TOUCH-FRIENDLY)
+  // --------------------------------------------------------------------------
+  function renderLiveScoring() {
+    const container = document.getElementById('liveConsoleContainer');
+    const liveMatch = DB.matches.find(m => m.status === 'LIVE');
+
+    if (!liveMatch || !liveMatch.liveScorecard) {
+      container.innerHTML = `
+        <div class="panel">
+          <div class="empty-state">
+            <div class="empty-state-title" style="letter-spacing:0.8px;">NO LIVE MATCH</div>
+            <div class="empty-state-desc">Select an upcoming match and click [Start Match].</div>
+            <button class="btn-primary" onclick="showView('matches')">Go to Matches</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('liveMatchSubtitle').textContent = 'No match is currently live.';
+      return;
+    }
+
+    const sc = liveMatch.liveScorecard;
+    document.getElementById('liveMatchSubtitle').textContent = `${liveMatch.teamA.toUpperCase()} vs ${liveMatch.teamB.toUpperCase()} · HPL MATCH ${liveMatch.matchNo || '01'}`;
+
+    container.innerHTML = `
+      <div class="console-shell">
+        <div class="scoreboard-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+            <div class="console-header-match" style="margin:0;">HPL MATCH ${liveMatch.matchNo || '01'} · ${liveMatch.status}</div>
+            <div style="display:inline-flex; gap:6px;">
+              <button class="btn-secondary btn-sm" onclick="pauseMatch('${liveMatch.id}')" title="Pause Match"><i class="fa fa-pause"></i> Pause</button>
+              <button class="btn-secondary btn-sm" onclick="switchInnings('${liveMatch.id}')" title="Switch to 2nd Innings"><i class="fa fa-exchange"></i> 2nd Innings</button>
+              <button class="btn-danger btn-sm" onclick="openEndMatchDialog()" title="Complete Match"><i class="fa fa-flag-checkered"></i> Complete</button>
+            </div>
+          </div>
+          <div class="console-batting-name">${liveMatch.teamA}</div>
+          <div class="console-runs-wickets num-bold">${sc.runs} / ${sc.wickets}</div>
+          <div class="console-overs-figure num-bold">${sc.oversCompleted}.${sc.ballsInOver} OVERS</div>
+
+          <div class="over-balls-track">
+            ${(sc.currentOverBalls || []).map(b => {
+              let cls = 'over-ball-item';
+              if (b === 'W') cls += ' wkt';
+              if (b === '4') cls += ' four';
+              if (b === '6') cls += ' six';
+              return `<span class="${cls}">${b}</span>`;
+            }).join('') || '<span style="font-size:11.5px; color:var(--text-subtle);">Over underway</span>'}
+          </div>
+
+          <div class="pitch-strip">
+            <div class="pitch-stat-cell">
+              <div class="pitch-stat-lbl">Striker *</div>
+              <div class="pitch-stat-name">${sc.striker ? sc.striker.name : 'Striker'}</div>
+              <div class="pitch-stat-val num-bold">${sc.striker ? `${sc.striker.runs} (${sc.striker.balls})` : '0 (0)'}</div>
+            </div>
+            <div class="pitch-stat-cell">
+              <div class="pitch-stat-lbl">Non-Striker</div>
+              <div class="pitch-stat-name">${sc.nonStriker ? sc.nonStriker.name : 'Non-Striker'}</div>
+              <div class="pitch-stat-val num-bold">${sc.nonStriker ? `${sc.nonStriker.runs} (${sc.nonStriker.balls})` : '0 (0)'}</div>
+            </div>
+            <div class="pitch-stat-cell" style="grid-column: span 2;">
+              <div class="pitch-stat-lbl">Bowler (${liveMatch.teamB})</div>
+              <div class="pitch-stat-name">${sc.bowler ? sc.bowler.name : 'Bowler'}</div>
+              <div class="pitch-stat-val num-bold">${sc.bowler ? `${sc.bowler.wickets} / ${sc.bowler.runs}` : '0 / 0'}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="keypad-shell">
+          <div class="keypad-grid-runs">
+            <button class="keypad-btn-run active" id="btn0" onclick="chooseRun(0)">0</button>
+            <button class="keypad-btn-run" id="btn1" onclick="chooseRun(1)">1</button>
+            <button class="keypad-btn-run" id="btn2" onclick="chooseRun(2)">2</button>
+            <button class="keypad-btn-run" id="btn3" onclick="chooseRun(3)">3</button>
+            <button class="keypad-btn-run" id="btn4" onclick="chooseRun(4)">4</button>
+            <button class="keypad-btn-run" id="btn6" onclick="chooseRun(6)">6</button>
+          </div>
+
+          <div class="keypad-extras-row">
+            <button class="btn-opt-extra" id="extWIDE" onclick="chooseExtra('WIDE')">Wide</button>
+            <button class="btn-opt-extra" id="extNO_BALL" onclick="chooseExtra('NO BALL')">No Ball</button>
+            <button class="btn-opt-extra" id="extBYE" onclick="chooseExtra('BYE')">Bye</button>
+            <button class="btn-opt-extra" id="extLEG_BYE" onclick="chooseExtra('LEG BYE')">Leg Bye</button>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
+            <button class="btn-wicket-action" style="margin-bottom:0;" onclick="openWicketDialog()">
+              <i class="fa fa-times-circle"></i> WICKET
+            </button>
+            <button class="btn-undo-action" onclick="undoBall('${liveMatch.id}')">
+              <i class="fa fa-undo"></i> UNDO
+            </button>
+          </div>
+
+          <button class="btn-confirm-ball" onclick="confirmBall('${liveMatch.id}')">
+            <span id="btnConfirmText">[ CONFIRM (0 RUNS) ]</span>
+          </button>
+        </div>
+      </div>
+    `;
+
+    chooseRun(0);
+  }
+
+  function chooseRun(n) {
+    runPick = n;
+    document.querySelectorAll('.keypad-btn-run').forEach(b => b.classList.remove('active'));
+    const btn = document.getElementById('btn' + n);
+    if (btn) btn.classList.add('active');
+    updateConfirmText();
+  }
+
+  function chooseExtra(extra) {
+    if (extraPick === extra) {
+      extraPick = null;
+      const el = document.getElementById('ext' + extra.replace(' ', '_'));
+      if (el) el.classList.remove('active');
+    } else {
+      document.querySelectorAll('.btn-opt-extra').forEach(b => b.classList.remove('active'));
+      extraPick = extra;
+      const el = document.getElementById('ext' + extra.replace(' ', '_'));
+      if (el) el.classList.add('active');
+    }
+    updateConfirmText();
+  }
+
+  function updateConfirmText() {
+    const el = document.getElementById('btnConfirmText');
+    if (!el) return;
+    let txt = `[ CONFIRM (${runPick} RUN${runPick === 1 ? '' : 'S'}`;
+    if (extraPick) txt += ` + ${extraPick}`;
+    txt += ') ]';
+    el.textContent = txt;
+  }
+
+  async function confirmBall(mId) {
+    try {
+      const res = await fetch(`/api/admin/matches/${mId}/ball`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ runs: runPick, extra: extraPick })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to record ball');
+        return;
+      }
+      runPick = 0;
+      extraPick = null;
+      showToast('Delivery recorded.');
+      await fetchDb();
+    } catch (e) {
+      showToast('Unable to record ball delivery.');
+    }
+  }
+
+  async function undoBall(mId) {
+    try {
+      const res = await fetch(`/api/admin/matches/${mId}/undo`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to undo delivery');
+        return;
+      }
+      showToast('Delivery reverted & score recalculated.');
+      await fetchDb();
+    } catch (e) {
+      showToast('Unable to undo delivery.');
+    }
+  }
+
+  async function switchInnings(mId) {
+    if (!confirm('Switch to 2nd Innings? Target score will be calculated automatically.')) return;
+    try {
+      const res = await fetch(`/api/admin/matches/${mId}/innings/switch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to switch innings');
+        return;
+      }
+      showToast('Switched to 2nd Innings!');
+      await fetchDb();
+    } catch (e) {
+      showToast('Unable to switch innings.');
+    }
+  }
+
+  async function pauseMatch(mId) {
+    try {
+      const res = await fetch(`/api/admin/matches/${mId}/pause`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to pause match');
+        return;
+      }
+      showToast('Match paused.');
+      await fetchDb();
+    } catch (e) {
+      showToast('Unable to pause match.');
+    }
+  }
+
+  function openWicketDialog() {
+    const liveMatch = DB.matches.find(m => m.status === 'LIVE');
+    if (!liveMatch) return;
+
+    const sc = liveMatch.liveScorecard;
+    document.getElementById('wBatter').value = sc.striker ? sc.striker.name : 'Striker';
+
+    const squad = DB.players.filter(p => p.team === liveMatch.teamA);
+    const newOpts = squad
+      .filter(p => p.name !== (sc.striker && sc.striker.name) && p.name !== (sc.nonStriker && sc.nonStriker.name))
+      .map(p => `<option value="${p.name}">${p.name} (#${p.jersey})</option>`)
+      .join('');
+    document.getElementById('wNewBatter').innerHTML = newOpts || '<option value="Next Batter">Next Batter</option>';
+
+    openModal('modalWicket');
+  }
+
+  async function submitWicket() {
+    const liveMatch = DB.matches.find(m => m.status === 'LIVE');
+    if (!liveMatch) return;
+
+    const newBatter = document.getElementById('wNewBatter').value;
+    try {
+      const res = await fetch(`/api/matches/${liveMatch.id}/wicket`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newBatter })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to record wicket');
+        return;
+      }
+      closeModal('modalWicket');
+      showToast('Wicket recorded.');
+      await fetchDb();
+    } catch (e) {
+      showToast('Unable to record wicket.');
+    }
+  }
+
+  function openEndMatchDialog() {
+    const liveMatch = DB.matches.find(m => m.status === 'LIVE');
+    if (!liveMatch) {
+      showToast('No active match to complete.');
+      return;
+    }
+    document.getElementById('endWinner').innerHTML = `
+      <option value="${liveMatch.teamA}">${liveMatch.teamA}</option>
+      <option value="${liveMatch.teamB}">${liveMatch.teamB}</option>
+    `;
+    openModal('modalEndMatch');
+  }
+
+  async function submitCompleteMatch() {
+    const liveMatch = DB.matches.find(m => m.status === 'LIVE');
+    if (!liveMatch) return;
+
+    const winner = document.getElementById('endWinner').value;
+    const margin = document.getElementById('endMargin').value.trim();
+    const scoreB = document.getElementById('endScoreB').value.trim();
+
+    try {
+      const res = await fetch(`/api/matches/${liveMatch.id}/complete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ winner, margin, scoreB })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to finalize match');
+        return;
+      }
+      closeModal('modalEndMatch');
+      showToast('Match completed! Points table updated.');
+      await fetchDb(() => {
+        showView('standings');
+      });
+    } catch (e) {
+      showToast('Unable to finalize match.');
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // 13. POINTS TABLE
+  // --------------------------------------------------------------------------
+  function renderStandings() {
+    const tbody = document.getElementById('standingsBody');
+    if (DB.standings.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="8">
+            <div class="empty-state">
+              <div class="empty-state-title">No standings available yet.</div>
+              <div class="empty-state-desc">Standings will automatically calculate as matches finish.</div>
+            </div>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = DB.standings.map(s => `
+      <tr>
+        <td class="num-bold" style="color:var(--text-muted);">${s.pos}</td>
+        <td><strong>${s.team}</strong></td>
+        <td style="text-align:center;" class="num-bold">${s.p}</td>
+        <td style="text-align:center;" class="num-bold">${s.w}</td>
+        <td style="text-align:center;" class="num-bold">${s.l}</td>
+        <td style="text-align:center;" class="num-bold">${s.nr}</td>
+        <td style="text-align:center; color:var(--hpl-blue);" class="num-bold">${s.pts}</td>
+        <td style="text-align:right;" class="num-bold">${s.nrr || '+0.00'}</td>
+      </tr>
+    `).join('');
+  }
+
+  // --------------------------------------------------------------------------
+  // 14. SEED & WIPE
+  // --------------------------------------------------------------------------
+  async function submitSeed() {
+    closeModal('modalSeed');
+    try {
+      const res = await fetch('/api/seed', { method: 'POST' });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to seed database');
+        return;
+      }
+      showToast('HPL data seeded successfully.');
+      await fetchDb();
+    } catch (e) {
+      showToast('Unable to seed data.');
+    }
+  }
+
+  async function submitWipe() {
+    closeModal('modalWipe');
+    try {
+      const res = await fetch('/api/wipe', { method: 'POST' });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to wipe database');
+        return;
+      }
+      showToast('All HPL data wiped clean.');
+      await fetchDb();
+    } catch (e) {
+      showToast('Unable to wipe data.');
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // 15. ADMINISTRATOR AUTH & MANAGEMENT
+  // --------------------------------------------------------------------------
+  let CURRENT_ADMIN = null;
+  let ADMINS_LIST = [];
+
+  async function checkAuthAndLoadProfile() {
+    try {
+      const res = await fetch('/api/auth/me');
+      const data = await res.json();
+      if (!data.authenticated || !data.admin) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      CURRENT_ADMIN = data.admin;
+      const topName = document.getElementById('topAdminName');
+      const dropName = document.getElementById('dropAdminName');
+      const dropEmail = document.getElementById('dropAdminEmail');
+      if (topName) topName.textContent = CURRENT_ADMIN.name || 'Admin';
+      if (dropName) dropName.textContent = CURRENT_ADMIN.name || 'Admin';
+      if (dropEmail) dropEmail.textContent = CURRENT_ADMIN.email || '';
+    } catch (e) {
+      window.location.href = '/admin/login';
+    }
+  }
+
+  function toggleAdminDropdown(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('adminDropdownMenu');
+    if (menu) menu.classList.toggle('show');
+  }
+
+  document.addEventListener('click', (e) => {
+    const wrapper = document.getElementById('adminProfileWrapper');
+    const menu = document.getElementById('adminDropdownMenu');
+    if (wrapper && menu && !wrapper.contains(e.target)) {
+      menu.classList.remove('show');
+    }
+  });
+
+  async function logoutAdmin() {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (e) {}
+    window.location.href = '/admin/login';
+  }
+
+  function openChangePasswordModal() {
+    const menu = document.getElementById('adminDropdownMenu');
+    if (menu) menu.classList.remove('show');
+    document.getElementById('cpCurrentInput').value = '';
+    document.getElementById('cpNewInput').value = '';
+    document.getElementById('cpConfirmInput').value = '';
+    openModal('modalChangePassword');
+  }
+
+  async function submitChangePassword() {
+    const currentPassword = document.getElementById('cpCurrentInput').value;
+    const newPassword = document.getElementById('cpNewInput').value;
+    const confirm = document.getElementById('cpConfirmInput').value;
+
+    if (!currentPassword || !newPassword) {
+      showToast('Please fill in all password fields.');
+      return;
+    }
+    if (newPassword.length < 6) {
+      showToast('New password must be at least 6 characters.');
+      return;
+    }
+    if (newPassword !== confirm) {
+      showToast('New passwords do not match.');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/admin/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to update password');
+        return;
+      }
+      closeModal('modalChangePassword');
+      showToast('Password updated successfully.');
+    } catch (e) {
+      showToast('Unable to update password.');
+    }
+  }
+
+  async function loadAdmins() {
+    try {
+      const res = await fetch('/api/admins');
+      if (res.status === 401) {
+        window.location.href = '/admin/login';
+        return;
+      }
+      const json = await res.json();
+      if (json.success && json.admins) {
+        ADMINS_LIST = json.admins;
+        renderAdmins();
+      }
+    } catch (e) {
+      console.log('Error loading admins', e);
+    }
+  }
+
+  function renderAdmins() {
+    const tbody = document.getElementById('adminsBody');
+    if (!tbody) return;
+
+    if (ADMINS_LIST.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="4" style="text-align:center; color:var(--text-muted); padding:16px;">
+            No administrators found.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = ADMINS_LIST.map(a => {
+      const isSelf = CURRENT_ADMIN && CURRENT_ADMIN.id === a.id;
+      const isActive = a.status === 'active';
+      const statusBadge = isActive
+        ? '<span class="status-badge active">Active</span>'
+        : '<span class="status-badge disabled">Disabled</span>';
+      
+      const toggleAction = isActive
+        ? `<button class="btn-secondary btn-sm" onclick="toggleAdminStatus('${a.id}', 'disabled')" title="Disable Admin">Disable</button>`
+        : `<button class="btn-primary btn-sm" onclick="toggleAdminStatus('${a.id}', 'active')" title="Enable Admin">Enable</button>`;
+
+      return `
+        <tr>
+          <td>
+            <strong>${escapeHtml(a.name)}</strong>
+            ${isSelf ? '<small style="color:var(--hpl-blue); font-weight:700; margin-left:4px;">(You)</small>' : ''}
+          </td>
+          <td>${escapeHtml(a.email)}</td>
+          <td style="text-align:center;">${statusBadge}</td>
+          <td style="text-align:right; white-space:nowrap;">
+            <div style="display:inline-flex; gap:6px;">
+              <button class="btn-secondary btn-sm" onclick="openEditAdminModal('${a.id}', '${escapeHtml(a.name)}', '${escapeHtml(a.email)}')" title="Edit details">Edit</button>
+              ${toggleAction}
+              <button class="btn-danger btn-sm" onclick="deleteAdmin('${a.id}', '${escapeHtml(a.name)}')" title="Delete admin"><i class="fa fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function openAddAdminModal() {
+    document.getElementById('adminNameInput').value = '';
+    document.getElementById('adminEmailInput').value = '';
+    document.getElementById('adminPassInput').value = '';
+    document.getElementById('adminPassConfirmInput').value = '';
+    openModal('modalAddAdmin');
+  }
+
+  async function submitAddAdmin() {
+    const name = document.getElementById('adminNameInput').value.trim();
+    const email = document.getElementById('adminEmailInput').value.trim().toLowerCase();
+    const pass = document.getElementById('adminPassInput').value;
+    const confirm = document.getElementById('adminPassConfirmInput').value;
+
+    if (!name || !email || !pass) {
+      showToast('All fields are required.');
+      return;
+    }
+    if (pass.length < 6) {
+      showToast('Password must be at least 6 characters.');
+      return;
+    }
+    if (pass !== confirm) {
+      showToast('Passwords do not match.');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/admins', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password: pass })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to create administrator');
+        return;
+      }
+      closeModal('modalAddAdmin');
+      showToast(`Admin ${name} created successfully.`);
+      await loadAdmins();
+    } catch (e) {
+      showToast('Unable to create administrator.');
+    }
+  }
+
+  function openEditAdminModal(id, name, email) {
+    document.getElementById('editAdminIdInput').value = id;
+    document.getElementById('editAdminNameInput').value = name;
+    document.getElementById('editAdminEmailInput').value = email;
+    openModal('modalEditAdmin');
+  }
+
+  async function submitEditAdmin() {
+    const id = document.getElementById('editAdminIdInput').value;
+    const name = document.getElementById('editAdminNameInput').value.trim();
+    const email = document.getElementById('editAdminEmailInput').value.trim().toLowerCase();
+
+    if (!name || !email) {
+      showToast('Name and email are required.');
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admins/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to update administrator');
+        return;
+      }
+      closeModal('modalEditAdmin');
+      showToast('Administrator details updated.');
+      if (CURRENT_ADMIN && CURRENT_ADMIN.id === id) {
+        CURRENT_ADMIN.name = name;
+        CURRENT_ADMIN.email = email;
+        const topName = document.getElementById('topAdminName');
+        const dropName = document.getElementById('dropAdminName');
+        const dropEmail = document.getElementById('dropAdminEmail');
+        if (topName) topName.textContent = name;
+        if (dropName) dropName.textContent = name;
+        if (dropEmail) dropEmail.textContent = email;
+      }
+      await loadAdmins();
+    } catch (e) {
+      showToast('Unable to update administrator.');
+    }
+  }
+
+  async function toggleAdminStatus(id, newStatus) {
+    try {
+      const res = await fetch(`/api/admins/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to update status');
+        return;
+      }
+      showToast(json.message || 'Status updated.');
+      await loadAdmins();
+    } catch (e) {
+      showToast('Unable to update status.');
+    }
+  }
+
+  async function deleteAdmin(id, name) {
+    if (!confirm(`Are you sure you want to delete administrator "${name}"?`)) {
+      return;
+    }
+    try {
+      const res = await fetch(`/api/admins/${id}`, {
+        method: 'DELETE'
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to delete administrator');
+        return;
+      }
+      showToast(`Administrator ${name} deleted.`);
+      await loadAdmins();
+    } catch (e) {
+      showToast('Unable to delete administrator.');
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // RENDER CURRENT STATE
+  // --------------------------------------------------------------------------
+  function renderCurrentViews() {
+    renderDashboard();
+    renderTeams();
+    renderPlayers();
+    renderMatches();
+    renderLiveScoring();
+    renderStandings();
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await checkAuthAndLoadProfile();
+    fetchDb(() => {
+      loadAdmins();
+    });
+  });
+</script>
+</body>
+</html>
