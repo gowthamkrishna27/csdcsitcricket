@@ -1208,7 +1208,7 @@ def api_admin_update_match(match_id):
         team_b = req.get("team_b") or req.get("teamB")
         venue = req.get("venue")
         match_date = req.get("match_date") or req.get("date")
-        time = req.get("time")
+        match_time = req.get("time")
         total_overs = req.get("total_overs") or req.get("overs")
         format_name = req.get("format_name") or req.get("format")
         players_per_team = req.get("players_per_team")
@@ -1221,10 +1221,11 @@ def api_admin_update_match(match_id):
         is_locked = req.get("is_locked")
 
         ok, res = cricket_db.update_match(
-            mid, team_a, team_b, venue, match_date, total_overs, status, 
+            mid, team_a=team_a, team_b=team_b, venue=venue, match_date=match_date,
+            total_overs=total_overs, status=status, 
             league_id=league_id, format_name=format_name, 
             players_per_team=players_per_team, balls_per_over=balls_per_over,
-            time=time, tournament_id=tournament_id,
+            time=match_time, tournament_id=tournament_id,
             stage=stage, stage_order=stage_order, is_locked=is_locked
         )
         if not ok:
@@ -1238,7 +1239,7 @@ def api_admin_update_match(match_id):
                     mid, team_a=team_a, team_b=team_b, venue=venue, match_date=match_date,
                     total_overs=total_overs, status=status, league_id=league_id, format_name=format_name,
                     players_per_team=players_per_team, balls_per_over=balls_per_over,
-                    time=time, tournament_id=tournament_id, stage=stage, stage_order=stage_order,
+                    time=match_time, tournament_id=tournament_id, stage=stage, stage_order=stage_order,
                     is_locked=is_locked
                 )
             except Exception:

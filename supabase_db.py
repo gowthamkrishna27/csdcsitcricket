@@ -438,10 +438,11 @@ def create_match(team_a: str, team_b: str, venue: str = "College Ground", match_
 
 
 def update_match(match_id: int, team_a: Optional[str] = None, team_b: Optional[str] = None, venue: Optional[str] = None,
-                 match_date: Optional[str] = None, time: Optional[str] = None, total_overs: Optional[int] = None,
-                 status: Optional[str] = None, league_id: Optional[int] = None, tournament_id: Optional[int] = None,
-                 stage: Optional[str] = None, stage_order: Optional[int] = None, format_name: Optional[str] = None,
-                 players_per_team: Optional[int] = None, balls_per_over: Optional[int] = None, is_locked: Optional[bool] = None,
+                 match_date: Optional[str] = None, total_overs: Optional[int] = None, status: Optional[str] = None,
+                 league_id: Optional[int] = None, format_name: Optional[str] = None,
+                 players_per_team: Optional[int] = None, balls_per_over: Optional[int] = None,
+                 time: Optional[str] = None, tournament_id: Optional[int] = None,
+                 stage: Optional[str] = None, stage_order: Optional[int] = None, is_locked: Optional[bool] = None,
                  playing_xi_a: Optional[List[str]] = None, playing_xi_b: Optional[List[str]] = None,
                  captain_a: Optional[str] = None, captain_b: Optional[str] = None,
                  toss_winner: Optional[str] = None, toss_decision: Optional[str] = None, **kwargs):
