@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
   <script src="js/api/matches.js"></script>
   <script src="js/api/scoring.js"></script>
@@ -594,6 +594,27 @@
     }
     .form-input:focus {
       border-color: var(--border-focus);
+    }
+    input[type="date"].form-input,
+    input[type="time"].form-input {
+      font-family: inherit;
+      color: var(--navy-900);
+      background-color: #fff;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    input[type="date"].form-input::-webkit-calendar-picker-indicator,
+    input[type="time"].form-input::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      filter: invert(0.2) sepia(1) saturate(5) hue-rotate(185deg);
+      opacity: 0.85;
+      padding: 2px;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+    input[type="date"].form-input::-webkit-calendar-picker-indicator:hover,
+    input[type="time"].form-input::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
+      transform: scale(1.18);
     }
 
     .back-btn-strip {
@@ -1289,6 +1310,9 @@
       <button class="nav-btn active" onclick="showView('dashboard')">
         <i class="fa fa-th-large"></i> Dashboard
       </button>
+      <button class="nav-btn" onclick="showView('tournaments')">
+        <i class="fa fa-sitemap"></i> Tournaments
+      </button>
       <button class="nav-btn" onclick="showView('leagues')">
         <i class="fa fa-trophy"></i> Leagues
       </button>
@@ -1303,6 +1327,9 @@
       </button>
       <button class="nav-btn" onclick="showView('live-scoring')">
         <i class="fa fa-circle"></i> Live Scoring <span class="nav-live-dot" id="navLiveDot" style="display:none;"></span>
+      </button>
+      <button class="nav-btn" onclick="showView('scorers')">
+        <i class="fa fa-pencil-square-o"></i> Scorer Logins
       </button>
       <button class="nav-btn" onclick="showView('standings')">
         <i class="fa fa-list-ol"></i> Points Table
@@ -1400,6 +1427,41 @@
         <div class="panel-title" style="margin-bottom: 8px;">NEXT MATCH</div>
         <div class="dash-next-panel" id="dashNextPanel">
           <div class="empty-state-desc" style="margin: 0; text-align: left;">No upcoming matches scheduled.</div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           TOURNAMENTS MANAGEMENT VIEW
+           ==================================================================== -->
+      <div class="page-view" id="page-tournaments">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Tournaments</h1>
+            <p class="page-subtitle">Configure top-level tournaments, seasons, formats, and active editions.</p>
+          </div>
+          <div>
+            <button class="btn-primary" onclick="openCreateTournament()">+ Create Tournament</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <table class="clean-table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">ID</th>
+                <th>TOURNAMENT NAME</th>
+                <th>SEASON</th>
+                <th>FORMAT</th>
+                <th>OVERS</th>
+                <th>STATUS</th>
+                <th>ACTIVE</th>
+                <th style="text-align:right;">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody id="tournamentsBody">
+              <!-- Rendered via DB -->
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -1648,10 +1710,105 @@
             </tbody>
           </table>
         </div>
+
+        <!-- PLAYOFF QUALIFICATION & SEEDING PANEL -->
+        <div class="panel" style="margin-top:20px;" id="playoffGovernancePanel">
+          <div class="panel-head" style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <span class="panel-title" style="font-size:14px;"><i class="fa fa-trophy"></i> Playoff Qualification & Seeding</span>
+              <p style="font-size:11px; color:var(--text-muted); margin:2px 0 0 0;">Top 4 ranked teams qualify for the championship playoffs.</p>
+            </div>
+            <button class="btn-secondary btn-sm" onclick="loadPlayoffQualification()"><i class="fa fa-refresh"></i> Refresh Seeds</button>
+          </div>
+          <div id="playoffSeedsContainer" style="padding:14px;">
+            <div class="empty-state-desc" style="margin:0;">Select a league to calculate playoff seeds.</div>
+          </div>
+        </div>
       </div>
 
       <!-- ====================================================================
-           14. SETTINGS VIEW (TOURNAMENT · DATABASE · ADMINISTRATORS)
+           14. SCORER LOGINS & ACCESS VIEW (DEDICATED CREDENTIALS MANAGEMENT)
+           ==================================================================== -->
+      <div class="page-view" id="page-scorers">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Scorer Logins & Access</h1>
+            <p class="page-subtitle">Create and manage authorized logins for official match scorers.</p>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn-secondary" onclick="copyScorerPortalLink()" title="Copy Scorer Login Portal Link">
+              <i class="fa fa-link"></i> Copy Portal Link
+            </button>
+            <a href="/scorer/login" target="_blank" class="btn-secondary" title="Open Scorer Portal in new tab" style="display:inline-flex; align-items:center; gap:6px;">
+              <i class="fa fa-external-link"></i> Open Scorer Portal
+            </a>
+            <button class="btn-primary" onclick="openAddScorerModal()">
+              <i class="fa fa-plus"></i> Add Scorer Login
+            </button>
+          </div>
+        </div>
+
+        <!-- Info & Stats Banner -->
+        <div class="panel" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #bae6fd; margin-bottom: 20px;">
+          <div class="panel-body" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; padding:16px 20px;">
+            <div style="display:flex; align-items:center; gap:14px; max-width:650px;">
+              <div style="width:44px; height:44px; border-radius:10px; background:#0284c7; color:#fff; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;">
+                <i class="fa fa-pencil-square-o"></i>
+              </div>
+              <div>
+                <strong style="color:var(--navy-900); font-size:14px;">Dedicated Scorer Login Portal</strong>
+                <p style="margin:2px 0 0 0; font-size:12.5px; color:var(--text-muted); line-height:1.4;">
+                  Match scorers sign in at <code style="background:rgba(255,255,255,0.85); padding:2px 6px; border-radius:4px; font-weight:700; color:#0369a1; border:1px solid #bae6fd;" id="scorerPortalUrlCode">/scorer/login</code> to claim fixtures, score live deliveries, and sync ball-by-ball updates.
+                </p>
+              </div>
+            </div>
+            <div style="display:flex; gap:20px; align-items:center;">
+              <div style="text-align:right;">
+                <span style="font-size:11px; text-transform:uppercase; font-weight:700; color:var(--text-muted); display:block;">Total Scorers</span>
+                <span class="num-bold" id="totalScorersCount" style="font-size:22px; color:var(--navy-900);">0</span>
+              </div>
+              <div style="width:1px; height:32px; background:#cbd5e1;"></div>
+              <div style="text-align:right;">
+                <span style="font-size:11px; text-transform:uppercase; font-weight:700; color:var(--text-muted); display:block;">Active</span>
+                <span class="num-bold" id="activeScorersCount" style="font-size:22px; color:var(--hpl-green);">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter & Actions Bar -->
+        <div class="filter-bar" style="margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+          <div style="position:relative; width:320px; max-width:100%;">
+            <input type="text" class="form-input" id="scorerSearchInput" placeholder="Search by scorer name or email..." style="width:100%; padding-left:32px;" oninput="filterScorersTable()">
+            <i class="fa fa-search" style="position:absolute; left:12px; top:10px; color:var(--text-muted);"></i>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-secondary btn-sm" onclick="loadScorers()" title="Reload Scorer List"><i class="fa fa-refresh"></i> Refresh</button>
+          </div>
+        </div>
+
+        <!-- Scorer Table -->
+        <div class="panel">
+          <table class="clean-table">
+            <thead>
+              <tr>
+                <th>SCORER NAME</th>
+                <th>LOGIN EMAIL / USERNAME</th>
+                <th style="text-align:center;">ROLE</th>
+                <th style="text-align:center;">STATUS</th>
+                <th style="text-align:center;">CREATED</th>
+                <th style="text-align:right;">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody id="scorersBody">
+              <!-- Rendered via loadScorers() -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           15. SETTINGS VIEW (TOURNAMENT · DATABASE · ADMINISTRATORS)
            ==================================================================== -->
       <div class="page-view" id="page-settings">
         <div class="page-head">
@@ -1932,22 +2089,22 @@
 
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <div class="form-group">
-          <label>Date</label>
-          <input type="text" class="form-input" style="width:100%;" id="mDate" value="Today">
+          <label><i class="fa fa-calendar" style="color:var(--hpl-blue); margin-right:4px;"></i> Date <span style="color:var(--hpl-red); font-weight:800;">*</span></label>
+          <input type="date" class="form-input" style="width:100%; cursor:pointer;" id="mDate">
         </div>
         <div class="form-group">
-          <label>Time</label>
-          <input type="text" class="form-input" style="width:100%;" id="mTime" value="09:00 AM">
+          <label><i class="fa fa-clock-o" style="color:var(--hpl-blue); margin-right:4px;"></i> Time <span style="color:var(--hpl-red); font-weight:800;">*</span></label>
+          <input type="time" class="form-input" style="width:100%; cursor:pointer;" id="mTime">
         </div>
       </div>
       <div class="form-group">
-        <label>Venue</label>
+        <label><i class="fa fa-map-marker" style="color:var(--hpl-blue); margin-right:4px;"></i> Venue</label>
         <input type="text" class="form-input" style="width:100%;" id="mVenue" value="College Ground">
       </div>
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalSchedule')">Cancel</button>
-      <button class="btn-primary" onclick="submitSchedule()">Schedule Fixture</button>
+      <button class="btn-primary" id="btnScheduleFixture" onclick="submitSchedule()">Schedule Fixture</button>
     </div>
   </div>
 </div>
@@ -2014,13 +2171,17 @@
 
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <div class="form-group">
-          <label>Date</label>
-          <input type="text" class="form-input" style="width:100%;" id="editFixDate">
+          <label><i class="fa fa-calendar" style="color:var(--hpl-blue); margin-right:4px;"></i> Date</label>
+          <input type="date" class="form-input" style="width:100%; cursor:pointer;" id="editFixDate">
         </div>
         <div class="form-group">
-          <label>Venue</label>
-          <input type="text" class="form-input" style="width:100%;" id="editFixVenue">
+          <label><i class="fa fa-clock-o" style="color:var(--hpl-blue); margin-right:4px;"></i> Time</label>
+          <input type="time" class="form-input" style="width:100%; cursor:pointer;" id="editFixTime">
         </div>
+      </div>
+      <div class="form-group">
+        <label><i class="fa fa-map-marker" style="color:var(--hpl-blue); margin-right:4px;"></i> Venue</label>
+        <input type="text" class="form-input" style="width:100%;" id="editFixVenue">
       </div>
       <div class="form-group" id="editFixStatusRow">
         <label>Status</label>
@@ -2035,7 +2196,7 @@
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalEditFixture')">Cancel</button>
-      <button class="btn-primary" onclick="submitEditFixture()">Save Fixture</button>
+      <button class="btn-primary" id="btnSaveFixture" onclick="submitEditFixture()">Save Fixture</button>
     </div>
   </div>
 </div>
@@ -2145,26 +2306,102 @@
   </div>
 </div>
 
-<!-- 6C. ABANDON FIXTURE -->
+<!-- ABANDON / CANCEL FIXTURE MODAL -->
 <div class="modal-overlay" id="modalAbandonFixture">
   <div class="modal-dialog">
     <div class="modal-head">
-      <div class="modal-head-title" style="color:var(--hpl-red);">Abandon / Cancel Fixture?</div>
+      <div class="modal-head-title" style="color:var(--hpl-red);"><i class="fa fa-ban"></i> Cancel / Abandon Fixture</div>
       <button onclick="closeModal('modalAbandonFixture')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="abandonFixtureId">
-      <p style="font-size:13.5px; color:var(--navy-900); margin-bottom:10px;" id="abandonFixturePrompt">
-        Mark match as Abandoned / No Result?
-      </p>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">Cancelling this fixture will mark it completed with no winner and exclude it from points-table calculations.</p>
       <div class="form-group">
-        <label>Reason / Note</label>
+        <label>Cancellation Reason <span style="color:var(--hpl-red);">*</span></label>
         <input type="text" class="form-input" style="width:100%;" id="abandonReason" placeholder="e.g. Match abandoned due to rain" value="Match Abandoned (Rain)">
       </div>
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalAbandonFixture')">Cancel</button>
       <button class="btn-danger" onclick="submitAbandonFixture()">Confirm Abandon</button>
+    </div>
+  </div>
+</div>
+
+<!-- UNLOCK MATCH MODAL -->
+<div class="modal-overlay" id="modalUnlockMatch">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title" style="color:var(--hpl-red);"><i class="fa fa-unlock"></i> Unlock Match for Correction</div>
+      <button onclick="closeModal('modalUnlockMatch')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="unlockMatchId">
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">
+        This match is locked and protected from scoring edits. Unlocking permits administrative corrections.
+        <strong>All unlock actions, timestamps, and your stated reason will be permanently recorded in the administrator audit trail.</strong>
+      </p>
+      <div class="form-group">
+        <label>Reason for Unlocking <span style="color:var(--hpl-red);">*</span></label>
+        <textarea class="form-input" style="width:100%; height:75px; resize:vertical;" id="unlockMatchReason" placeholder="Explain why this match is being unlocked (e.g. Score correction on over 3)..."></textarea>
+      </div>
+      <div style="margin-top:10px; display:flex; align-items:center; gap:8px;">
+        <input type="checkbox" id="unlockConfirmCheck">
+        <label for="unlockConfirmCheck" style="font-size:12px; font-weight:600; cursor:pointer;">I confirm this administrative override.</label>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalUnlockMatch')">Cancel</button>
+      <button class="btn-danger" id="btnConfirmUnlockMatch" onclick="submitUnlockMatch()">Confirm & Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOURNAMENT CREATE / EDIT MODAL -->
+<div class="modal-overlay" id="modalTournament">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title" id="tournamentModalTitle">Create Tournament</div>
+      <button onclick="closeModal('modalTournament')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="tournamentEditId">
+      <div class="form-group">
+        <label>Tournament Name <span style="color:var(--hpl-red);">*</span></label>
+        <input type="text" class="form-input" style="width:100%;" id="tournName" placeholder="e.g. College Premier League 2026">
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:1;">
+          <label>Season / Year</label>
+          <input type="text" class="form-input" style="width:100%;" id="tournSeason" placeholder="2026" value="2026">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>Format</label>
+          <input type="text" class="form-input" style="width:100%;" id="tournFormat" placeholder="T10, T20, T6" value="T10">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:1;">
+          <label>Total Overs</label>
+          <input type="number" class="form-input" style="width:100%;" id="tournOvers" value="10" min="1" max="50">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>Status</label>
+          <select class="form-input" style="width:100%;" id="tournStatus">
+            <option value="active">Active</option>
+            <option value="disabled">Disabled</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" class="form-input" style="width:100%;" id="tournDesc" placeholder="Tournament notes or details">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalTournament')">Cancel</button>
+      <button class="btn-primary" onclick="submitSaveTournament()">Save Tournament</button>
     </div>
   </div>
 </div>
@@ -2224,6 +2461,31 @@
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalDeleteLeague')">Cancel</button>
       <button class="btn-danger" onclick="submitDeleteLeague()">Delete League</button>
+    </div>
+  </div>
+</div>
+
+<!-- 6D. NEW OVER / SELECT BOWLER MODAL -->
+<div class="modal-overlay" id="modalNewOverBowler">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title" style="color:var(--hpl-blue);"><i class="fa fa-refresh"></i> Over Complete — Select Next Bowler</div>
+      <button onclick="closeModal('modalNewOverBowler')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="newOverMatchId">
+      <div id="newOverSummaryBanner" style="font-size:13px; font-weight:700; color:var(--navy-900); background:var(--bg-subtle); padding:10px 14px; border-radius:6px; margin-bottom:14px; border:1px solid var(--border-light);">
+        Over completed. Strike rotated.
+      </div>
+      <div class="form-group">
+        <label id="newOverBowlerLabel">Select Bowler for Next Over <span style="color:var(--hpl-red);">*</span></label>
+        <select class="form-input" style="width:100%; font-size:13px; font-weight:700; padding:8px 12px;" id="newOverBowlerSelect"></select>
+      </div>
+      <p id="newOverPrevBowlerNote" style="font-size:11.5px; color:var(--text-muted); margin-top:6px;"></p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalNewOverBowler')">Skip</button>
+      <button class="btn-primary" onclick="confirmNewOverBowler()">Confirm Bowler</button>
     </div>
   </div>
 </div>
@@ -2500,6 +2762,94 @@
   </div>
 </div>
 
+<!-- 14. ADD SCORER MODAL -->
+<div class="modal-overlay" id="modalAddScorer">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title"><i class="fa fa-user-plus" style="color:var(--hpl-blue); margin-right:6px;"></i> Add Scorer Login</div>
+      <button onclick="closeModal('modalAddScorer')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--bg-subtle); border-left:3px solid var(--hpl-blue); padding:10px 12px; border-radius:4px; font-size:12px; color:var(--navy-700); margin-bottom:14px;">
+        This creates an authorized Scorer credential. Scorers can log in at <strong>/scorer/login</strong> to claim and score assigned matches.
+      </div>
+      <div class="form-group">
+        <label>Scorer Full Name</label>
+        <input type="text" class="form-input" style="width:100%;" id="scorerNameInput" placeholder="e.g. Rahul Sharma (Official Scorer)">
+      </div>
+      <div class="form-group">
+        <label>Login Email / Username</label>
+        <input type="email" class="form-input" style="width:100%;" id="scorerEmailInput" placeholder="scorer@college.edu">
+      </div>
+      <div class="form-group">
+        <label>Initial Password</label>
+        <input type="password" class="form-input" style="width:100%;" id="scorerPassInput" placeholder="Minimum 6 characters">
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="password" class="form-input" style="width:100%;" id="scorerPassConfirmInput" placeholder="Re-enter password">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalAddScorer')">Cancel</button>
+      <button class="btn-primary" onclick="submitAddScorer()"><i class="fa fa-check"></i> Create Scorer Login</button>
+    </div>
+  </div>
+</div>
+
+<!-- 15. EDIT SCORER MODAL -->
+<div class="modal-overlay" id="modalEditScorer">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title"><i class="fa fa-pencil" style="color:var(--hpl-blue); margin-right:6px;"></i> Edit Scorer Details</div>
+      <button onclick="closeModal('modalEditScorer')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editScorerIdInput">
+      <div class="form-group">
+        <label>Scorer Name</label>
+        <input type="text" class="form-input" style="width:100%;" id="editScorerNameInput">
+      </div>
+      <div class="form-group">
+        <label>Login Email</label>
+        <input type="email" class="form-input" style="width:100%;" id="editScorerEmailInput">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalEditScorer')">Cancel</button>
+      <button class="btn-primary" onclick="submitEditScorer()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- 16. RESET SCORER PASSWORD MODAL -->
+<div class="modal-overlay" id="modalResetScorerPassword">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <div class="modal-head-title"><i class="fa fa-key" style="color:#eab308; margin-right:6px;"></i> Reset Scorer Password</div>
+      <button onclick="closeModal('modalResetScorerPassword')" style="background:none;border:none;cursor:pointer;font-size:16px;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="resetScorerIdInput">
+      <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px;">
+        Setting a new password for scorer: <strong id="resetScorerNameDisplay" style="color:var(--navy-900);"></strong>
+      </p>
+      <div class="form-group">
+        <label>New Password</label>
+        <input type="password" class="form-input" style="width:100%;" id="resetScorerPassInput" placeholder="Minimum 6 characters">
+      </div>
+      <div class="form-group">
+        <label>Confirm New Password</label>
+        <input type="password" class="form-input" style="width:100%;" id="resetScorerPassConfirmInput" placeholder="Re-enter new password">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modalResetScorerPassword')">Cancel</button>
+      <button class="btn-primary" onclick="submitResetScorerPassword()"><i class="fa fa-lock"></i> Set New Password</button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast Box -->
 <div class="toast-box" id="toast">Message</div>
 
@@ -2507,7 +2857,7 @@
      CONTROLLER (100% DB-DRIVEN · ZERO MOCK DATA)
      ======================================================================== -->
 <script>
-  let DB = { leagues: [], teams: [], players: [], matches: [], standings: [], settings: {} };
+  let DB = { tournaments: [], activeTournament: null, leagues: [], teams: [], players: [], matches: [], standings: [], settings: {} };
   let currentDetailTeam = null;
   let matchTabFilter = 'ALL';
   let fixtureViewMode = 'list';
@@ -2520,10 +2870,11 @@
     const loader = document.getElementById('loadingIndicator');
     if (loader) loader.style.display = 'inline-flex';
     try {
-      const [resData, resLeagues, resMatches] = await Promise.all([
+      const [resData, resLeagues, resMatches, resTournaments] = await Promise.all([
         fetch('/api/data').then(r => r.json()),
         fetch('/api/leagues').then(r => r.json()).catch(() => ({ success: false })),
-        fetch('/api/matches').then(r => r.json()).catch(() => ({ success: false }))
+        fetch('/api/matches').then(r => r.json()).catch(() => ({ success: false })),
+        fetch('/api/tournaments').then(r => r.json()).catch(() => ({ success: false }))
       ]);
 
       if (resData && resData.success && resData.data) {
@@ -2536,6 +2887,10 @@
       }
       if (resMatches && resMatches.success && resMatches.matches) {
         DB.matches = resMatches.matches;
+      }
+      if (resTournaments && resTournaments.success && resTournaments.tournaments) {
+        DB.tournaments = resTournaments.tournaments;
+        DB.activeTournament = DB.tournaments.find(t => t.is_active) || DB.tournaments[0] || null;
       }
       populateLeagueSelects();
     } catch (e) {
@@ -2583,12 +2938,14 @@
 
     const titles = {
       'dashboard': 'Dashboard',
+      'tournaments': 'Tournaments Management',
       'leagues': 'Leagues Management',
       'teams': 'Teams',
       'team-details': 'Team Details',
       'players': 'Players',
       'matches': 'Matches',
       'live-scoring': 'Live Scoring',
+      'scorers': 'Scorer Logins & Access',
       'standings': 'Points Table',
       'settings': 'Settings'
     };
@@ -2596,6 +2953,9 @@
     document.getElementById('appSidebar').classList.remove('open');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
+    if (viewId === 'scorers') {
+      loadScorers();
+    }
     if (viewId === 'settings') {
       loadAdmins();
     }
@@ -2678,6 +3038,149 @@
   }
 
   // --------------------------------------------------------------------------
+  // TOURNAMENTS MANAGEMENT
+  // --------------------------------------------------------------------------
+  function renderTournaments() {
+    const tbody = document.getElementById('tournamentsBody');
+    if (!tbody) return;
+    if (!DB.tournaments || DB.tournaments.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:24px;">No tournaments created yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = DB.tournaments.map(t => `
+      <tr>
+        <td style="font-weight:700; color:var(--navy-900);">${t.id}</td>
+        <td>
+          <div style="font-weight:700; color:var(--navy-900); font-size:13.5px;">${escHtml(t.name)}</div>
+          <div style="font-size:11.5px; color:var(--text-muted);">${escHtml(t.description || 'College Tournament Edition')}</div>
+        </td>
+        <td><span class="badge badge-gray">${escHtml(t.season || '2026')}</span></td>
+        <td><strong>${escHtml(t.format_name || 'T10')}</strong></td>
+        <td>${t.total_overs || 10} Overs</td>
+        <td>
+          <span class="badge ${t.status === 'active' ? 'badge-green' : (t.status === 'completed' ? 'badge-blue' : 'badge-gray')}">
+            ${(t.status || 'active').toUpperCase()}
+          </span>
+        </td>
+        <td>
+          ${t.is_active ? '<span class="badge badge-green"><i class="fa fa-check-circle"></i> ACTIVE</span>' : `<button class="btn-table" onclick="activateTournament(${t.id})">Set Active</button>`}
+        </td>
+        <td style="text-align:right;">
+          <button class="btn-table" onclick="openEditTournament(${t.id})"><i class="fa fa-pencil"></i> Edit</button>
+          ${!t.is_active ? `<button class="btn-table" style="color:var(--hpl-red);" onclick="deleteTournament(${t.id}, '${escHtml(t.name)}')"><i class="fa fa-trash"></i></button>` : ''}
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function openCreateTournament() {
+    document.getElementById('tournamentModalTitle').textContent = 'Create Tournament';
+    document.getElementById('tournamentEditId').value = '';
+    document.getElementById('tournName').value = '';
+    document.getElementById('tournSeason').value = '2026';
+    document.getElementById('tournFormat').value = 'T10';
+    document.getElementById('tournOvers').value = 10;
+    document.getElementById('tournStatus').value = 'active';
+    document.getElementById('tournDesc').value = '';
+    openModal('modalTournament');
+  }
+
+  function openEditTournament(id) {
+    const t = DB.tournaments.find(x => x.id === id);
+    if (!t) return;
+    document.getElementById('tournamentModalTitle').textContent = 'Edit Tournament';
+    document.getElementById('tournamentEditId').value = t.id;
+    document.getElementById('tournName').value = t.name || '';
+    document.getElementById('tournSeason').value = t.season || '2026';
+    document.getElementById('tournFormat').value = t.format_name || 'T10';
+    document.getElementById('tournOvers').value = t.total_overs || 10;
+    document.getElementById('tournStatus').value = t.status || 'active';
+    document.getElementById('tournDesc').value = t.description || '';
+    openModal('modalTournament');
+  }
+
+  async function submitSaveTournament() {
+    const editId = document.getElementById('tournamentEditId').value;
+    const name = document.getElementById('tournName').value.trim();
+    const season = document.getElementById('tournSeason').value.trim();
+    const format_name = document.getElementById('tournFormat').value.trim();
+    const total_overs = parseInt(document.getElementById('tournOvers').value) || 10;
+    const status = document.getElementById('tournStatus').value;
+    const description = document.getElementById('tournDesc').value.trim();
+
+    if (!name) {
+      showToast('Please enter a tournament name.');
+      return;
+    }
+
+    const payload = { name, season, format_name, total_overs, status, description };
+    try {
+      const url = editId ? `/api/tournaments/${editId}` : '/api/tournaments';
+      const method = editId ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(r => r.json());
+
+      if (res && res.success) {
+        closeModal('modalTournament');
+        showToast(editId ? 'Tournament updated!' : 'Tournament created!');
+        await fetchDb();
+      } else {
+        showToast(res.error || 'Failed to save tournament.');
+      }
+    } catch (e) {
+      showToast('Network error saving tournament.');
+    }
+  }
+
+  async function activateTournament(id) {
+    if (!confirm('Activate this tournament as the current live tournament edition?')) return;
+    try {
+      const res = await fetch(`/api/tournaments/${id}/activate`, { method: 'POST' }).then(r => r.json());
+      if (res && res.success) {
+        showToast('Tournament activated!');
+        await fetchDb();
+      } else {
+        showToast(res.error || 'Failed to activate tournament.');
+      }
+    } catch (e) {
+      showToast('Network error activating tournament.');
+    }
+  }
+
+  async function deleteTournament(id, name) {
+    if (!confirm(`Are you sure you want to delete tournament "${name}"?`)) return;
+    try {
+      const res = await fetch(`/api/tournaments/${id}`, { method: 'DELETE' }).then(r => r.json());
+      if (res && res.success) {
+        showToast('Tournament deleted successfully.');
+        await fetchDb();
+      } else {
+        showToast(res.error || 'Failed to delete tournament.');
+      }
+    } catch (e) {
+      showToast('Network error deleting tournament.');
+    }
+  }
+
+  async function cancelFixture(matchId) {
+    if (!confirm('Are you sure you want to cancel this scheduled fixture?')) return;
+    try {
+      const res = await fetch(`/api/fixtures/${matchId}/cancel`, { method: 'POST' }).then(r => r.json());
+      if (res && res.success) {
+        showToast('Fixture cancelled.');
+        await fetchDb();
+      } else {
+        showToast(res.error || 'Failed to cancel fixture.');
+      }
+    } catch (e) {
+      showToast('Network error cancelling fixture.');
+    }
+  }
+
+  // --------------------------------------------------------------------------
   // TEAMS
   // --------------------------------------------------------------------------
   function renderTeams() {
@@ -2715,7 +3218,7 @@
             <div style="display:inline-flex; gap:6px;">
               <button class="btn-secondary btn-sm" onclick="viewTeam('${t.name}')">Squad</button>
               <button class="btn-secondary btn-sm" onclick="openEditTeam('${t.id}')">Edit</button>
-              <button class="btn-danger btn-sm" onclick="openDeleteTeam('${t.id}', '${t.name}')">Delete</button>
+              <button class="btn-danger btn-sm" onclick="openDeleteTeam('${t.id}')">Delete</button>
             </div>
           </td>
         </tr>
@@ -2754,7 +3257,7 @@
   }
 
   function openEditTeam(id) {
-    const t = DB.teams.find(x => x.id === id);
+    const t = DB.teams.find(x => String(x.id) === String(id));
     if (!t) return;
     document.getElementById('eTeamId').value = t.id;
     document.getElementById('eTeamName').value = t.name;
@@ -2788,7 +3291,9 @@
     }
   }
 
-  function openDeleteTeam(id, name) {
+  function openDeleteTeam(id) {
+    const t = DB.teams.find(x => String(x.id) === String(id));
+    const name = t ? t.name : 'this team';
     document.getElementById('delTeamId').value = id;
     document.getElementById('delTeamPrompt').textContent = `Are you sure you want to delete ${name}?`;
     openModal('modalDeleteTeam');
@@ -3106,6 +3611,7 @@
     container.innerHTML = filtered.map(m => {
       const leagueName = m.league_name || (DB.leagues.find(l => l.id === (m.league_id || 1)) || {}).name || `League ${m.league_id || 1}`;
       const leagueBadge = `<span class="badge-status" style="background:#e8f0fe; color:#1a73e8; margin-right:6px; font-weight:800;">${escHtml(leagueName)}</span>`;
+      const stageBadge = m.stage && m.stage !== 'LEAGUE' ? `<span class="badge-status" style="background:rgba(161,66,244,0.15); color:#a142f4; border:1px solid rgba(161,66,244,0.3); font-weight:700; margin-right:6px;"><i class="fa fa-trophy"></i> ${escHtml(m.stage)}</span>` : '';
       const matchNoTag = `<span class="match-card-tag" style="margin-right:6px;">MATCH ${m.matchNo || m.id}</span>`;
       const formatBadge = `<span style="font-size:10.5px; font-weight:800; color:var(--hpl-blue); background:rgba(26,115,232,0.08); padding:2px 8px; border-radius:4px; text-transform:uppercase; margin-right:6px;">${escHtml(m.format_name || 'T10')} • ${m.players_per_team || 11} PLAYERS • ${m.total_overs || 10} OVERS</span>`;
 
@@ -3115,6 +3621,7 @@
             <div>
               <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                 ${leagueBadge}
+                ${stageBadge}
                 ${matchNoTag}
                 ${formatBadge}
                 <span class="badge-status ${m.status === 'PAUSED' ? 'upcoming' : 'live'}">${m.status}</span>
@@ -3130,19 +3637,34 @@
           </div>
         `;
       } else if (m.status === 'COMPLETED') {
+        const isLocked = !!m.is_locked;
+        const lockBadge = isLocked 
+          ? `<span class="badge-status" style="background:rgba(234,67,53,0.12); color:var(--hpl-red); border:1px solid rgba(234,67,53,0.3);"><i class="fa fa-lock"></i> LOCKED</span>`
+          : `<span class="badge-status" style="background:rgba(52,168,83,0.12); color:var(--hpl-green); border:1px solid rgba(52,168,83,0.3);"><i class="fa fa-unlock"></i> UNLOCKED</span>`;
+        const lockActionBtn = isLocked
+          ? `<button class="btn-secondary btn-sm" onclick="openUnlockMatchModal('${m.id}')" title="Unlock for administrative correction"><i class="fa fa-unlock"></i> Unlock</button>`
+          : `<button class="btn-secondary btn-sm" onclick="lockMatchDirect('${m.id}')" title="Lock match from edits"><i class="fa fa-lock"></i> Lock</button>`;
+        const advanceBtn = (m.stage === 'SEMIFINAL' && m.winner && m.winner !== 'Cancelled' && m.winner !== 'No Result')
+          ? `<button class="btn-primary btn-sm" onclick="openAdvanceWinnerPrompt('${m.id}', '${escHtml(m.winner)}')"><i class="fa fa-arrow-right"></i> Advance Winner</button>`
+          : '';
+
         return `
           <div class="match-card-unit">
             <div>
               <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                 ${leagueBadge}
+                ${stageBadge}
                 ${matchNoTag}
                 ${formatBadge}
                 <span class="badge-status completed">COMPLETED</span>
+                ${lockBadge}
               </div>
               <div class="match-card-teams" style="margin-top:6px;">${escHtml(m.teamA || m.team_a)} ${m.scoreA || ''} vs ${escHtml(m.teamB || m.team_b)} ${m.scoreB || ''}</div>
               <div class="match-card-info" style="color:var(--hpl-green); font-weight:700;">${m.winner ? (escHtml(m.winner) + ' ' + escHtml(m.result_margin || '')) : 'Completed'}</div>
             </div>
             <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+              ${lockActionBtn}
+              ${advanceBtn}
               <button class="btn-secondary btn-sm" onclick="openMatchSetupModal('${m.id}')" title="View Playing XI"><i class="fa fa-users"></i> [ VIEW XI ]</button>
               <button class="btn-secondary btn-sm" onclick="openEditFixtureModal('${m.id}')" title="Edit completed fixture info"><i class="fa fa-pen"></i> Edit</button>
               <button class="btn-secondary btn-sm" onclick="openScoringMatch('${m.id}')"><i class="fa fa-table"></i> [ VIEW SCORER ]</button>
@@ -3155,6 +3677,7 @@
             <div>
               <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px; flex-wrap:wrap;">
                 ${leagueBadge}
+                ${stageBadge}
                 ${matchNoTag}
                 ${formatBadge}
                 <span class="badge-status upcoming">UPCOMING</span>
@@ -3199,6 +3722,33 @@
     }
   }
 
+  function formatTime12h(time24) {
+    if (!time24) return '03:00 PM';
+    if (time24.includes('AM') || time24.includes('PM')) return time24;
+    const parts = time24.split(':');
+    if (parts.length < 2) return time24;
+    let h = parseInt(parts[0], 10);
+    const m = parts[1];
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return `${String(h).padStart(2, '0')}:${m} ${ampm}`;
+  }
+
+  function formatTime24h(time12) {
+    if (!time12) return '15:00';
+    if (/^\d{2}:\d{2}$/.test(time12)) return time12;
+    const parts = time12.trim().split(/[:\s]+/);
+    if (parts.length >= 2) {
+      let h = parseInt(parts[0], 10);
+      const m = parts[1] || '00';
+      const ampm = (parts[2] || '').toUpperCase();
+      if (ampm === 'PM' && h < 12) h += 12;
+      if (ampm === 'AM' && h === 12) h = 0;
+      return `${String(h).padStart(2, '0')}:${m}`;
+    }
+    return '15:00';
+  }
+
   function openCreateFixtureModal() {
     onScheduleLeagueChange();
     const presetSel = document.getElementById('mFormatPreset');
@@ -3206,6 +3756,23 @@
       presetSel.value = 'T10';
       onFormatPresetChange('m');
     }
+
+    // Initialize date with today (YYYY-MM-DD)
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const dateInput = document.getElementById('mDate');
+    if (dateInput) dateInput.value = `${yyyy}-${mm}-${dd}`;
+
+    // Initialize time with upcoming hour (e.g. 15:00)
+    const timeInput = document.getElementById('mTime');
+    if (timeInput) {
+      const hh = String(today.getHours()).padStart(2, '0');
+      const min = String(today.getMinutes()).padStart(2, '0');
+      timeInput.value = `${hh}:${min}`;
+    }
+
     openModal('modalSchedule');
   }
 
@@ -3236,8 +3803,10 @@
     const league_id = parseInt(document.getElementById('mLeague')?.value || '1', 10);
     const teamA = document.getElementById('mTeamA').value;
     const teamB = document.getElementById('mTeamB').value;
-    const date = document.getElementById('mDate').value.trim();
-    const time = document.getElementById('mTime').value.trim();
+    const rawDate = document.getElementById('mDate').value.trim();
+    const rawTime = document.getElementById('mTime').value.trim();
+    const date = rawDate || new Date().toISOString().split('T')[0];
+    const time = rawTime ? formatTime12h(rawTime) : '03:00 PM';
     const venue = document.getElementById('mVenue').value.trim();
     const overs = parseInt(document.getElementById('mOvers').value, 10);
     const format_name = document.getElementById('mFormatName')?.value.trim() || 'T10';
@@ -3251,6 +3820,14 @@
     if (!overs || overs <= 0) {
       showToast('Total overs must be greater than 0');
       return;
+    }
+
+    const btn = document.getElementById('btnScheduleFixture');
+    const originalText = btn ? btn.innerHTML : 'Schedule Fixture';
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa fa-spinner fa-spin" style="margin-right:6px;"></i> Scheduling...';
+      btn.style.opacity = '0.75';
     }
 
     try {
@@ -3272,6 +3849,12 @@
       await fetchDb();
     } catch (e) {
       showToast('Unable to schedule fixture.');
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        btn.style.opacity = '1';
+      }
     }
   }
 
@@ -3290,7 +3873,14 @@
     document.getElementById('editFixTeamA').value = m.teamA || m.team_a;
     document.getElementById('editFixTeamB').value = m.teamB || m.team_b;
 
-    document.getElementById('editFixDate').value = m.date || m.match_date || 'Today';
+    const rawD = m.date || m.match_date || '';
+    if (rawD && /^\d{4}-\d{2}-\d{2}$/.test(rawD)) {
+      document.getElementById('editFixDate').value = rawD;
+    } else {
+      document.getElementById('editFixDate').value = new Date().toISOString().split('T')[0];
+    }
+    document.getElementById('editFixTime').value = formatTime24h(m.time || '15:00');
+
     document.getElementById('editFixVenue').value = m.venue || 'College Ground';
     document.getElementById('editFixOvers').value = m.total_overs || 10;
     document.getElementById('editFixFormatName').value = m.format_name || 'T10';
@@ -3326,7 +3916,10 @@
     const league_id = parseInt(document.getElementById('editFixLeague').value, 10);
     const team_a = document.getElementById('editFixTeamA').value;
     const team_b = document.getElementById('editFixTeamB').value;
-    const match_date = document.getElementById('editFixDate').value.trim();
+    const rawDate = document.getElementById('editFixDate').value.trim();
+    const rawTime = document.getElementById('editFixTime').value.trim();
+    const match_date = rawDate || new Date().toISOString().split('T')[0];
+    const time = rawTime ? formatTime12h(rawTime) : '03:00 PM';
     const venue = document.getElementById('editFixVenue').value.trim();
     const total_overs = parseInt(document.getElementById('editFixOvers').value, 10);
     const format_name = document.getElementById('editFixFormatName')?.value.trim() || 'T10';
@@ -3343,11 +3936,19 @@
       return;
     }
 
+    const btn = document.getElementById('btnSaveFixture');
+    const originalText = btn ? btn.innerHTML : 'Save Fixture';
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa fa-spinner fa-spin" style="margin-right:6px;"></i> Saving...';
+      btn.style.opacity = '0.75';
+    }
+
     try {
       const res = await fetch(`/api/admin/matches/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ league_id, team_a, team_b, match_date, venue, total_overs, format_name, players_per_team, balls_per_over, status })
+        body: JSON.stringify({ league_id, team_a, team_b, match_date, date: match_date, time, venue, total_overs, format_name, players_per_team, balls_per_over, status })
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
@@ -3359,6 +3960,12 @@
       await fetchDb();
     } catch (e) {
       showToast('Unable to update fixture.');
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        btn.style.opacity = '1';
+      }
     }
   }
 
@@ -3735,6 +4342,26 @@
     openScoringMatch(matchId);
   }
 
+  function getTeamPlayers(teamName, matchObj) {
+    if (!teamName) return [];
+    const tNorm = teamName.trim().toLowerCase();
+    // 1. Check Playing XI
+    if (matchObj) {
+      const isTeamA = (matchObj.teamA || matchObj.team_a || '').trim().toLowerCase() === tNorm;
+      const isTeamB = (matchObj.teamB || matchObj.team_b || '').trim().toLowerCase() === tNorm;
+      const xi = isTeamA ? matchObj.playing_xi_a : (isTeamB ? matchObj.playing_xi_b : []);
+      if (Array.isArray(xi) && xi.length > 0) {
+        return xi.map(n => typeof n === 'string' ? { name: n } : n);
+      }
+    }
+    // 2. Filter from DB.players (case-insensitive)
+    const squad = (DB.players || []).filter(p => (p.team || p.team_name || '').trim().toLowerCase() === tNorm);
+    if (squad.length > 0) return squad;
+
+    // 3. Fallback: match by partial name
+    return (DB.players || []).filter(p => (p.team || '').toLowerCase().includes(tNorm) || tNorm.includes((p.team || '').toLowerCase()));
+  }
+
   function renderLiveScoring() {
     const container = document.getElementById('liveConsoleContainer');
     if (!container) return;
@@ -3909,10 +4536,27 @@
       `;
     }
 
-    // Bowler selector options (players from fielding team)
-    const bowlingTeamName = (match.current_innings === 2) ? teamA : teamB;
-    const fieldingPlayers = DB.players.filter(p => p.team === bowlingTeamName);
-    const bowlerOpts = fieldingPlayers.map(p => `<option value="${p.name}" ${p.name === bowler.name ? 'selected' : ''}>${p.name}</option>`).join('');
+    // Active Innings teams (accounting for toss and current innings)
+    const activeInn = (match.innings && match.innings.length > 0)
+      ? match.innings.find(i => i.innings_number === (match.current_innings || 1))
+      : null;
+    const battingTeamName = activeInn ? activeInn.batting_team : ((match.current_innings === 2) ? teamB : teamA);
+    const bowlingTeamName = activeInn ? activeInn.bowling_team : ((match.current_innings === 2) ? teamA : teamB);
+
+    const battingPlayers = getTeamPlayers(battingTeamName, match);
+    const fieldingPlayers = getTeamPlayers(bowlingTeamName, match);
+
+    const strikerOpts = battingPlayers.length > 0
+      ? battingPlayers.map(p => `<option value="${escHtml(p.name)}" ${p.name === striker.name ? 'selected' : ''}>${escHtml(p.name)}</option>`).join('')
+      : `<option value="${escHtml(striker.name)}">${escHtml(striker.name)}</option>`;
+
+    const nonStrikerOpts = battingPlayers.length > 0
+      ? battingPlayers.map(p => `<option value="${escHtml(p.name)}" ${p.name === nonStriker.name ? 'selected' : ''}>${escHtml(p.name)}</option>`).join('')
+      : `<option value="${escHtml(nonStriker.name)}">${escHtml(nonStriker.name)}</option>`;
+
+    const bowlerOpts = fieldingPlayers.length > 0
+      ? fieldingPlayers.map(p => `<option value="${escHtml(p.name)}" ${p.name === bowler.name ? 'selected' : ''}>${escHtml(p.name)}</option>`).join('')
+      : `<option value="${escHtml(bowler.name)}">${escHtml(bowler.name)}</option>`;
 
     container.innerHTML = `
       <div class="console-shell">
@@ -3945,7 +4589,7 @@
             <span class="badge-status ${isLive ? 'live' : (isPaused ? 'upcoming' : 'completed')}">${match.status}</span>
           </div>
 
-          <div class="console-batting-name">${match.current_innings === 2 ? teamB : teamA} (Batting)</div>
+          <div class="console-batting-name">${escHtml(battingTeamName)} (Batting)</div>
           <div class="console-runs-wickets num-bold">${sc.runs} / ${sc.wickets}</div>
           <div class="console-overs-figure num-bold">${sc.oversCompleted}.${sc.ballsInOver} / ${match.total_overs || 10} OVERS</div>
 
@@ -3965,8 +4609,12 @@
                 <span>STRIKER ★</span>
                 <span style="font-size:10px; color:var(--hpl-blue);">ON STRIKE</span>
               </div>
-              <div class="pitch-stat-name">${striker.name}</div>
-              <div class="pitch-stat-val num-bold">${striker.runs} <span style="font-size:11px; color:var(--text-muted); font-weight:600;">(${striker.balls}b · 4s:${striker.fours || 0} · 6s:${striker.sixes || 0})</span></div>
+              <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+                <select class="form-input" style="font-size:12px; font-weight:700; height:32px; padding:2px 8px; flex:1;" onchange="changeCurrentStriker(${match.id}, this.value)">
+                  ${strikerOpts}
+                </select>
+                <div class="pitch-stat-val num-bold" style="white-space:nowrap;">${striker.runs} <span style="font-size:11px; color:var(--text-muted); font-weight:600;">(${striker.balls}b · 4s:${striker.fours || 0} · 6s:${striker.sixes || 0})</span></div>
+              </div>
             </div>
 
             <div class="pitch-stat-cell">
@@ -3976,18 +4624,22 @@
                   ⇄ SWAP
                 </button>
               </div>
-              <div class="pitch-stat-name">${nonStriker.name}</div>
-              <div class="pitch-stat-val num-bold">${nonStriker.runs} <span style="font-size:11px; color:var(--text-muted); font-weight:600;">(${nonStriker.balls}b · 4s:${nonStriker.fours || 0} · 6s:${nonStriker.sixes || 0})</span></div>
+              <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+                <select class="form-input" style="font-size:12px; font-weight:700; height:32px; padding:2px 8px; flex:1;" onchange="changeCurrentNonStriker(${match.id}, this.value)">
+                  ${nonStrikerOpts}
+                </select>
+                <div class="pitch-stat-val num-bold" style="white-space:nowrap;">${nonStriker.runs} <span style="font-size:11px; color:var(--text-muted); font-weight:600;">(${nonStriker.balls}b · 4s:${nonStriker.fours || 0} · 6s:${nonStriker.sixes || 0})</span></div>
+              </div>
             </div>
 
             <div class="pitch-stat-cell" style="grid-column: span 2;">
               <div class="pitch-stat-lbl">
-                <span>CURRENT BOWLER (${bowlingTeamName})</span>
+                <span>CURRENT BOWLER (${escHtml(bowlingTeamName)})</span>
                 <span style="font-size:11px; color:var(--text-muted);">Eco: ${bowler.economy || '0.00'}</span>
               </div>
               <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px; gap:8px;">
-                <select class="form-input" style="font-size:12.5px; font-weight:700; height:32px; padding:2px 8px; flex:1;" onchange="changeCurrentBowler(${match.id}, this.value)">
-                  ${bowlerOpts || `<option value="${bowler.name}">${bowler.name}</option>`}
+                <select class="form-input" id="currentBowlerSelect" style="font-size:12.5px; font-weight:700; height:32px; padding:2px 8px; flex:1;" onchange="changeCurrentBowler(${match.id}, this.value)">
+                  ${bowlerOpts}
                 </select>
                 <div class="num-bold" style="font-size:13.5px; color:var(--navy-900); white-space:nowrap;">
                   ${bowler.overs || 0}-${bowler.maidens || 0}-${bowler.runs || 0}-${bowler.wickets || 0}
@@ -4076,12 +4728,113 @@
         return;
       }
       showToast(extra ? `Recorded: ${extra}` : (runs === 4 ? 'FOUR!' : (runs === 6 ? 'SIX!' : `${runs} run(s)`)));
+
+      const matchData = json.match;
+      const sc = matchData ? matchData.liveScorecard : null;
+      const isOverComplete = sc && sc.ballsInOver === 0 && sc.oversCompleted > 0 && matchData.status !== 'COMPLETED';
+
       await fetchDb();
+
+      if (isOverComplete) {
+        promptNewOverBowler(matchId, matchData);
+      }
     } catch (e) {
       showToast('Connection error recording ball delivery.');
     } finally {
       scoringIsSubmitting = false;
       disableScoringKeypad(false);
+    }
+  }
+
+  function promptNewOverBowler(matchId, matchData) {
+    const match = matchData || DB.matches.find(m => m.id === matchId);
+    if (!match) return;
+
+    const sc = match.liveScorecard || {};
+    const prevBowlerName = (sc.bowler && sc.bowler.name) ? sc.bowler.name : '';
+    const activeInn = (match.innings && match.innings.length > 0)
+      ? match.innings.find(i => i.innings_number === (match.current_innings || 1))
+      : null;
+    const bowlingTeamName = activeInn ? activeInn.bowling_team : ((match.current_innings === 2) ? (match.teamA || match.team_a) : (match.teamB || match.team_b));
+
+    const fieldingPlayers = getTeamPlayers(bowlingTeamName, match);
+    const selectEl = document.getElementById('newOverBowlerSelect');
+    if (!selectEl) return;
+
+    selectEl.innerHTML = fieldingPlayers.map(p => {
+      const isPrev = (p.name === prevBowlerName);
+      return `<option value="${escHtml(p.name)}" ${isPrev ? 'disabled' : ''}>${escHtml(p.name)}${isPrev ? ' (Just Bowled - Ineligible)' : ''}</option>`;
+    }).join('');
+
+    // Pre-select first eligible bowler
+    for (let i = 0; i < selectEl.options.length; i++) {
+      if (!selectEl.options[i].disabled) {
+        selectEl.selectedIndex = i;
+        break;
+      }
+    }
+
+    document.getElementById('newOverMatchId').value = matchId;
+    const banner = document.getElementById('newOverSummaryBanner');
+    if (banner) {
+      banner.innerHTML = `Over <strong>${sc.oversCompleted}</strong> finished! Strike rotated to <strong>${escHtml(sc.striker?.name || 'Striker')}</strong>.`;
+    }
+    const note = document.getElementById('newOverPrevBowlerNote');
+    if (note) {
+      note.textContent = prevBowlerName ? `Previous bowler: ${prevBowlerName} (cannot bowl consecutive overs in standard cricket)` : '';
+    }
+
+    openModal('modalNewOverBowler');
+  }
+
+  async function confirmNewOverBowler() {
+    const matchId = parseInt(document.getElementById('newOverMatchId').value, 10);
+    const bowlerName = document.getElementById('newOverBowlerSelect').value;
+    closeModal('modalNewOverBowler');
+    if (matchId && bowlerName) {
+      await changeCurrentBowler(matchId, bowlerName);
+    }
+  }
+
+  // ── CHANGE CURRENT STRIKER ──
+  async function changeCurrentStriker(matchId, playerName) {
+    if (!playerName) return;
+    try {
+      const res = await fetch(`/api/admin/matches/${matchId}/set-striker`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ player_name: playerName })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to assign striker');
+        return;
+      }
+      showToast(`Striker set to ${playerName}.`);
+      await fetchDb();
+    } catch (e) {
+      showToast('Connection error setting striker.');
+    }
+  }
+
+  // ── CHANGE CURRENT NON-STRIKER ──
+  async function changeCurrentNonStriker(matchId, playerName) {
+    if (!playerName) return;
+    try {
+      const res = await fetch(`/api/admin/matches/${matchId}/set-non-striker`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ player_name: playerName })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to assign non-striker');
+        return;
+      }
+      showToast(`Non-striker set to ${playerName}.`);
+      await fetchDb();
+    } catch (e) {
+      showToast('Connection error setting non-striker.');
     }
   }
 
@@ -4219,18 +4972,21 @@
     `;
 
     // Populate fielding team players
-    const battingTeam = match.current_innings === 2 ? (match.teamB || match.team_b) : (match.teamA || match.team_a);
-    const bowlingTeam = match.current_innings === 2 ? (match.teamA || match.team_a) : (match.teamB || match.team_b);
+    const activeInn = (match.innings && match.innings.length > 0)
+      ? match.innings.find(i => i.innings_number === (match.current_innings || 1))
+      : null;
+    const battingTeam = activeInn ? activeInn.batting_team : (match.current_innings === 2 ? (match.teamB || match.team_b) : (match.teamA || match.team_a));
+    const bowlingTeam = activeInn ? activeInn.bowling_team : (match.current_innings === 2 ? (match.teamA || match.team_a) : (match.teamB || match.team_b));
 
-    const fPlayers = DB.players.filter(p => p.team === bowlingTeam);
+    const fPlayers = getTeamPlayers(bowlingTeam, match);
     const fSel = document.getElementById('wFielderSelect');
     fSel.innerHTML = fPlayers.map(p => `<option value="${p.name}">${p.name}</option>`).join('') || '<option value="">Fielding Team</option>';
 
     // Populate available new batters
-    const bPlayers = DB.players.filter(p => p.team === battingTeam);
+    const bPlayers = getTeamPlayers(battingTeam, match);
     const nSel = document.getElementById('wNewBatterSelect');
     const availableBatters = bPlayers.filter(p => p.name !== strikerName && p.name !== nonStrikerName);
-    nSel.innerHTML = availableBatters.map(p => `<option value="${p.name}">${p.name} (#${p.jersey || ''})</option>`).join('') +
+    nSel.innerHTML = availableBatters.map(p => `<option value="${p.name}">${p.name}</option>`).join('') +
       '<option value="Next Batter">Next Batter (Default)</option>';
 
     onWicketTypeChange();
@@ -4272,7 +5028,16 @@
       }
       closeModal('modalWicket');
       showToast('Wicket recorded & fall-of-wicket added.');
+
+      const matchData = json.match;
+      const sc = matchData ? matchData.liveScorecard : null;
+      const isOverComplete = sc && sc.ballsInOver === 0 && sc.oversCompleted > 0 && matchData.status !== 'COMPLETED';
+
       await fetchDb();
+
+      if (isOverComplete) {
+        promptNewOverBowler(matchId, matchData);
+      }
     } catch (e) {
       showToast('Connection error recording wicket.');
     } finally {
@@ -4578,6 +5343,7 @@
       if (json.success && json.standings) {
         DB.standings = json.standings;
         renderStandings();
+        loadPlayoffQualification();
       }
     } catch (e) {
       console.error('Error loading admin standings:', e);
@@ -4604,7 +5370,7 @@
   }
 
   // --------------------------------------------------------------------------
-  // 13. POINTS TABLE
+  // 13. POINTS TABLE & PLAYOFF GOVERNANCE
   // --------------------------------------------------------------------------
   function renderStandings() {
     const tbody = document.getElementById('standingsBody');
@@ -4635,6 +5401,207 @@
         <td style="text-align:right;" class="num-bold ${String(s.nrr).startsWith('-') ? 'text-danger' : ''}">${s.nrr || '+0.00'}</td>
       </tr>
     `).join('');
+    loadPlayoffQualification();
+  }
+
+  async function loadPlayoffQualification() {
+    const sel = document.getElementById('standingsLeagueSelect');
+    const leagueId = sel ? parseInt(sel.value, 10) : (selectedAdminStandingsLeagueId || 1);
+    const container = document.getElementById('playoffSeedsContainer');
+    if (!container) return;
+
+    try {
+      const res = await fetch(`/api/playoffs/qualification?league_id=${leagueId}&top_n=4`);
+      const json = await res.json();
+      if (!json.success) {
+        container.innerHTML = `<div class="empty-state-desc">Unable to load playoff qualifications.</div>`;
+        return;
+      }
+
+      const qTeams = json.qualified_teams || [];
+      const matchups = json.suggested_matchups || [];
+
+      if (qTeams.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="padding:16px;">
+            <div class="empty-state-title" style="font-size:12px;">NO QUALIFIED TEAMS YET</div>
+            <div class="empty-state-desc">Playoff qualification will activate as league matches are completed.</div>
+          </div>
+        `;
+        return;
+      }
+
+      const seedsHtml = qTeams.map(t => `
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:6px; margin-bottom:6px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="display:inline-block; width:24px; height:24px; line-height:24px; text-align:center; background:var(--hpl-blue); color:#fff; border-radius:50%; font-weight:700; font-size:11px;">#${t.seed}</span>
+            <div>
+              <span style="font-weight:700; font-size:13px; color:var(--text-main);">${escHtml(t.team)}</span>
+              <span style="font-size:11px; color:var(--text-muted); margin-left:6px;">(Capt: ${escHtml(t.captain)})</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:12px; font-size:12px;">
+            <span><strong>${t.points}</strong> pts</span>
+            <span style="color:var(--text-muted);">NRR: <strong>${t.net_run_rate}</strong></span>
+          </div>
+        </div>
+      `).join('');
+
+      const matchupsHtml = matchups.map(m => `
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:rgba(26,115,232,0.06); border:1px solid rgba(26,115,232,0.2); border-radius:6px; margin-bottom:8px;">
+          <div>
+            <span class="badge-status" style="background:var(--hpl-blue); color:#fff; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px; margin-right:6px;">${m.stage}</span>
+            <span style="font-weight:700; font-size:13px;">${escHtml(m.match_name)}</span>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Seed ${m.seed_a} (${escHtml(m.team_a)}) vs Seed ${m.seed_b} (${escHtml(m.team_b)})</div>
+          </div>
+          <button class="btn-primary btn-sm" onclick="createPlayoffFixtureDirect('${m.stage}', '${escHtml(m.team_a)}', '${escHtml(m.team_b)}', '${escHtml(m.match_name)}')">
+            <i class="fa fa-calendar-plus"></i> Create Fixture
+          </button>
+        </div>
+      `).join('');
+
+      container.innerHTML = `
+        <div style="display:grid; grid-template-columns: 1fr 1.2fr; gap:16px;">
+          <div>
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px;">Current Seeds (Top 4)</div>
+            ${seedsHtml}
+          </div>
+          <div>
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px;">Suggested Playoff Fixtures</div>
+            ${matchupsHtml || '<div class="empty-state-desc">At least 2 qualified teams required to schedule playoffs.</div>'}
+          </div>
+        </div>
+      `;
+    } catch (e) {
+      console.error('Error loading playoff qualification:', e);
+    }
+  }
+
+  function openUnlockMatchModal(matchId) {
+    document.getElementById('unlockMatchId').value = matchId;
+    document.getElementById('unlockMatchReason').value = '';
+    document.getElementById('unlockConfirmCheck').checked = false;
+    openModal('modalUnlockMatch');
+  }
+
+  async function submitUnlockMatch() {
+    const matchId = document.getElementById('unlockMatchId').value;
+    const reason = document.getElementById('unlockMatchReason').value.trim();
+    const confirmed = document.getElementById('unlockConfirmCheck').checked;
+
+    if (!reason) {
+      showToast('A reason is required to unlock a match.');
+      return;
+    }
+    if (!confirmed) {
+      showToast('Please check the confirmation box.');
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/matches/${matchId}/unlock`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: reason })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to unlock match');
+        return;
+      }
+      showToast('Match unlocked for correction.');
+      closeModal('modalUnlockMatch');
+      await fetchDb();
+    } catch (e) {
+      showToast('Error unlocking match.');
+    }
+  }
+
+  async function lockMatchDirect(matchId) {
+    try {
+      const res = await fetch(`/api/admin/matches/${matchId}/lock`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: 'Match finalized and locked by administrator.' })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to lock match');
+        return;
+      }
+      showToast('Match locked successfully.');
+      await fetchDb();
+    } catch (e) {
+      showToast('Error locking match.');
+    }
+  }
+
+  async function createPlayoffFixtureDirect(stage, teamA, teamB, matchName) {
+    const sel = document.getElementById('standingsLeagueSelect');
+    const leagueId = sel ? parseInt(sel.value, 10) : 1;
+    try {
+      const res = await fetch('/api/admin/fixtures', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          team_a: teamA,
+          team_b: teamB,
+          match_name: matchName,
+          stage: stage,
+          venue: 'College Ground (Playoffs)',
+          match_date: 'Playoff Day',
+          time: '02:00 PM',
+          total_overs: 10,
+          format_name: 'T10',
+          league_id: leagueId
+        })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to create playoff fixture');
+        return;
+      }
+      showToast(`Created ${stage} fixture: ${teamA} vs ${teamB}`);
+      await fetchDb();
+      showView('matches');
+    } catch (e) {
+      showToast('Error creating playoff fixture.');
+    }
+  }
+
+  async function openAdvanceWinnerPrompt(sourceMatchId, winner) {
+    const finalMatches = DB.matches.filter(m => m.stage === 'FINAL' && m.status === 'UPCOMING');
+    if (finalMatches.length === 0) {
+      if (confirm(`No scheduled Final fixture found. Would you like to create the Final fixture now with winner '${winner}'?`)) {
+        await createPlayoffFixtureDirect('FINAL', winner, 'TBD', `Championship Final (${winner} vs TBD)`);
+      }
+      return;
+    }
+
+    const targetMatch = finalMatches[0];
+    const slot = (!targetMatch.teamA || targetMatch.teamA === 'TBD' || targetMatch.team_a === 'TBD') ? 'team_a' : 'team_b';
+    if (confirm(`Advance winner '${winner}' into Final fixture #${targetMatch.id} (${targetMatch.match_name || 'Final'}) as ${slot === 'team_a' ? 'Team A' : 'Team B'}?`)) {
+      try {
+        const res = await fetch('/api/playoffs/advance', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            source_match_id: sourceMatchId,
+            target_match_id: targetMatch.id,
+            slot: slot
+          })
+        });
+        const json = await res.json();
+        if (!res.ok || !json.success) {
+          showToast(json.error || 'Failed to advance winner');
+          return;
+        }
+        showToast(`Winner '${winner}' advanced to Final!`);
+        await fetchDb();
+      } catch (e) {
+        showToast('Error advancing playoff winner.');
+      }
+    }
   }
 
   // --------------------------------------------------------------------------
@@ -4764,6 +5731,9 @@
     }
   }
 
+  let SCORERS_LIST = [];
+  let ALL_USERS_LIST = [];
+
   async function loadAdmins() {
     try {
       const res = await fetch('/api/admins');
@@ -4773,8 +5743,11 @@
       }
       const json = await res.json();
       if (json.success && json.admins) {
-        ADMINS_LIST = json.admins;
+        ALL_USERS_LIST = json.admins;
+        ADMINS_LIST = json.admins.filter(a => (a.role || 'ADMIN').toUpperCase() === 'ADMIN');
+        SCORERS_LIST = json.admins.filter(a => (a.role || '').toUpperCase() === 'SCORER');
         renderAdmins();
+        renderScorers();
       }
     } catch (e) {
       console.log('Error loading admins', e);
@@ -4798,7 +5771,7 @@
 
     tbody.innerHTML = ADMINS_LIST.map(a => {
       const isSelf = CURRENT_ADMIN && CURRENT_ADMIN.id === a.id;
-      const isActive = a.status === 'active';
+      const isActive = (a.status || 'active').toLowerCase() === 'active';
       const statusBadge = isActive
         ? '<span class="status-badge active">Active</span>'
         : '<span class="status-badge disabled">Disabled</span>';
@@ -4825,6 +5798,289 @@
         </tr>
       `;
     }).join('');
+  }
+
+  // --------------------------------------------------------------------------
+  // 16. DEDICATED SCORER LOGINS MANAGEMENT
+  // --------------------------------------------------------------------------
+  async function loadScorers() {
+    await loadAdmins();
+  }
+
+  function renderScorers(customList) {
+    const list = customList !== undefined ? customList : SCORERS_LIST;
+    const tbody = document.getElementById('scorersBody');
+    const totalCountEl = document.getElementById('totalScorersCount');
+    const activeCountEl = document.getElementById('activeScorersCount');
+
+    if (totalCountEl) totalCountEl.textContent = SCORERS_LIST.length;
+    if (activeCountEl) {
+      activeCountEl.textContent = SCORERS_LIST.filter(s => (s.status || 'active').toLowerCase() === 'active').length;
+    }
+
+    if (!tbody) return;
+
+    if (list.length === 0) {
+      const isFiltered = (document.getElementById('scorerSearchInput')?.value || '').trim().length > 0;
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align:center; padding:32px 16px; color:var(--text-muted);">
+            <div style="font-size:28px; color:var(--text-subtle); margin-bottom:8px;"><i class="fa fa-user-circle-o"></i></div>
+            <div style="font-weight:700; color:var(--navy-900); margin-bottom:4px;">
+              ${isFiltered ? 'No scorers match your search.' : 'No Scorer accounts created yet.'}
+            </div>
+            <div style="font-size:12px; margin-bottom:14px;">
+              ${isFiltered ? 'Try a different search query or clear the filter.' : 'Create dedicated logins for official tournament scorers.'}
+            </div>
+            ${!isFiltered ? '<button class="btn-primary btn-sm" onclick="openAddScorerModal()"><i class="fa fa-plus"></i> Add First Scorer</button>' : ''}
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = list.map(s => {
+      const isActive = (s.status || 'active').toLowerCase() === 'active';
+      const statusBadge = isActive
+        ? '<span class="status-badge active"><i class="fa fa-check-circle"></i> Active</span>'
+        : '<span class="status-badge disabled"><i class="fa fa-ban"></i> Disabled</span>';
+
+      const toggleAction = isActive
+        ? `<button class="btn-secondary btn-sm" onclick="toggleScorerStatus('${s.id}', 'disabled')" title="Disable Login"><i class="fa fa-ban"></i> Disable</button>`
+        : `<button class="btn-primary btn-sm" onclick="toggleScorerStatus('${s.id}', 'active')" title="Enable Login"><i class="fa fa-check"></i> Enable</button>`;
+
+      const createdDate = s.created_at ? new Date(s.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+
+      return `
+        <tr>
+          <td>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="width:32px; height:32px; border-radius:50%; background:var(--hpl-blue-light); color:var(--hpl-blue); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:12px;">
+                ${escapeHtml((s.name || 'S').charAt(0).toUpperCase())}
+              </div>
+              <div>
+                <strong>${escapeHtml(s.name)}</strong>
+                <div style="font-size:11px; color:var(--text-muted);">ID: ${escapeHtml(s.id)}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <code style="font-family:'Inter',monospace; font-size:12px; font-weight:600; color:var(--navy-900);">${escapeHtml(s.email)}</code>
+          </td>
+          <td style="text-align:center;">
+            <span style="font-size:10.5px; font-weight:800; background:#f1f5f9; color:var(--navy-700); padding:3px 8px; border-radius:4px; text-transform:uppercase; letter-spacing:0.5px;">SCORER</span>
+          </td>
+          <td style="text-align:center;">${statusBadge}</td>
+          <td style="text-align:center; font-size:12px; color:var(--text-muted);">${createdDate}</td>
+          <td style="text-align:right; white-space:nowrap;">
+            <div style="display:inline-flex; gap:6px; align-items:center;">
+              <button class="btn-secondary btn-sm" onclick="openEditScorerModal('${s.id}', '${escapeHtml(s.name)}', '${escapeHtml(s.email)}')" title="Edit Scorer Details">
+                <i class="fa fa-pencil"></i> Edit
+              </button>
+              <button class="btn-secondary btn-sm" onclick="openResetScorerPasswordModal('${s.id}', '${escapeHtml(s.name)}')" title="Reset Scorer Password" style="color:#b45309;">
+                <i class="fa fa-key"></i> Reset Pass
+              </button>
+              ${toggleAction}
+              <button class="btn-danger btn-sm" onclick="deleteScorer('${s.id}', '${escapeHtml(s.name)}')" title="Delete Scorer Account">
+                <i class="fa fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function filterScorersTable() {
+    const q = (document.getElementById('scorerSearchInput')?.value || '').trim().toLowerCase();
+    if (!q) {
+      renderScorers(SCORERS_LIST);
+      return;
+    }
+    const filtered = SCORERS_LIST.filter(s => 
+      (s.name || '').toLowerCase().includes(q) || 
+      (s.email || '').toLowerCase().includes(q) ||
+      (s.id || '').toLowerCase().includes(q)
+    );
+    renderScorers(filtered);
+  }
+
+  function copyScorerPortalLink() {
+    const url = window.location.origin + '/scorer/login';
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('Scorer login portal link copied: ' + url);
+      }).catch(() => {
+        prompt('Copy scorer login portal URL:', url);
+      });
+    } else {
+      prompt('Copy scorer login portal URL:', url);
+    }
+  }
+
+  function openAddScorerModal() {
+    document.getElementById('scorerNameInput').value = '';
+    document.getElementById('scorerEmailInput').value = '';
+    document.getElementById('scorerPassInput').value = '';
+    document.getElementById('scorerPassConfirmInput').value = '';
+    openModal('modalAddScorer');
+  }
+
+  async function submitAddScorer() {
+    const name = document.getElementById('scorerNameInput').value.trim();
+    const email = document.getElementById('scorerEmailInput').value.trim().toLowerCase();
+    const pass = document.getElementById('scorerPassInput').value;
+    const confirm = document.getElementById('scorerPassConfirmInput').value;
+
+    if (!name || !email || !pass) {
+      showToast('All fields are required.');
+      return;
+    }
+    if (pass.length < 6) {
+      showToast('Password must be at least 6 characters.');
+      return;
+    }
+    if (pass !== confirm) {
+      showToast('Passwords do not match.');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/admins', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password: pass, role: 'SCORER' })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to create scorer account');
+        return;
+      }
+      closeModal('modalAddScorer');
+      showToast(`Scorer account "${name}" created successfully.`);
+      await loadScorers();
+    } catch (e) {
+      showToast('Unable to create scorer account.');
+    }
+  }
+
+  function openEditScorerModal(id, name, email) {
+    document.getElementById('editScorerIdInput').value = id;
+    document.getElementById('editScorerNameInput').value = name;
+    document.getElementById('editScorerEmailInput').value = email;
+    openModal('modalEditScorer');
+  }
+
+  async function submitEditScorer() {
+    const id = document.getElementById('editScorerIdInput').value;
+    const name = document.getElementById('editScorerNameInput').value.trim();
+    const email = document.getElementById('editScorerEmailInput').value.trim().toLowerCase();
+
+    if (!name || !email) {
+      showToast('Name and email are required.');
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admins/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, role: 'SCORER' })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to update scorer details');
+        return;
+      }
+      closeModal('modalEditScorer');
+      showToast(`Scorer details updated for "${name}".`);
+      await loadScorers();
+    } catch (e) {
+      showToast('Unable to update scorer.');
+    }
+  }
+
+  function openResetScorerPasswordModal(id, name) {
+    document.getElementById('resetScorerIdInput').value = id;
+    document.getElementById('resetScorerNameDisplay').textContent = name;
+    document.getElementById('resetScorerPassInput').value = '';
+    document.getElementById('resetScorerPassConfirmInput').value = '';
+    openModal('modalResetScorerPassword');
+  }
+
+  async function submitResetScorerPassword() {
+    const id = document.getElementById('resetScorerIdInput').value;
+    const pass = document.getElementById('resetScorerPassInput').value;
+    const confirm = document.getElementById('resetScorerPassConfirmInput').value;
+
+    if (!pass) {
+      showToast('Password is required.');
+      return;
+    }
+    if (pass.length < 6) {
+      showToast('Password must be at least 6 characters.');
+      return;
+    }
+    if (pass !== confirm) {
+      showToast('Passwords do not match.');
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admins/${id}/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pass })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to reset password');
+        return;
+      }
+      closeModal('modalResetScorerPassword');
+      showToast('Scorer password has been reset successfully.');
+    } catch (e) {
+      showToast('Unable to reset scorer password.');
+    }
+  }
+
+  async function toggleScorerStatus(id, newStatus) {
+    try {
+      const res = await fetch(`/api/admins/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to update status');
+        return;
+      }
+      showToast(json.message || 'Scorer status updated.');
+      await loadScorers();
+    } catch (e) {
+      showToast('Unable to update status.');
+    }
+  }
+
+  async function deleteScorer(id, name) {
+    if (!confirm(`Are you sure you want to delete scorer "${name}"? This action cannot be undone.`)) {
+      return;
+    }
+    try {
+      const res = await fetch(`/api/admins/${id}`, {
+        method: 'DELETE'
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        showToast(json.error || 'Failed to delete scorer');
+        return;
+      }
+      showToast(`Scorer "${name}" deleted.`);
+      await loadScorers();
+    } catch (e) {
+      showToast('Unable to delete scorer.');
+    }
   }
 
   function escapeHtml(str) {
@@ -4863,7 +6119,7 @@
       const res = await fetch('/api/admins', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password: pass })
+        body: JSON.stringify({ name, email, password: pass, role: 'ADMIN' })
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
@@ -4899,7 +6155,7 @@
       const res = await fetch(`/api/admins/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email })
+        body: JSON.stringify({ name, email, role: 'ADMIN' })
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
@@ -4968,6 +6224,7 @@
   // --------------------------------------------------------------------------
   function renderCurrentViews() {
     renderDashboard();
+    renderTournaments();
     renderLeagues();
     renderTeams();
     renderPlayers();

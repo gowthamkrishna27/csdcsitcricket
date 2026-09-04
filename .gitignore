@@ -29,7 +29,9 @@ var/
 .env.local
 
 # Databases & test databases
-data/test_cricket.db*
+data/test_*.db*
+data/*.db.bak
+data/*.db.*backup*
 *.db-journal
 *.db-wal
 *.db-shm

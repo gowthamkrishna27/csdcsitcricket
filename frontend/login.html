@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tournament Portal Login · CSD & CSIT Cricket</title>
+
+  <!-- Google Fonts: Inter & Lato -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <style>
+    :root {
+      --bg-body: #f8fafc;
+      --bg-white: #ffffff;
+      --navy-950: #060e1a;
+      --navy-900: #0a1728;
+      --navy-800: #0f172a;
+      --navy-700: #1e293b;
+      --text-muted: #64748b;
+      --hpl-blue: #0284c7;
+      --hpl-blue-hover: #0369a1;
+      --hpl-blue-light: #e0f2fe;
+      --hpl-red: #e11d48;
+      --hpl-red-light: #ffe4e6;
+      --border-light: #e2e8f0;
+      --border-focus: #0284c7;
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --shadow-card: 0 4px 20px rgba(2, 132, 199, 0.08);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--navy-800);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+      padding: 32px 28px 28px 28px;
+      text-align: center;
+    }
+
+    .brand-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+
+    .brand-hpl {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--hpl-blue);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .brand-title {
+      font-size: 19px;
+      font-weight: 900;
+      color: var(--navy-900);
+      letter-spacing: 0.2px;
+    }
+
+    /* ROLE SWITCHER SEGMENTED CONTROL */
+    .role-switcher {
+      display: flex;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-light);
+      gap: 4px;
+    }
+
+    .role-tab {
+      flex: 1;
+      padding: 9px 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .role-tab.active {
+      background: var(--bg-white);
+      color: var(--hpl-blue);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .role-desc-banner {
+      background: var(--hpl-blue-light);
+      border: 1px solid #bae6fd;
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: 11.5px;
+      color: var(--navy-700);
+      text-align: left;
+      margin-bottom: 18px;
+      line-height: 1.4;
+    }
+
+    .error-alert {
+      display: none;
+      background: var(--hpl-red-light);
+      color: var(--hpl-red);
+      border: 1px solid rgba(217, 48, 37, 0.2);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 12.5px;
+      font-weight: 600;
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .form-group {
+      text-align: left;
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--navy-700);
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 42px;
+      padding: 0 14px;
+      font-size: 13.5px;
+      font-family: inherit;
+      color: var(--navy-900);
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .form-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+
+    .btn-submit {
+      width: 100%;
+      height: 44px;
+      background: var(--hpl-blue);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.15s ease, transform 0.05s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-submit:hover {
+      background: var(--hpl-blue-hover);
+    }
+
+    .btn-submit:active {
+      transform: scale(0.99);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .login-footer {
+      margin-top: 20px;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .pancha-bhuta-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 14px;
+    }
+    .bhuta-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .dot-vayu { background: #2980b9; }
+    .dot-agni { background: #e67e22; }
+    .dot-akasha { background: #8e44ad; }
+    .dot-jala { background: #16a085; }
+    .dot-prithvi { background: #27ae60; }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+  <div style="margin-bottom:12px; text-align:left;">
+    <a href="/" style="display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:var(--hpl-blue); text-decoration:none;">
+      <i class="fa fa-arrow-left"></i> Back to Public Match Center
+    </a>
+  </div>
+
+  <div class="login-card">
+    <div class="brand-header">
+      <img src="images/hpl-logo.png" alt="CSD & CSIT Logo" class="brand-logo" onerror="this.style.display='none'">
+      <div class="brand-hpl">CSD & CSIT CRICKET</div>
+      <h1 class="brand-title" id="pageTitle">SIGN IN</h1>
+    </div>
+
+    <!-- Role Switcher -->
+    <div class="role-switcher" role="tablist">
+      <button type="button" class="role-tab active" id="tabScorer" onclick="setRole('scorer')">
+        <i class="fa fa-pencil-square-o"></i> Official Scorer
+      </button>
+      <button type="button" class="role-tab" id="tabAdmin" onclick="setRole('admin')">
+        <i class="fa fa-shield"></i> Tournament Admin
+      </button>
+    </div>
+
+    <div class="role-desc-banner" id="roleDescBanner">
+      <i class="fa fa-info-circle" style="color:var(--hpl-blue); margin-right:4px;"></i>
+      <span id="roleDescText">Official match scorers sign in to claim fixtures and record real-time ball-by-ball scorecards.</span>
+    </div>
+
+    <div class="error-alert" id="errorAlert" role="alert"></div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label class="form-label" for="userEmail" id="emailLabel">Scorer Email</label>
+        <input 
+          type="email" 
+          id="userEmail" 
+          class="form-input" 
+          placeholder="scorer@college.edu" 
+          autocomplete="username" 
+          required 
+          autofocus
+        >
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="userPassword">Password</label>
+        <div style="position:relative;">
+          <input 
+            type="password" 
+            id="userPassword" 
+            class="form-input" 
+            placeholder="••••••••••••" 
+            autocomplete="current-password" 
+            style="padding-right:38px;"
+            required
+          >
+          <button 
+            type="button" 
+            id="btnTogglePassword" 
+            onclick="togglePasswordVisibility()" 
+            aria-label="Toggle password visibility"
+            style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:14px; padding:4px;"
+          >
+            <i class="fa fa-eye" id="pwdEyeIcon"></i>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="btnSubmit">
+        <span id="btnSubmitText">SIGN IN AS SCORER</span> <i class="fa fa-arrow-right"></i>
+      </button>
+    </form>
+
+    <div class="pancha-bhuta-dots" title="Pancha Bhuta">
+      <span class="bhuta-dot dot-vayu" title="Vayu"></span>
+      <span class="bhuta-dot dot-agni" title="Agni"></span>
+      <span class="bhuta-dot dot-akasha" title="Akasha"></span>
+      <span class="bhuta-dot dot-jala" title="Jala"></span>
+      <span class="bhuta-dot dot-prithvi" title="Prithvi"></span>
+    </div>
+  </div>
+
+  <div class="login-footer">
+    &copy; 2026 CSD & CSIT Cricket · Authorized Tournament Personnel Only
+  </div>
+</div>
+
+<script>
+  let activeRole = 'scorer';
+
+  function setRole(role) {
+    activeRole = role;
+    const tabScorer = document.getElementById('tabScorer');
+    const tabAdmin = document.getElementById('tabAdmin');
+    const pageTitle = document.getElementById('pageTitle');
+    const roleDescText = document.getElementById('roleDescText');
+    const emailLabel = document.getElementById('emailLabel');
+    const emailInput = document.getElementById('userEmail');
+    const btnText = document.getElementById('btnSubmitText');
+
+    if (role === 'admin') {
+      tabAdmin.classList.add('active');
+      tabScorer.classList.remove('active');
+      pageTitle.textContent = 'ADMIN ACCESS';
+      roleDescText.textContent = 'Tournament administrators sign in to manage tournaments, leagues, teams, and match scheduling.';
+      emailLabel.textContent = 'Admin Email Address';
+      emailInput.placeholder = 'admin@college.edu';
+      btnText.textContent = 'SIGN IN AS ADMIN';
+      document.title = 'Admin Access · CSD & CSIT Cricket';
+    } else {
+      tabScorer.classList.add('active');
+      tabAdmin.classList.remove('active');
+      pageTitle.textContent = 'SCORER ACCESS';
+      roleDescText.textContent = 'Official match scorers sign in to claim fixtures and record real-time ball-by-ball scorecards.';
+      emailLabel.textContent = 'Scorer Login Email';
+      emailInput.placeholder = 'scorer@college.edu';
+      btnText.textContent = 'SIGN IN AS SCORER';
+      document.title = 'Scorer Portal Login · CSD & CSIT Cricket';
+    }
+  }
+
+  function togglePasswordVisibility() {
+    const pwdInput = document.getElementById('userPassword');
+    const eyeIcon = document.getElementById('pwdEyeIcon');
+    if (!pwdInput) return;
+    if (pwdInput.type === 'password') {
+      pwdInput.type = 'text';
+      if (eyeIcon) eyeIcon.className = 'fa fa-eye-slash';
+    } else {
+      pwdInput.type = 'password';
+      if (eyeIcon) eyeIcon.className = 'fa fa-eye';
+    }
+  }
+
+  // Initialize from query parameters or current route
+  const urlParams = new URLSearchParams(window.location.search);
+  const requestedRole = urlParams.get('role');
+  if (requestedRole === 'admin' || window.location.pathname.includes('/admin')) {
+    setRole('admin');
+  } else {
+    setRole('scorer');
+  }
+
+  // Check if already authenticated
+  fetch('/api/auth/me')
+    .then(r => r.json())
+    .then(data => {
+      if (data.authenticated && data.user) {
+        if (data.user.role === 'SCORER') {
+          window.location.href = '/scorer/matches';
+        } else {
+          window.location.href = activeRole === 'scorer' ? '/scorer/matches' : '/admin';
+        }
+      }
+    })
+    .catch(() => {});
+
+  async function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('userEmail').value.trim();
+    const password = document.getElementById('userPassword').value;
+    const errEl = document.getElementById('errorAlert');
+    const btn = document.getElementById('btnSubmit');
+
+    errEl.style.display = 'none';
+    errEl.textContent = '';
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin" style="margin-right:6px;"></i> SIGNING IN...';
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        let target = '/admin';
+        if (data.user && (data.user.role || '').toUpperCase() === 'SCORER') {
+          target = '/scorer/matches';
+        } else if (activeRole === 'scorer') {
+          target = '/scorer/matches';
+        } else {
+          target = data.redirect || '/admin';
+        }
+        window.location.href = target;
+      } else {
+        errEl.textContent = data.error || 'Invalid email or password';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = `<span id="btnSubmitText">${activeRole === 'admin' ? 'SIGN IN AS ADMIN' : 'SIGN IN AS SCORER'}</span> <i class="fa fa-arrow-right"></i>`;
+      }
+    } catch (err) {
+      errEl.textContent = 'Unable to connect to server. Please verify your connection.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = `<span id="btnSubmitText">${activeRole === 'admin' ? 'SIGN IN AS ADMIN' : 'SIGN IN AS SCORER'}</span> <i class="fa fa-arrow-right"></i>`;
+    }
+  }
+</script>
+
+</body>
+</html>

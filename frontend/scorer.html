@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Scorer Portal · CSD & CSIT Cricket</title>
+
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --surface: #ffffff;
+      --surface-subtle: #f1f5f9;
+      --border: #e2e8f0;
+      --border-subtle: #edf2f7;
+
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+
+      --blue-primary: #0284c7;
+      --blue-dark: #0369a1;
+      --blue-light: #e0f2fe;
+      --blue-border: #bae6fd;
+
+      --green-primary: #059669;
+      --green-dark: #047857;
+      --green-light: #ecfdf5;
+      --green-border: #a7f3d0;
+
+      --red-primary: #e11d48;
+      --red-light: #ffe4e6;
+      --red-border: #fecdd3;
+
+      --amber-primary: #d97706;
+      --amber-light: #fef3c7;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 14px rgba(2, 132, 199, 0.08);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ── */
+    .scorer-header {
+      background: var(--surface);
+      border-bottom: 2px solid var(--blue-primary);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .header-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 16px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+    .brand-icon {
+      font-size: 18px;
+      color: var(--blue-primary);
+    }
+    .brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+    .scorer-pill {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: var(--blue-light);
+      color: var(--blue-primary);
+      border: 1px solid var(--blue-border);
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-icon {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.15s ease;
+    }
+    .btn-icon:hover {
+      background: var(--blue-light);
+      color: var(--blue-primary);
+    }
+    .btn-logout {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn-logout:hover {
+      background: var(--red-light);
+      color: var(--red-primary);
+      border-color: var(--red-border);
+    }
+
+    /* ── MAIN CONTAINER ── */
+    .scorer-main {
+      max-width: 680px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px;
+      flex: 1;
+    }
+
+    /* ── USER BAR ── */
+    .user-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      font-size: 12.5px;
+    }
+    .user-strip-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+    }
+    .user-strip-name {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* ── ALERT BANNER ── */
+    .alert-banner {
+      display: none;
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .alert-banner.error {
+      background: var(--red-light);
+      color: var(--red-primary);
+      border: 1px solid var(--red-border);
+    }
+    .alert-banner.success {
+      background: var(--green-light);
+      color: var(--green-primary);
+      border: 1px solid var(--green-border);
+    }
+
+    /* ── SECTIONS ── */
+    .section-block {
+      margin-bottom: 24px;
+    }
+    .section-heading {
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-count {
+      background: #e2e8f0;
+      color: #475569;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 1px 7px;
+      border-radius: 9999px;
+    }
+
+    /* ── MATCH CARDS ── */
+    .match-cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .scorer-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: transform 0.1s ease, box-shadow 0.15s ease;
+    }
+    .scorer-card.my-match {
+      border: 2px solid var(--blue-primary);
+      background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+      box-shadow: var(--shadow-md);
+    }
+    .card-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .status-badge {
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .status-badge.live {
+      background: var(--red-light);
+      color: var(--red-primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .status-badge.paused {
+      background: var(--amber-light);
+      color: var(--amber-primary);
+    }
+    .status-badge.upcoming {
+      background: var(--blue-light);
+      color: var(--blue-primary);
+    }
+    .dot-pulse {
+      width: 6px;
+      height: 6px;
+      background: var(--red-primary);
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(1.3); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .card-teams {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .match-teams-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.25;
+    }
+    .match-meta-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 8px;
+    }
+    .meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .meta-item i {
+      color: var(--blue-primary);
+      font-size: 11px;
+    }
+
+    /* ── ACTION BUTTONS (LARGE TOUCH TARGETS) ── */
+    .btn-action-touch {
+      width: 100%;
+      height: 48px;
+      min-height: 48px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+    }
+    .btn-resume {
+      background: var(--blue-primary);
+      color: #ffffff;
+      box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25);
+    }
+    .btn-resume:hover {
+      background: var(--blue-dark);
+    }
+    .btn-claim {
+      background: var(--green-primary);
+      color: #ffffff;
+      box-shadow: 0 3px 10px rgba(5, 150, 105, 0.25);
+    }
+    .btn-claim:hover {
+      background: var(--green-dark);
+    }
+    .btn-action-touch:active {
+      transform: scale(0.99);
+    }
+    .btn-action-touch:disabled {
+      background: #cbd5e1;
+      color: #64748b;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .btn-release-text {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 4px;
+      text-align: center;
+      width: 100%;
+    }
+    .btn-release-text:hover {
+      color: var(--red-primary);
+    }
+
+    /* ── EMPTY STATES ── */
+    .empty-box {
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-sm);
+      padding: 24px 16px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    /* ── SKELETON LOADER ── */
+    .loading-state {
+      padding: 32px 16px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13.5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <header class="scorer-header">
+    <div class="header-inner">
+      <a href="/scorer/matches" class="brand-box">
+        <i class="fa fa-clipboard-check brand-icon"></i>
+        <span class="brand-title">CSD & CSIT <span class="scorer-pill">SCORER</span></span>
+      </a>
+      <div class="header-actions">
+        <button class="btn-icon" onclick="loadScorerMatches()" title="Refresh Matches" aria-label="Refresh">
+          <i class="fa fa-rotate"></i>
+        </button>
+        <button class="btn-logout" onclick="handleLogout()">
+          <i class="fa fa-sign-out"></i> Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main class="scorer-main">
+
+    <!-- USER INFO BAR -->
+    <div class="user-strip">
+      <div class="user-strip-info">
+        <i class="fa fa-user-circle" style="color:var(--blue-primary); font-size:16px;"></i>
+        <span>Logged in as: <strong class="user-strip-name" id="userDisplayName">Scorer</strong></span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span id="queueBadge" style="display:none; font-size:11px; font-weight:700; background:#fef3c7; color:#d97706; padding:2px 8px; border-radius:4px;">
+          <i class="fa fa-cloud-arrow-up"></i> Queued: <span id="queueCount">0</span>
+        </span>
+        <span id="networkStatusBadge" style="font-size:11px; font-weight:700; color:var(--green-primary);"><i class="fa fa-circle" style="font-size:8px;"></i> Online</span>
+      </div>
+    </div>
+
+    <!-- NOTIFICATION ALERT BANNER -->
+    <div id="alertBanner" class="alert-banner" role="alert" style="display:none;">
+      <i id="alertIcon" class="fa fa-circle-info"></i>
+      <span id="alertMsg"></span>
+    </div>
+
+    <!-- 1. MY MATCH SECTION -->
+    <section class="section-block" id="myMatchSection">
+      <div class="section-heading">
+        <i class="fa fa-star" style="color:var(--blue-primary);"></i>
+        <span>My Match</span>
+        <span class="section-count" id="myMatchCount">0</span>
+      </div>
+      <div class="match-cards-list" id="myMatchList">
+        <div class="loading-state"><i class="fa fa-spinner fa-spin"></i> Checking your claimed matches…</div>
+      </div>
+    </section>
+
+    <!-- 2. AVAILABLE TODAY SECTION -->
+    <section class="section-block" id="availableSection">
+      <div class="section-heading">
+        <i class="fa fa-calendar-check" style="color:var(--green-primary);"></i>
+        <span>Available Today</span>
+        <span class="section-count" id="availableCount">0</span>
+      </div>
+      <div class="match-cards-list" id="availableList">
+        <div class="loading-state"><i class="fa fa-spinner fa-spin"></i> Loading scheduled matches…</div>
+      </div>
+    </section>
+
+    <!-- 3. CLAIMED BY OTHER SCORERS (MUTED) -->
+    <section class="section-block" id="otherSection" style="display:none;">
+      <div class="section-heading">
+        <i class="fa fa-lock" style="color:var(--text-dim);"></i>
+        <span>In Progress by Others</span>
+        <span class="section-count" id="otherCount">0</span>
+      </div>
+      <div class="match-cards-list" id="otherList"></div>
+    </section>
+
+  </main>
+
+  <script>
+    let currentUser = null;
+
+    function escH(s) {
+      if (!s) return '';
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function showAlert(msg, isError = true) {
+      const banner = document.getElementById('alertBanner');
+      const text = document.getElementById('alertMsg');
+      const icon = document.getElementById('alertIcon');
+      if (!banner || !text) return;
+
+      banner.className = 'alert-banner ' + (isError ? 'error' : 'success');
+      icon.className = 'fa ' + (isError ? 'fa-triangle-exclamation' : 'fa-circle-check');
+      text.textContent = msg;
+      banner.style.display = 'flex';
+
+      setTimeout(() => {
+        banner.style.display = 'none';
+      }, 5000);
+    }
+
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/me');
+        const data = await res.json();
+        if (!data.authenticated || !data.user) {
+          window.location.href = '/scorer/login';
+          return false;
+        }
+        currentUser = data.user;
+        const nameEl = document.getElementById('userDisplayName');
+        if (nameEl) nameEl.textContent = currentUser.name || currentUser.email;
+        return true;
+      } catch (e) {
+        window.location.href = '/scorer/login';
+        return false;
+      }
+    }
+
+    async function loadScorerMatches() {
+      try {
+        const res = await fetch('/api/scorer/matches');
+        if (res.status === 401 || res.status === 403) {
+          window.location.href = '/scorer/login';
+          return;
+        }
+        const data = await res.json();
+        if (!data.success) {
+          showAlert(data.error || 'Failed to load matches.', true);
+          return;
+        }
+
+        renderMyMatches(data.my_matches || []);
+        renderAvailableMatches(data.available_matches || []);
+        renderOtherClaimedMatches(data.other_claimed || []);
+      } catch (e) {
+        showAlert('Unable to connect to tournament scoring server.', true);
+      }
+    }
+
+    function renderMyMatches(matches) {
+      const container = document.getElementById('myMatchList');
+      const countEl = document.getElementById('myMatchCount');
+      if (countEl) countEl.textContent = matches.length;
+      if (!container) return;
+
+      if (matches.length === 0) {
+        container.innerHTML = `
+          <div class="empty-box">
+            <i class="fa fa-cricket-bat-ball" style="color:var(--text-dim); font-size:20px; margin-bottom:6px; display:block;"></i>
+            You have no active matches claimed.<br>
+            <span style="font-size:11.5px; color:var(--text-dim);">Claim an available match below to begin live scoring.</span>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = matches.map(m => {
+        const status = (m.status || 'UPCOMING').toUpperCase();
+        let statusBadge = '';
+        if (status === 'LIVE') {
+          statusBadge = '<span class="status-badge live"><span class="dot-pulse"></span> LIVE</span>';
+        } else if (status === 'PAUSED') {
+          statusBadge = '<span class="status-badge paused"><i class="fa fa-pause"></i> PAUSED</span>';
+        } else {
+          statusBadge = '<span class="status-badge upcoming">UPCOMING</span>';
+        }
+
+        return `
+          <div class="scorer-card my-match">
+            <div class="card-top-row">
+              ${statusBadge}
+              <span style="font-size:11px; font-weight:700; color:var(--blue-primary);">
+                <i class="fa fa-clock"></i> Lease Active
+              </span>
+            </div>
+
+            <div class="card-teams">
+              <div class="match-teams-title">${escH(m.team_a)} vs ${escH(m.team_b)}</div>
+            </div>
+
+            <div class="match-meta-grid">
+              <span class="meta-item"><i class="fa fa-calendar-day"></i> ${escH(m.match_date || 'Today')}</span>
+              <span class="meta-item"><i class="fa fa-clock"></i> ${escH(m.time || '02:00 PM')}</span>
+              <span class="meta-item"><i class="fa fa-location-dot"></i> ${escH(m.venue || 'College Ground')}</span>
+            </div>
+
+            <a href="/scorer/match/${m.id}" class="btn-action-touch btn-resume">
+              <i class="fa fa-circle-play"></i> RESUME SCORING
+            </a>
+
+            <button type="button" class="btn-release-text" onclick="handleReleaseMatch(${m.id})">
+              Release Match Claim
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderAvailableMatches(matches) {
+      const container = document.getElementById('availableList');
+      const countEl = document.getElementById('availableCount');
+      if (countEl) countEl.textContent = matches.length;
+      if (!container) return;
+
+      if (matches.length === 0) {
+        container.innerHTML = `
+          <div class="empty-box">
+            No scheduled matches are currently available for claiming.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = matches.map(m => `
+        <div class="scorer-card">
+          <div class="card-top-row">
+            <span style="font-size:11px; font-weight:800; color:var(--green-primary); text-transform:uppercase;">
+              <i class="fa fa-check-circle"></i> Available to Claim
+            </span>
+            <span style="font-size:11px; font-weight:700; color:var(--text-dim);">
+              ${escH(m.format_name || 'T10')}
+            </span>
+          </div>
+
+          <div class="card-teams">
+            <div class="match-teams-title">${escH(m.team_a)} vs ${escH(m.team_b)}</div>
+          </div>
+
+          <div class="match-meta-grid">
+            <span class="meta-item"><i class="fa fa-clock"></i> ${escH(m.time || '02:00 PM')}</span>
+            <span class="meta-item"><i class="fa fa-location-dot"></i> ${escH(m.venue || 'College Ground')}</span>
+            <span class="meta-item"><i class="fa fa-layer-group"></i> ${m.total_overs || 10} Overs</span>
+          </div>
+
+          <button type="button" class="btn-action-touch btn-claim" id="claimBtn_${m.id}" onclick="handleClaimMatch(${m.id})">
+            <i class="fa fa-clipboard-check"></i> CLAIM MATCH
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function renderOtherClaimedMatches(matches) {
+      const section = document.getElementById('otherSection');
+      const container = document.getElementById('otherList');
+      const countEl = document.getElementById('otherCount');
+      if (!section || !container) return;
+
+      if (matches.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+
+      section.style.display = 'block';
+      if (countEl) countEl.textContent = matches.length;
+
+      container.innerHTML = matches.map(m => `
+        <div class="scorer-card" style="opacity:0.75; background:#f8fafc;">
+          <div class="card-top-row">
+            <span style="font-size:11px; font-weight:800; color:var(--text-dim); text-transform:uppercase;">
+              <i class="fa fa-lock"></i> In Progress
+            </span>
+            <span style="font-size:11px; color:var(--text-dim);">${escH(m.format_name || 'T10')}</span>
+          </div>
+
+          <div class="card-teams">
+            <div class="match-teams-title" style="font-size:16px;">${escH(m.team_a)} vs ${escH(m.team_b)}</div>
+          </div>
+
+          <div class="match-meta-grid">
+            <span class="meta-item"><i class="fa fa-location-dot"></i> ${escH(m.venue || 'College Ground')}</span>
+          </div>
+
+          <button type="button" class="btn-action-touch" disabled style="height:40px; font-size:12px;">
+            Claimed by Another Scorer
+          </button>
+        </div>
+      `).join('');
+    }
+
+    async function handleClaimMatch(matchId) {
+      const btn = document.getElementById(`claimBtn_${matchId}`);
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> CLAIMING...';
+      }
+
+      try {
+        const res = await fetch(`/api/scorer/matches/${matchId}/claim`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          // Success: open match scoring console
+          window.location.href = `/scorer/match/${matchId}`;
+        } else if (res.status === 409) {
+          // Conflict: prompt required message
+          showAlert('This match has already been claimed.', true);
+          loadScorerMatches();
+        } else {
+          showAlert(data.error || 'Failed to claim match. Please try again.', true);
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa fa-clipboard-check"></i> CLAIM MATCH';
+          }
+        }
+      } catch (e) {
+        showAlert('Network error while claiming match. Please verify connection.', true);
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa fa-clipboard-check"></i> CLAIM MATCH';
+        }
+      }
+    }
+
+    async function handleReleaseMatch(matchId) {
+      if (!confirm('Are you sure you want to release this match? Another scorer will be able to claim it.')) {
+        return;
+      }
+      try {
+        const res = await fetch(`/api/scorer/matches/${matchId}/release`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showAlert('Match claim released successfully.', false);
+          loadScorerMatches();
+        } else {
+          showAlert(data.error || 'Failed to release match claim.', true);
+        }
+      } catch (e) {
+        showAlert('Network error while releasing match.', true);
+      }
+    }
+
+    async function handleLogout() {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/scorer/login';
+    }
+
+    function updateNetworkStatus() {
+      const netBadge = document.getElementById('networkStatusBadge');
+      if (!netBadge) return;
+      if (navigator.onLine) {
+        netBadge.innerHTML = '<i class="fa fa-circle" style="font-size:8px;"></i> Online';
+        netBadge.style.color = 'var(--green-primary)';
+      } else {
+        netBadge.innerHTML = '<i class="fa fa-circle-exclamation" style="font-size:8px;"></i> Offline';
+        netBadge.style.color = 'var(--red-primary)';
+      }
+    }
+
+    function updateQueueUI(count) {
+      const qBadge = document.getElementById('queueBadge');
+      const qCount = document.getElementById('queueCount');
+      if (!qBadge || !qCount) return;
+      qCount.textContent = count;
+      qBadge.style.display = count > 0 ? 'inline-flex' : 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      updateNetworkStatus();
+      window.addEventListener('online', updateNetworkStatus);
+      window.addEventListener('offline', updateNetworkStatus);
+
+      if (window.ScorerOfflineSync) {
+        window.ScorerOfflineSync.onQueueChange((count) => updateQueueUI(count));
+        window.ScorerOfflineSync.getPendingQueueCount().then(updateQueueUI);
+      }
+
+      const ok = await checkAuth();
+      if (ok) {
+        loadScorerMatches();
+      }
+    });
+  </script>
+  <script src="/js/scorer_offline.js"></script>
+</body>
+</html>
